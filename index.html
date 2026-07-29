@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Responsive Employee Directory</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SheetJS CDN for Excel Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- jsPDF & AutoTable CDN for PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  </head>
+  <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+    <!-- Header / Navbar -->
+    <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-20">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex flex-row justify-between items-center gap-2"
+      >
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <div class="bg-white/10 p-1.5 sm:p-2 rounded-lg">
+            <svg
+              class="w-5 h-5 sm:w-6 sm:h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+              />
+            </svg>
+          </div>
+          <h1 class="text-lg sm:text-xl font-bold tracking-tight">
+            ProData EMS
+          </h1>
+        </div>
+        <nav
+          class="flex items-center space-x-3 sm:space-x-6 text-xs sm:text-sm font-medium"
+        >
+          <a href="#" class="hover:text-indigo-200 transition">Dashboard</a>
+          <a href="#" class="hover:text-indigo-200 transition">Employees</a>
+          <a href="#" class="hover:text-indigo-200 transition hidden xs:inline"
+            >Reports</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section
+      class="bg-gradient-to-r from-indigo-700 to-indigo-500 text-white py-6 sm:py-8 px-4 sm:px-6"
+    >
+      <div class="max-w-7xl mx-auto text-left">
+        <h2 class="text-2xl sm:text-3xl font-extrabold mb-1.5">
+          Employee Directory
+        </h2>
+        <p
+          class="text-indigo-100 text-xs sm:text-base max-w-2xl leading-relaxed"
+        >
+          Manage staff records, search contact & nationality details, and export
+          reports to Excel or PDF on any device.
+        </p>
+      </div>
+    </section>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full">
+      <!-- Top Metrics / Statistics Cards Section -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <!-- Card 1: Total Employees -->
+        <div
+          class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between"
+        >
+          <div>
+            <p
+              class="text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wider"
+            >
+              Total Staff
+            </p>
+            <h3
+              id="statTotal"
+              class="text-2xl sm:text-3xl font-extrabold text-indigo-600 mt-1"
+            >
+              0
+            </h3>
+          </div>
+          <div class="bg-indigo-50 text-indigo-600 p-3 rounded-lg">
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+              />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Card 2: Active Employees -->
+        <div
+          class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between"
+        >
+          <div>
+            <p
+              class="text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wider"
+            >
+              Active Staff
+            </p>
+            <h3
+              id="statActive"
+              class="text-2xl sm:text-3xl font-extrabold text-emerald-600 mt-1"
+            >
+              0
+            </h3>
+          </div>
+          <div class="bg-emerald-50 text-emerald-600 p-3 rounded-lg">
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Card 3: Employees On Leave -->
+        <div
+          class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between"
+        >
+          <div>
+            <p
+              class="text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wider"
+            >
+              On Leave
+            </p>
+            <h3
+              id="statLeave"
+              class="text-2xl sm:text-3xl font-extrabold text-amber-600 mt-1"
+            >
+              0
+            </h3>
+          </div>
+          <div class="bg-amber-50 text-amber-600 p-3 rounded-lg">
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls Bar: Search & Export Buttons -->
+      <div
+        class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-slate-200 mb-6 flex flex-col md:flex-row gap-3 sm:gap-4 items-stretch md:items-center justify-between"
+      >
+        <!-- Search Box -->
+        <div class="relative w-full md:w-80 lg:w-96">
+          <input
+            type="text"
+            id="searchInput"
+            onkeyup="filterTable()"
+            placeholder="Search name, phone, department..."
+            class="w-full pl-10 pr-4 py-2.5 sm:py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+          <svg
+            class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5 sm:top-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </div>
+
+        <!-- Export Action Buttons -->
+        <div
+          class="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:space-x-3 w-full md:w-auto"
+        >
+          <button
+            onclick="exportToExcel()"
+            class="flex items-center justify-center space-x-1.5 sm:space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition shadow-sm"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <span>Excel</span>
+          </button>
+
+          <button
+            onclick="exportToPDF()"
+            class="flex items-center justify-center space-x-1.5 sm:space-x-2 bg-rose-600 hover:bg-rose-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition shadow-sm"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+              />
+            </svg>
+            <span>PDF</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Data Display Wrapper -->
+      <div
+        class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"
+      >
+        <!-- Desktop & Tablet Table View -->
+        <div class="hidden sm:block overflow-x-auto">
+          <table class="w-full text-left border-collapse" id="employeeTable">
+            <thead>
+              <tr
+                class="bg-slate-100 border-b border-slate-200 text-slate-600 text-xs font-semibold uppercase tracking-wider"
+              >
+                <th class="px-3 py-3.5 text-center">SL</th>
+                <th class="px-4 lg:px-6 py-3.5">ID</th>
+                <th class="px-4 lg:px-6 py-3.5">Employee</th>
+                <th class="px-4 lg:px-6 py-3.5">Contact Details</th>
+                <th class="px-4 lg:px-6 py-3.5">Nationality</th>
+                <th class="px-4 lg:px-6 py-3.5">Department / Role</th>
+                <th class="px-4 lg:px-6 py-3.5">Status</th>
+                <th class="px-4 lg:px-6 py-3.5">Joined</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody" class="divide-y divide-slate-200 text-sm">
+              <!-- Rendered by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Cards View (Visible < 640px) -->
+        <div id="mobileCards" class="block sm:hidden divide-y divide-slate-200">
+          <!-- Rendered by JavaScript -->
+        </div>
+
+        <!-- Footer Info -->
+        <div
+          id="recordCount"
+          class="px-4 sm:px-6 py-3 bg-slate-50 border-t border-slate-200 text-xs text-slate-500 font-medium"
+        >
+          Showing 0 records
+        </div>
+      </div>
+    </main>
+
+    <!-- Script Logic -->
+    <script>
+      const API_URL = "http://localhost:5000/api/employees";
+
+      // Fallback Data
+      const fallbackEmployees = [
+        {
+          id: "EMP-101",
+          name: "Mahabub Alam",
+          email: "mahabub@example.com",
+          mobile: "+966 50 123 4567",
+          nationality: "Bangladeshi",
+          department: "Engineering",
+          role: "Full Stack Developer",
+          status: "Active",
+          joined: "2023-01-15",
+        },
+        {
+          id: "EMP-102",
+          name: "Sarah Jenkins",
+          email: "sarah.j@example.com",
+          mobile: "+1 415 555 0198",
+          nationality: "American",
+          department: "Design",
+          role: "UI/UX Designer",
+          status: "Active",
+          joined: "2022-08-10",
+        },
+        {
+          id: "EMP-103",
+          name: "Tariq Al-Mansoor",
+          email: "tariq.m@example.com",
+          mobile: "+966 55 987 6543",
+          nationality: "Saudi",
+          department: "HR",
+          role: "HR Specialist",
+          status: "On Leave",
+          joined: "2021-11-04",
+        },
+        {
+          id: "EMP-104",
+          name: "David Kim",
+          email: "dkim@example.com",
+          mobile: "+82 10 5555 1234",
+          nationality: "South Korean",
+          department: "Engineering",
+          role: "Backend Engineer",
+          status: "Active",
+          joined: "2023-05-20",
+        },
+        {
+          id: "EMP-105",
+          name: "Elena Rostova",
+          email: "elena@example.com",
+          mobile: "+44 20 7946 0912",
+          nationality: "British",
+          department: "Marketing",
+          role: "SEO Specialist",
+          status: "Inactive",
+          joined: "2020-03-12",
+        },
+      ];
+
+      let dbEmployees = [];
+      let currentData = [];
+
+      // Fetch JSON from MongoDB or Fallback Data
+      async function fetchEmployees() {
+        try {
+          const response = await fetch(API_URL);
+          if (!response.ok) throw new Error("API Offline");
+          dbEmployees = await response.json();
+        } catch (error) {
+          console.warn("Using local fallback data.");
+          dbEmployees = [...fallbackEmployees];
+        }
+        currentData = [...dbEmployees];
+        updateTopMetrics(dbEmployees);
+        renderData(currentData);
+      }
+
+      // Update Dashboard Metrics Cards
+      function updateTopMetrics(employees) {
+        const total = employees.length;
+        const active = employees.filter((e) => e.status === "Active").length;
+        const onLeave = employees.filter((e) => e.status === "On Leave").length;
+
+        document.getElementById("statTotal").innerText = total;
+        document.getElementById("statActive").innerText = active;
+        document.getElementById("statLeave").innerText = onLeave;
+      }
+
+      // Render Data to Table & Cards
+      function renderData(data) {
+        const tbody = document.getElementById("tableBody");
+        const mobileContainer = document.getElementById("mobileCards");
+
+        tbody.innerHTML = "";
+        mobileContainer.innerHTML = "";
+
+        if (data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" class="px-6 py-8 text-center text-slate-400">No matching records found</td></tr>`;
+          mobileContainer.innerHTML = `<div class="p-6 text-center text-slate-400 text-sm">No matching records found</div>`;
+          document.getElementById("recordCount").innerText =
+            "Showing 0 records";
+          return;
+        }
+
+        data.forEach((emp, index) => {
+          const srNo = index + 1; // Sequential Serial Number
+          const badgeColor =
+            emp.status === "Active"
+              ? "bg-emerald-100 text-emerald-800"
+              : emp.status === "On Leave"
+                ? "bg-amber-100 text-amber-800"
+                : "bg-slate-100 text-slate-600";
+
+          // Desktop Table Row
+          const tableRow = `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="px-3 py-4 text-center font-semibold text-slate-400 text-xs">${srNo}</td>
+            <td class="px-4 lg:px-6 py-4 font-medium text-indigo-600 whitespace-nowrap">${emp.id}</td>
+            <td class="px-4 lg:px-6 py-4 font-semibold text-slate-800 whitespace-nowrap">${emp.name}</td>
+            <td class="px-4 lg:px-6 py-4">
+              <div class="text-slate-700 font-medium">${emp.email}</div>
+              <div class="text-xs text-slate-400">${emp.mobile}</div>
+            </td>
+            <td class="px-4 lg:px-6 py-4 text-slate-600">${emp.nationality}</td>
+            <td class="px-4 lg:px-6 py-4">
+              <div class="text-slate-800 font-medium">${emp.role}</div>
+              <div class="text-xs text-slate-400">${emp.department}</div>
+            </td>
+            <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
+              <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${badgeColor}">
+                ${emp.status}
+              </span>
+            </td>
+            <td class="px-4 lg:px-6 py-4 text-slate-500 whitespace-nowrap text-xs">${emp.joined}</td>
+          </tr>
+        `;
+          tbody.innerHTML += tableRow;
+
+          // Mobile Card
+          const card = `
+          <div class="p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span class="text-xs bg-slate-100 px-2 py-0.5 rounded font-bold text-slate-500">#${srNo}</span>
+                <span class="text-xs font-bold text-indigo-600">${emp.id}</span>
+              </div>
+              <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${badgeColor}">
+                ${emp.status}
+              </span>
+            </div>
+
+            <div>
+              <h3 class="font-bold text-slate-800 text-base">${emp.name}</h3>
+            </div>
+
+            <div class="text-xs space-y-1 bg-slate-50 p-2.5 rounded-lg text-slate-600 border border-slate-100">
+              <div><strong class="text-slate-700">Role:</strong> ${emp.role} (${emp.department})</div>
+              <div><strong class="text-slate-700">Email:</strong> ${emp.email}</div>
+              <div><strong class="text-slate-700">Mobile:</strong> ${emp.mobile}</div>
+              <div><strong class="text-slate-700">Nationality:</strong> ${emp.nationality}</div>
+            </div>
+
+            <div class="text-[11px] text-slate-400 text-right">Joined: ${emp.joined}</div>
+          </div>
+        `;
+          mobileContainer.innerHTML += card;
+        });
+
+        document.getElementById("recordCount").innerText =
+          `Showing ${data.length} of ${dbEmployees.length} records`;
+      }
+
+      // Search Filter
+      function filterTable() {
+        const query = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        currentData = dbEmployees.filter(
+          (emp) =>
+            emp.name.toLowerCase().includes(query) ||
+            emp.email.toLowerCase().includes(query) ||
+            emp.mobile.toLowerCase().includes(query) ||
+            emp.nationality.toLowerCase().includes(query) ||
+            emp.department.toLowerCase().includes(query) ||
+            emp.role.toLowerCase().includes(query) ||
+            emp.id.toLowerCase().includes(query),
+        );
+        renderData(currentData);
+      }
+
+      // Export Excel
+      function exportToExcel() {
+        const exportFormat = currentData.map((emp, index) => ({
+          SL: index + 1,
+          "Employee ID": emp.id,
+          Name: emp.name,
+          Email: emp.email,
+          Mobile: emp.mobile,
+          Nationality: emp.nationality,
+          Department: emp.department,
+          Role: emp.role,
+          Status: emp.status,
+          "Joining Date": emp.joined,
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(exportFormat);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
+        XLSX.writeFile(workbook, "Employee_Directory.xlsx");
+      }
+
+      // Export PDF
+      function exportToPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: "landscape" });
+
+        doc.setFontSize(16);
+        doc.text("Employee Directory Report", 14, 15);
+
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 22);
+
+        const tableRows = currentData.map((emp, index) => [
+          index + 1,
+          emp.id,
+          emp.name,
+          emp.email,
+          emp.mobile,
+          emp.nationality,
+          `${emp.role} (${emp.department})`,
+          emp.status,
+          emp.joined,
+        ]);
+
+        doc.autoTable({
+          head: [
+            [
+              "SL",
+              "ID",
+              "Name",
+              "Email",
+              "Mobile",
+              "Nationality",
+              "Role / Dept",
+              "Status",
+              "Joined",
+            ],
+          ],
+          body: tableRows,
+          startY: 28,
+          theme: "grid",
+          headStyles: { fillColor: [79, 70, 229] },
+          styles: { fontSize: 8 },
+        });
+
+        doc.save("Employee_Directory.pdf");
+      }
+
+      document.addEventListener("DOMContentLoaded", fetchEmployees);
+    </script>
+  </body>
+</html>
