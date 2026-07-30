@@ -1,57 +1,30 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ProEMS - Employee & Iqama Management System</title>
-
+    <title>ProEMS - Employee Management System</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
+    <!-- FontAwesome CDN -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- SheetJS for Excel Export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- jsPDF & autoTable for PDF Export -->
+    <!-- SheetJS (xlsx) CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- jsPDF & AutoTable CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
     <style>
-      .org-line-v {
-        width: 2px;
-        background-color: #cbd5e1;
-      }
-      .org-line-h {
-        height: 2px;
-        background-color: #cbd5e1;
-      }
-      .kpi-card {
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
-      }
-      .kpi-card:hover {
-        transform: translateY(-2px);
-      }
-      .kpi-card.active-card {
-        border-color: #6366f1;
-        background-color: #f8fafc;
-      }
-
-      /* Sidebar transition for collapsed state */
-      #sidebar {
-        transition: width 0.3s ease, transform 0.3s ease;
-      }
-      /* Collapsed sidebar styling */
       .sidebar-collapsed {
-        width: 4.5rem !important;
+        width: 5rem !important;
       }
       .sidebar-collapsed .nav-text,
-      .sidebar-collapsed .brand-text,
-      .sidebar-collapsed .footer-text {
+      .sidebar-collapsed .brand-text {
         display: none !important;
       }
       .sidebar-collapsed .nav-item {
@@ -59,504 +32,1060 @@
         padding-left: 0 !important;
         padding-right: 0 !important;
       }
-      .sidebar-collapsed .brand-container {
-        justify-content: center !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
+      .active-card {
+        border-color: #4f46e5 !important;
       }
     </style>
   </head>
+  <body class="bg-slate-100 text-slate-800 font-sans antialiased">
+    <!-- MOBILE OVERLAY BACKDROP -->
+    <div
+      id="sidebar-overlay"
+      onclick="toggleSidebar()"
+      class="fixed inset-0 bg-black/50 z-20 hidden md:hidden transition-opacity"
+    ></div>
 
-  <body class="bg-gray-100 font-sans text-gray-800 antialiased">
-    <div class="flex h-screen overflow-hidden relative">
-
-      <!-- Mobile Backdrop Overlay -->
-      <div
-        id="sidebar-overlay"
-        onclick="toggleSidebar()"
-        class="fixed inset-0 bg-slate-900/50 z-20 hidden md:hidden transition-opacity"
-      ></div>
-
-      <!-- Sidebar Navigation -->
+    <div class="flex h-screen overflow-hidden">
+      <!-- SIDEBAR -->
       <aside
         id="sidebar"
-        class="fixed md:static inset-y-0 left-0 z-30 w-64 bg-slate-900 text-white flex flex-col justify-between p-4 transform -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out shrink-0"
+        class="fixed md:static inset-y-0 left-0 z-30 w-64 bg-slate-900 text-slate-300 transition-all duration-300 transform -translate-x-full md:translate-x-0 flex flex-col justify-between shrink-0"
       >
         <div>
-          <div class="brand-container flex items-center justify-between px-2 py-3 mb-6">
-            <div class="flex items-center space-x-3 overflow-hidden">
-              <i class="fa-solid fa-users-gear text-2xl text-indigo-400 shrink-0"></i>
-              <span class="brand-text text-xl font-bold tracking-wide whitespace-nowrap">EMS G&L</span>
-            </div>
-            <!-- Close button for mobile -->
-            <button onclick="toggleSidebar()" class="md:hidden text-gray-400 hover:text-white">
-              <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
+          <!-- Brand Header -->
+          <div class="h-16 flex items-center px-6 bg-slate-950 border-b border-slate-800">
+            <i class="fa-solid fa-users-gear text-indigo-500 text-2xl mr-3"></i>
+            <span class="brand-text font-bold text-xl text-white tracking-wide">ProEMS</span>
           </div>
 
-          <nav class="space-y-1" id="sidebar-nav">
+          <!-- Navigation Links -->
+          <nav id="sidebar-nav" class="p-4 space-y-1.5">
             <button
-              onclick="switchTab('dashboard')"
               id="nav-dashboard"
-              title="Dashboard"
+              onclick="switchTab('dashboard')"
               class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg bg-indigo-600 text-white font-medium transition"
             >
-              <i class="fa-solid fa-chart-pie w-5 text-center shrink-0"></i>
-              <span class="nav-text whitespace-nowrap">Dashboard</span>
+              <i class="fa-solid fa-chart-line w-5 text-center"></i>
+              <span class="nav-text">Dashboard</span>
             </button>
+
             <button
-              onclick="switchTab('iqama')"
               id="nav-iqama"
-              title="Iqama & DMM Expiry"
+              onclick="switchTab('iqama')"
               class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
             >
-              <i class="fa-solid fa-id-card w-5 text-center shrink-0"></i>
-              <span class="nav-text whitespace-nowrap">Iqama & DMM Expiry</span>
+              <i class="fa-solid fa-id-card w-5 text-center"></i>
+              <span class="nav-text">Iqama & DMM Expiry</span>
             </button>
+
             <button
-              onclick="switchTab('orgchart')"
               id="nav-orgchart"
-              title="Org Structure"
+              onclick="switchTab('orgchart')"
               class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
             >
-              <i class="fa-solid fa-sitemap w-5 text-center shrink-0"></i>
-              <span class="nav-text whitespace-nowrap">Org Structure</span>
+              <i class="fa-solid fa-sitemap w-5 text-center"></i>
+              <span class="nav-text">Org Chart</span>
+            </button>
+
+            <button
+              id="nav-vacation"
+              onclick="switchTab('vacation')"
+              class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
+            >
+              <i class="fa-solid fa-plane-departure w-5 text-center"></i>
+              <span class="nav-text">Vacation</span>
+            </button>
+
+            <button
+              id="nav-heavy-equipment"
+              onclick="switchTab('heavy-equipment')"
+              class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
+            >
+              <i class="fa-solid fa-truck-monster w-5 text-center"></i>
+              <span class="nav-text">Heavy Equipment</span>
+            </button>
+
+            <button
+              id="nav-light-equipment"
+              onclick="switchTab('light-equipment')"
+              class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
+            >
+              <i class="fa-solid fa-truck-pickup w-5 text-center"></i>
+              <span class="nav-text">Light Equipment</span>
             </button>
           </nav>
         </div>
 
-        <div class="footer-text border-t border-slate-800 pt-4 px-2 text-xs text-slate-400 text-center">
-        EMS v1 • Safari Group
+        <div class="p-4 border-t border-slate-800">
+          <div class="nav-text text-xs text-slate-500 text-center">
+            ProEMS v2.4 &bull; Safari Contracting
+          </div>
         </div>
       </aside>
 
-      <!-- Main Content Area -->
-      <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        <!-- Top Header Bar -->
-        <header
-          class="bg-white border-b px-4 sm:px-6 py-3.5 flex items-center justify-between sticky top-0 z-10 shadow-sm"
-        >
-          <div class="flex items-center space-x-3 sm:space-x-4">
-            <!-- Sidebar Collapse / Expand Button -->
+      <!-- MAIN WRAPPER -->
+      <div class="flex-1 flex flex-col overflow-y-auto">
+        <!-- TOP HEADER -->
+        <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-10">
+          <div class="flex items-center space-x-4">
             <button
+              type="button"
               onclick="toggleSidebar()"
-              title="Toggle Sidebar / Icon View"
-              class="p-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+              class="text-slate-600 hover:text-slate-900 focus:outline-none p-1.5 rounded-md hover:bg-slate-100"
             >
-              <i class="fa-solid fa-bars-staggered text-lg"></i>
+              <i class="fa-solid fa-bars text-lg"></i>
             </button>
-
-            <h1 class="text-lg sm:text-xl font-bold text-gray-800 truncate" id="page-title">
-              EMS – Grounds & Landscaping Overview
-            </h1>
+            <h1 id="page-title" class="text-xl font-bold text-slate-800">Employee Overview</h1>
           </div>
 
-          <div class="flex items-center space-x-3 sm:space-x-4 shrink-0">
-            <span class="hidden sm:inline-block text-xs sm:text-sm font-semibold text-gray-600">
-              G&L Safari Group
-            </span>
-            <div
-              class="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center font-bold text-sm justify-center shadow-sm"
-            >
-          MA
+          <div class="flex items-center space-x-3">
+            <div class="relative">
+              <i class="fa-solid fa-bell text-slate-500 text-lg hover:text-slate-700 cursor-pointer"></i>
+              <span class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">1</span>
+            </div>
+            <div class="h-8 w-px bg-slate-200"></div>
+            <div class="flex items-center space-x-2">
+              <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-semibold text-sm">
+                MA
+              </div>
+              <span class="text-sm font-medium text-slate-700 hidden sm:inline">Mahabub Alam</span>
             </div>
           </div>
         </header>
 
-        <!-- TAB 1: MAIN DASHBOARD -->
-        <main id="tab-dashboard" class="p-4 sm:p-6 space-y-6 max-w-[1920px] mx-auto w-full">
-          <!-- KPI Summary Cards -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-            <div
-              id="card-all"
-              onclick="filterByCard('all')"
-              class="kpi-card bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between active-card ring-2 ring-indigo-500"
-            >
-              <div>
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  Total Manpower
-                </p>
-                <h2 class="text-2xl font-bold text-gray-900 mt-1" id="kpi-total">
-                  0
-                </h2>
-              </div>
-              <div class="p-3 bg-indigo-50 text-indigo-600 rounded-lg">
-                <i class="fa-solid fa-users text-xl"></i>
-              </div>
-            </div>
-
-            <div
-              id="card-vacation"
-              onclick="filterByCard('vacation')"
-              class="kpi-card bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between"
-            >
-              <div>
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  On Vacation
-                </p>
-                <h2 class="text-2xl font-bold text-amber-600 mt-1" id="kpi-vacation">
-                  0
-                </h2>
-              </div>
-              <div class="p-3 bg-amber-50 text-amber-600 rounded-lg">
-                <i class="fa-solid fa-plane-departure text-xl"></i>
-              </div>
-            </div>
-
-            <div
-              id="card-saudi"
-              onclick="filterByCard('saudi')"
-              class="kpi-card bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between"
-            >
-              <div>
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  Saudi Total
-                </p>
-                <h2 class="text-2xl font-bold text-emerald-600 mt-1" id="kpi-saudi">
-                  0
-                </h2>
-              </div>
-              <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
-                <i class="fa-solid fa-flag text-xl"></i>
-              </div>
-            </div>
-
-            <div
-              id="card-bd"
-              onclick="filterByCard('bd')"
-              class="kpi-card bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between"
-            >
-              <div>
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  Bangladeshi
-                </p>
-                <h2 class="text-2xl font-bold text-blue-600 mt-1" id="kpi-bd">
-                  0
-                </h2>
-              </div>
-              <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
-                <i class="fa-solid fa-globe text-xl"></i>
-              </div>
-            </div>
-          </div>
-
-          <!-- Active Filter Banner -->
-          <div
-            id="filterBanner"
-            class="hidden bg-indigo-50 border border-indigo-200 text-indigo-800 px-4 py-3 rounded-lg flex items-center justify-between text-xs sm:text-sm"
-          >
-            <span id="bannerText" class="font-medium">Filtered View</span>
-            <button
-              onclick="filterByCard('all')"
-              class="text-indigo-600 font-bold underline hover:text-indigo-900 ml-2"
-            >
-              Reset Filter
-            </button>
-          </div>
-
-          <!-- Charts Section -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
-            <div class="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm">
-              <h3 class="text-sm font-bold text-gray-700 mb-4">Nationality Demographics</h3>
-              <div class="h-56 sm:h-64 relative">
-                <canvas id="nationalityChart"></canvas>
-              </div>
-            </div>
-
-            <div class="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm">
-              <h3 class="text-sm font-bold text-gray-700 mb-4">Department Distribution</h3>
-              <div class="h-56 sm:h-64 relative">
-                <canvas id="deptChart"></canvas>
-              </div>
-            </div>
-          </div>
-
-          <!-- Employee Table Section -->
-          <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div class="p-4 border-b flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
-              <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full md:w-auto">
-                <input
-                  type="text"
-                  id="tableSearch"
-                  oninput="onSearchInput()"
-                  placeholder="Search name, ID, group, Iqama, DMM..."
-                  class="border rounded-lg px-3 py-2 text-sm w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-
-                <div class="flex items-center gap-2">
-                  <!-- Filter by Group Dropdown -->
-                  <select
-                    id="groupFilter"
-                    onchange="applyFilters()"
-                    class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white w-full sm:w-auto"
-                  >
-                    <option value="all">All Groups</option>
-                    <option value="Ecopower">Ecopower</option>
-                    <option value="Administrative / Management">Administrative / Management</option>
-                    <option value="Fleet Management">Fleet Management</option>
-                    <option value="Irrigation">Irrigation</option>
-                    <option value="Landscaping">Landscaping</option>
-                    <option value="Nursery">Nursery</option>
-                    <option value="Pest Control">Pest Control</option>
-                    <option value="Roads and Grounds">Roads and Grounds</option>
-                    <option value="Street light ">Street light </option>
-
-                  </select>
-
-                  <select
-                    id="pageSize"
-                    onchange="onPageSizeChange()"
-                    class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
-                  >
-                    <option value="10">10 Rows</option>
-                    <option value="25">25 Rows</option>
-                    <option value="50">50 Rows</option>
-                    <option value="all">Show All</option>
-                  </select>
+        <!-- CONTENT CONTAINER -->
+        <main class="p-6 space-y-6">
+          <!-- TAB 1: DASHBOARD -->
+          <div id="tab-dashboard" class="space-y-6">
+            <!-- KPI CARDS -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div
+                id="card-all"
+                onclick="filterByCard('all')"
+                class="kpi-card bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition ring-2 active-card"
+              >
+                <div class="flex justify-between items-start">
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Employees</p>
+                    <h3 id="kpi-total" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
+                  </div>
+                  <div class="p-3 bg-indigo-50 text-indigo-600 rounded-lg">
+                    <i class="fa-solid fa-users text-xl"></i>
+                  </div>
                 </div>
               </div>
 
-              <div class="flex items-center space-x-2 self-end md:self-auto">
-                <button
-                  onclick="exportToExcel('employee')"
-                  class="px-3 py-2 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition flex items-center space-x-1.5"
-                >
-                  <i class="fa-solid fa-file-excel"></i>
-                  <span>Excel</span>
-                </button>
-                <button
-                  onclick="exportToPDF('employee')"
-                  class="px-3 py-2 bg-rose-600 text-white rounded-lg text-xs font-semibold hover:bg-rose-700 transition flex items-center space-x-1.5"
-                >
-                  <i class="fa-solid fa-file-pdf"></i>
-                  <span>PDF</span>
-                </button>
+              <div
+                id="card-vacation"
+                onclick="filterByCard('vacation')"
+                class="kpi-card bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition"
+              >
+                <div class="flex justify-between items-start">
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">On Vacation</p>
+                    <h3 id="kpi-vacation" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
+                  </div>
+                  <div class="p-3 bg-amber-50 text-amber-600 rounded-lg">
+                    <i class="fa-solid fa-plane text-xl"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                id="card-saudi"
+                onclick="filterByCard('saudi')"
+                class="kpi-card bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition"
+              >
+                <div class="flex justify-between items-start">
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Saudi Nationals</p>
+                    <h3 id="kpi-saudi" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
+                  </div>
+                  <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
+                    <i class="fa-solid fa-flag text-xl"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                id="card-bd"
+                onclick="filterByCard('bd')"
+                class="kpi-card bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition"
+              >
+                <div class="flex justify-between items-start">
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Bangladeshi</p>
+                    <h3 id="kpi-bd" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
+                  </div>
+                  <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
+                    <i class="fa-solid fa-globe text-xl"></i>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs sm:text-sm text-gray-600 min-w-[1200px]">
-                <thead class="bg-slate-50 text-gray-700 uppercase font-semibold text-xs border-b">
-                  <tr>
-                    <th class="px-3 py-3 text-center">SL</th>
-                    <th class="px-4 py-3">ID</th>
-                    <th class="px-4 py-3">Employee Details</th>
-                    <th class="px-4 py-3">Contact</th>
-                    <th class="px-4 py-3">Nationality</th>
-                    <th class="px-4 py-3">Group / Dept</th>
-                    <th class="px-4 py-3">Status</th>
-                    <th class="px-4 py-3">Joined</th>
-                    <th class="px-4 py-3">Iqama No</th>
-                    <th class="px-4 py-3">Iqama Issue / Exp</th>
-                    <th class="px-4 py-3">DMM ID</th>
-                    <th class="px-4 py-3">DMM Issue / Exp</th>
-                    <th class="px-4 py-3">Note</th>
-                  </tr>
-                </thead>
-                <tbody id="employeeTableBody" class="divide-y"></tbody>
-              </table>
+            <!-- CHARTS SECTION -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <h4 class="text-sm font-bold text-slate-700 mb-4">Nationality Breakdown</h4>
+                <div class="h-48">
+                  <canvas id="nationalityChart"></canvas>
+                </div>
+              </div>
+              <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                <h4 class="text-sm font-bold text-slate-700 mb-4">Employees by Department</h4>
+                <div class="h-48">
+                  <canvas id="deptChart"></canvas>
+                </div>
+              </div>
             </div>
 
-            <!-- Table Pagination -->
-            <div class="p-4 border-t flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
-              <span id="paginationInfo">Showing 0 to 0 of 0 entries</span>
-              <div id="paginationControls" class="flex flex-wrap justify-center gap-1"></div>
+            <!-- TABLE CONTAINER -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+              <!-- Filter Banner -->
+              <div id="filterBanner" class="hidden bg-indigo-50 border-b border-indigo-100 px-6 py-2.5 text-xs text-indigo-700 font-medium flex justify-between items-center">
+                <span id="bannerText">Filtered View</span>
+                <button onclick="filterByCard('all')" class="hover:underline text-indigo-900 font-bold">Clear Filter</button>
+              </div>
+
+              <!-- Controls Toolbar -->
+              <div class="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                  <input
+                    type="text"
+                    id="tableSearch"
+                    oninput="onSearchInput()"
+                    placeholder="Search employees..."
+                    class="px-3.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-64"
+                  />
+                  <select
+                    id="groupFilter"
+                    onchange="applyFilters()"
+                    class="px-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="all">All Groups</option>
+                    <option value="Ecopower">Ecopower</option>
+                    <option value="Administration">Administration</option>
+                  </select>
+                </div>
+
+                <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                  <select
+                    id="pageSize"
+                    onchange="onPageSizeChange()"
+                    class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="3" selected>3 per page</option>
+                    <option value="5">5 per page</option>
+                    <option value="10">10 per page</option>
+                    <option value="all">Show All</option>
+                  </select>
+                  <button onclick="exportToExcel('main')" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition">
+                    <i class="fa-solid fa-file-excel mr-1"></i> Excel
+                  </button>
+                  <button onclick="exportToPDF('main')" class="px-3 py-1.5 bg-rose-600 text-white rounded-lg text-xs font-semibold hover:bg-rose-700 transition">
+                    <i class="fa-solid fa-file-pdf mr-1"></i> PDF
+                  </button>
+                </div>
+              </div>
+
+              <!-- Table -->
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider">
+                      <th class="px-3 py-3 text-center">#</th>
+                      <th class="px-4 py-3">Emp ID</th>
+                      <th class="px-4 py-3">Name & Role</th>
+                      <th class="px-4 py-3">Contact</th>
+                      <th class="px-4 py-3">Nationality</th>
+                      <th class="px-4 py-3">Group/Dept</th>
+                      <th class="px-4 py-3">Status</th>
+                      <th class="px-4 py-3">Joined</th>
+                      <th class="px-4 py-3">Iqama No</th>
+                      <th class="px-4 py-3">Iqama Dates</th>
+                      <th class="px-4 py-3">DMM ID</th>
+                      <th class="px-4 py-3">DMM Dates</th>
+                      <th class="px-4 py-3">Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody id="employeeTableBody" class="divide-y divide-slate-100">
+                    <!-- Dynamic Data -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Pagination Footer -->
+              <div class="p-4 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 gap-2">
+                <span id="paginationInfo">Showing 0 to 0 of 0 entries</span>
+                <div id="paginationControls" class="flex items-center space-x-1"></div>
+              </div>
             </div>
           </div>
-        </main>
 
-        <!-- TAB 2: IQAMA & DMM EXPIRY MANAGEMENT -->
-        <main id="tab-iqama" class="p-4 sm:p-6 space-y-6 hidden max-w-[1920px] mx-auto w-full">
-          <!-- Iqama KPI Summary Cards -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-            <div
-              id="iqcard-all"
-              onclick="filterIqamaCard('all')"
-              class="kpi-card bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between active-card ring-2 ring-indigo-500"
-            >
-              <div>
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  Total Records
-                </p>
-                <h2 class="text-2xl font-bold text-gray-900 mt-1" id="iqkpi-total">
-                  0
-                </h2>
+          <!-- TAB 2: IQAMA & DMM EXPIRY -->
+          <div id="tab-iqama" class="space-y-6 hidden">
+            <!-- IQAMA KPI CARDS -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div id="iqcard-all" onclick="filterIqamaCard('all')" class="kpi-card bg-white p-5 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:shadow-md transition ring-2 active-card">
+                <p class="text-xs font-semibold uppercase text-slate-500">Total Documents</p>
+                <h3 id="iqkpi-total" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
               </div>
-              <div class="p-3 bg-indigo-50 text-indigo-600 rounded-lg">
-                <i class="fa-solid fa-id-card text-xl"></i>
+              <div id="iqcard-soon" onclick="filterIqamaCard('soon')" class="kpi-card bg-white p-5 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:shadow-md transition">
+                <p class="text-xs font-semibold uppercase text-slate-500">Expiring Soon (<=30 Days)</p>
+                <h3 id="iqkpi-soon" class="text-2xl font-bold text-amber-600 mt-1">0</h3>
+              </div>
+              <div id="iqcard-expired" onclick="filterIqamaCard('expired')" class="kpi-card bg-white p-5 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:shadow-md transition">
+                <p class="text-xs font-semibold uppercase text-slate-500">Iqama Expired</p>
+                <h3 id="iqkpi-expired" class="text-2xl font-bold text-rose-600 mt-1">0</h3>
+              </div>
+              <div id="iqcard-dmm-expired" onclick="filterIqamaCard('dmm-expired')" class="kpi-card bg-white p-5 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:shadow-md transition">
+                <p class="text-xs font-semibold uppercase text-slate-500">DMM Expired</p>
+                <h3 id="iqkpi-dmm-expired" class="text-2xl font-bold text-rose-600 mt-1">0</h3>
               </div>
             </div>
 
-            <div
-              id="iqcard-soon"
-              onclick="filterIqamaCard('soon')"
-              class="kpi-card bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between"
-            >
-              <div>
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  Iqama Expiring Soon
-                </p>
-                <h2 class="text-2xl font-bold text-amber-600 mt-1" id="iqkpi-soon">
-                  0
-                </h2>
+            <!-- IQAMA TABLE CONTAINER -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+              <div id="iqamaFilterBanner" class="hidden bg-amber-50 border-b border-amber-100 px-6 py-2.5 text-xs text-amber-800 font-medium flex justify-between items-center">
+                <span id="iqamaBannerText">Filtered View</span>
+                <button onclick="filterIqamaCard('all')" class="hover:underline font-bold">Clear Filter</button>
               </div>
-              <div class="p-3 bg-amber-50 text-amber-600 rounded-lg">
-                <i class="fa-solid fa-clock text-xl"></i>
-              </div>
-            </div>
 
-            <div
-              id="iqcard-expired"
-              onclick="filterIqamaCard('expired')"
-              class="kpi-card bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between"
-            >
-              <div>
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  Iqama Expired
-                </p>
-                <h2 class="text-2xl font-bold text-red-600 mt-1" id="iqkpi-expired">
-                  0
-                </h2>
-              </div>
-              <div class="p-3 bg-red-50 text-red-600 rounded-lg">
-                <i class="fa-solid fa-triangle-exclamation text-xl"></i>
-              </div>
-            </div>
-
-            <div
-              id="iqcard-dmm-expired"
-              onclick="filterIqamaCard('dmm-expired')"
-              class="kpi-card bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between"
-            >
-              <div>
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  DMM ID Expired
-                </p>
-                <h2 class="text-2xl font-bold text-rose-600 mt-1" id="iqkpi-dmm-expired">
-                  0
-                </h2>
-              </div>
-              <div class="p-3 bg-rose-50 text-rose-600 rounded-lg">
-                <i class="fa-solid fa-building-flag text-xl"></i>
-              </div>
-            </div>
-          </div>
-
-          <!-- Iqama Filter Banner -->
-          <div
-            id="iqamaFilterBanner"
-            class="hidden bg-indigo-50 border border-indigo-200 text-indigo-800 px-4 py-3 rounded-lg flex items-center justify-between text-xs sm:text-sm"
-          >
-            <span id="iqamaBannerText" class="font-medium">Filtered View</span>
-            <button
-              onclick="filterIqamaCard('all')"
-              class="text-indigo-600 font-bold underline hover:text-indigo-900 ml-2"
-            >
-              Reset Filter
-            </button>
-          </div>
-
-          <!-- Iqama Table Section -->
-          <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div class="p-4 border-b flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
-              <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full md:w-auto">
+              <div class="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <input
                   type="text"
                   id="iqamaSearch"
                   oninput="onIqamaSearchInput()"
-                  placeholder="Search Iqama, DMM ID or Name..."
-                  class="border rounded-lg px-3 py-2 text-sm w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Search Iqama / Name / DMM..."
+                  class="px-3.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-64"
                 />
-                <select
-                  id="iqamaPageSize"
-                  onchange="onIqamaPageSizeChange()"
-                  class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
-                >
-                  <option value="10">10 Rows</option>
-                  <option value="25">25 Rows</option>
-                  <option value="50">50 Rows</option>
-                  <option value="all">Show All</option>
-                </select>
+
+                <div class="flex items-center space-x-2">
+                  <select
+                    id="iqamaPageSize"
+                    onchange="onIqamaPageSizeChange()"
+                    class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="3" selected>3 per page</option>
+                    <option value="5">5 per page</option>
+                    <option value="10">10 per page</option>
+                    <option value="all">Show All</option>
+                  </select>
+                  <button onclick="exportToExcel('iqama')" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition">
+                    <i class="fa-solid fa-file-excel mr-1"></i> Excel
+                  </button>
+                </div>
               </div>
 
-              <div class="flex items-center space-x-2 self-end md:self-auto">
-                <button
-                  onclick="exportToExcel('iqama')"
-                  class="px-3 py-2 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition flex items-center space-x-1.5"
-                >
-                  <i class="fa-solid fa-file-excel"></i>
-                  <span>Excel</span>
-                </button>
-                <button
-                  onclick="exportToPDF('iqama')"
-                  class="px-3 py-2 bg-rose-600 text-white rounded-lg text-xs font-semibold hover:bg-rose-700 transition flex items-center space-x-1.5"
-                >
-                  <i class="fa-solid fa-file-pdf"></i>
-                  <span>PDF</span>
-                </button>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase">
+                      <th class="px-3 py-3 text-center">#</th>
+                      <th class="px-4 py-3">Employee</th>
+                      <th class="px-4 py-3">Iqama No</th>
+                      <th class="px-4 py-3">Iqama Validity</th>
+                      <th class="px-4 py-3">Status</th>
+                      <th class="px-4 py-3">DMM ID</th>
+                      <th class="px-4 py-3">DMM Validity</th>
+                      <th class="px-4 py-3">DMM Status</th>
+                      <th class="px-4 py-3">Vacation Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="iqamaTableBody" class="divide-y divide-slate-100">
+                    <!-- Dynamic Data -->
+                  </tbody>
+                </table>
               </div>
-            </div>
 
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs sm:text-sm text-gray-600 min-w-[900px]">
-                <thead class="bg-slate-50 text-gray-700 uppercase font-semibold text-xs border-b">
-                  <tr>
-                    <th class="px-3 py-3 text-center">SL</th>
-                    <th class="px-4 py-3">Employee</th>
-                    <th class="px-4 py-3">Iqama No</th>
-                    <th class="px-4 py-3">Iqama Issue / Expiry</th>
-                    <th class="px-4 py-3">Iqama Status</th>
-                    <th class="px-4 py-3">DMM ID</th>
-                    <th class="px-4 py-3">DMM Issue / Expiry</th>
-                    <th class="px-4 py-3">DMM Status</th>
-                    <th class="px-4 py-3">Duty Status</th>
-                  </tr>
-                </thead>
-                <tbody id="iqamaTableBody" class="divide-y"></tbody>
-              </table>
-            </div>
-
-            <!-- Iqama Pagination -->
-            <div class="p-4 border-t flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
-              <span id="iqamaPaginationInfo">Showing 0 to 0 of 0 entries</span>
-              <div id="iqamaPaginationControls" class="flex flex-wrap justify-center gap-1"></div>
+              <div class="p-4 border-t border-slate-200 text-xs text-slate-500">
+                <span id="iqamaPaginationInfo">Showing 0 to 0 of 0 entries</span>
+              </div>
             </div>
           </div>
-        </main>
 
-        <!-- TAB 3: ORG CHART -->
-        <main id="tab-orgchart" class="p-4 sm:p-6 hidden max-w-[1920px] mx-auto w-full">
-          <div class="bg-white p-4 sm:p-6 rounded-xl border border-gray-200 shadow-sm text-center overflow-x-auto">
-            <h2 class="text-lg font-bold text-gray-800 mb-1">Organizational Chart</h2>
-            <p class="text-sm text-gray-500 mb-6">Safari Contracting Group Structure View</p>
-
-            <div class="inline-block text-left border rounded-lg p-6 bg-slate-50 min-w-[300px]">
-              <div class="flex flex-col items-center">
-                <div class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold text-xs sm:text-sm shadow">
-                  Safari Group Executive Leadership
-                </div>
-                <div class="org-line-v h-6 my-1"></div>
-                <div class="flex space-x-4 sm:space-x-8">
-                  <div class="flex flex-col items-center">
-                    <div class="bg-white border-2 border-indigo-500 px-3 py-1.5 rounded text-xs font-semibold shadow-sm">
-                      Ecopower Dept
-                    </div>
-                  </div>
-                  <div class="flex flex-col items-center">
-                    <div class="bg-white border-2 border-indigo-500 px-3 py-1.5 rounded text-xs font-semibold shadow-sm">
-                      Administration
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <!-- TAB 3: ORG CHART -->
+          <div id="tab-orgchart" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hidden">
+            <h3 class="text-base font-bold text-slate-800 mb-4">Company Organization Hierarchy</h3>
+            <div class="p-8 bg-slate-50 border border-dashed border-slate-300 rounded-lg text-center text-slate-500">
+              <i class="fa-solid fa-sitemap text-4xl text-slate-400 mb-2"></i>
+              <p class="text-sm">Interactive Organizational Tree Chart View</p>
             </div>
+          </div>
+
+          <!-- TAB 4: VACATION -->
+          <div id="tab-vacation" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hidden">
+            <h3 class="text-base font-bold text-slate-800 mb-4">Vacation Schedule & Logs</h3>
+            <p class="text-sm text-slate-500">Vacation tracking workflow and leave approval logs.</p>
+          </div>
+
+          <!-- TAB 5: HEAVY EQUIPMENT -->
+          <div id="tab-heavy-equipment" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hidden">
+            <h3 class="text-base font-bold text-slate-800 mb-4">Heavy Equipment Tracking</h3>
+            <p class="text-sm text-slate-500">Fleet management and active site allocations for heavy machinery.</p>
+          </div>
+
+          <!-- TAB 6: LIGHT EQUIPMENT -->
+          <div id="tab-light-equipment" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hidden">
+            <h3 class="text-base font-bold text-slate-800 mb-4">Light Equipment & Vehicles</h3>
+            <p class="text-sm text-slate-500">Light vehicle inventory and maintenance tracking.</p>
           </div>
         </main>
       </div>
     </div>
 
-    <!-- SCRIPT SECTION -->
-      <script src="./index.js"></script>
+    <!-- JAVASCRIPT CODE -->
+    <script>
+      // --- MOCK DATA ---
+      const employeesData = [
+        {
+          id: "EMP-001",
+          name: "Suresh Kumar",
+          role: "Site Manager",
+          phone: "+966 50 123 4567",
+          email: "suresh@safaricontracting.com",
+          nationality: "Indian",
+          group: "Ecopower",
+          dept: "Operations",
+          status: "Active",
+          joined: "2021-03-15",
+          iqamaNo: "2450198234",
+          issueDate: "2023-01-10",
+          expiryDate: "2026-08-15",
+          dmmId: "DMM-8841",
+          dmmIssueDate: "2023-02-01",
+          dmmExpiryDate: "2026-09-01",
+          vacationStatus: "On Site",
+          note: "Lead engineer"
+        },
+        {
+          id: "EMP-002",
+          name: "Mahabub Alam",
+          role: "Full Stack Developer",
+          phone: "+966 55 987 6543",
+          email: "mahabub@safaricontracting.com",
+          nationality: "Bangladeshi",
+          group: "Administration",
+          dept: "IT",
+          status: "Active",
+          joined: "2022-06-01",
+          iqamaNo: "2398410293",
+          issueDate: "2023-05-10",
+          expiryDate: "2026-07-20",
+          dmmId: "DMM-9012",
+          dmmIssueDate: "2023-05-15",
+          dmmExpiryDate: "2026-05-15",
+          vacationStatus: "On Site",
+          note: "ProEMS Admin"
+        },
+        {
+          id: "EMP-003",
+          name: "Tariq Al-Harbi",
+          role: "Safety Officer",
+          phone: "+966 51 444 3322",
+          email: "tariq@safaricontracting.com",
+          nationality: "Saudi",
+          group: "Administration",
+          dept: "HSE",
+          status: "On Vacation",
+          joined: "2020-01-10",
+          iqamaNo: "1092837465",
+          issueDate: "2022-01-01",
+          expiryDate: "2028-01-01",
+          dmmId: "DMM-1022",
+          dmmIssueDate: "2022-01-05",
+          dmmExpiryDate: "2028-01-05",
+          vacationStatus: "Annual Leave",
+          note: "Returning Aug 10"
+        },
+        {
+          id: "EMP-004",
+          name: "Mohammed Rahman",
+          role: "Civil Engineer",
+          phone: "+966 56 222 1100",
+          email: "m.rahman@safaricontracting.com",
+          nationality: "Bangladeshi",
+          group: "Ecopower",
+          dept: "Engineering",
+          status: "Active",
+          joined: "2023-02-14",
+          iqamaNo: "2501928374",
+          issueDate: "2023-02-15",
+          expiryDate: "2026-08-01",
+          dmmId: "DMM-3341",
+          dmmIssueDate: "2023-03-01",
+          dmmExpiryDate: "2026-06-01",
+          vacationStatus: "On Site",
+          note: "Needs DMM Renewal"
+        }
+      ];
 
+      // --- MAIN DASHBOARD STATE ---
+      let currentPage = 1;
+      let pageSize = 3;
+      let currentCardFilter = "all";
+      let filteredData = [...employeesData];
+
+      // --- IQAMA VIEW STATE ---
+      let iqamaCurrentPage = 1;
+      let iqamaPageSize = 3;
+      let iqamaCardFilter = "all";
+      let filteredIqamaData = [...employeesData];
+
+      // --- FIXED SIDEBAR TOGGLE MECHANISM ---
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebar-overlay");
+        const isMobile = window.innerWidth < 768;
+
+        if (isMobile) {
+          sidebar.classList.toggle("-translate-x-full");
+          overlay.classList.toggle("hidden");
+        } else {
+          sidebar.classList.toggle("sidebar-collapsed");
+        }
+      }
+
+      function calculateDaysRemaining(expiryDateStr) {
+        if (!expiryDateStr) return null;
+        const today = new Date();
+        const expiry = new Date(expiryDateStr);
+        if (isNaN(expiry.getTime())) return null;
+        return Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+      }
+
+      function updateKPIData() {
+        document.getElementById("kpi-total").innerText = employeesData.length;
+        document.getElementById("kpi-vacation").innerText =
+          employeesData.filter((e) => e.status === "On Vacation").length;
+        document.getElementById("kpi-saudi").innerText = employeesData.filter(
+          (e) => e.nationality === "Saudi"
+        ).length;
+        document.getElementById("kpi-bd").innerText = employeesData.filter(
+          (e) => e.nationality === "Bangladeshi"
+        ).length;
+
+        document.getElementById("iqkpi-total").innerText = employeesData.length;
+        document.getElementById("iqkpi-soon").innerText = employeesData.filter(
+          (e) => {
+            const days = calculateDaysRemaining(e.expiryDate);
+            return days !== null && days >= 0 && days <= 30;
+          }
+        ).length;
+        document.getElementById("iqkpi-expired").innerText =
+          employeesData.filter((e) => {
+            const days = calculateDaysRemaining(e.expiryDate);
+            return days !== null && days < 0;
+          }).length;
+        document.getElementById("iqkpi-dmm-expired").innerText =
+          employeesData.filter((e) => {
+            const days = calculateDaysRemaining(e.dmmExpiryDate);
+            return days !== null && days < 0;
+          }).length;
+      }
+
+      // --- MAIN DASHBOARD FILTERS ---
+      function filterByCard(filterType) {
+        currentCardFilter = filterType;
+        document
+          .querySelectorAll("#tab-dashboard .kpi-card")
+          .forEach((card) => card.classList.remove("active-card", "ring-2"));
+
+        const filterBanner = document.getElementById("filterBanner");
+        const bannerText = document.getElementById("bannerText");
+
+        if (filterType === "vacation") {
+          document
+            .getElementById("card-vacation")
+            .classList.add("active-card", "ring-2");
+          filterBanner.classList.remove("hidden");
+          bannerText.innerText = "Filtered View: Showing On Vacation Employees";
+        } else if (filterType === "saudi") {
+          document
+            .getElementById("card-saudi")
+            .classList.add("active-card", "ring-2");
+          filterBanner.classList.remove("hidden");
+          bannerText.innerText = "Filtered View: Showing Saudi Nationals";
+        } else if (filterType === "bd") {
+          document
+            .getElementById("card-bd")
+            .classList.add("active-card", "ring-2");
+          filterBanner.classList.remove("hidden");
+          bannerText.innerText =
+            "Filtered View: Showing Bangladeshi Nationals";
+        } else {
+          document
+            .getElementById("card-all")
+            .classList.add("active-card", "ring-2");
+          filterBanner.classList.add("hidden");
+        }
+
+        applyFilters();
+      }
+
+      function onSearchInput() {
+        applyFilters();
+      }
+
+      function applyFilters() {
+        const query = document
+          .getElementById("tableSearch")
+          .value.toLowerCase()
+          .trim();
+        const selectedGroup = document.getElementById("groupFilter").value;
+
+        filteredData = employeesData.filter((emp) => {
+          let matchesCard = true;
+          if (currentCardFilter === "vacation")
+            matchesCard = emp.status === "On Vacation";
+          else if (currentCardFilter === "saudi")
+            matchesCard = emp.nationality === "Saudi";
+          else if (currentCardFilter === "bd")
+            matchesCard = emp.nationality === "Bangladeshi";
+
+          let matchesGroup = true;
+          if (selectedGroup !== "all") {
+            matchesGroup = emp.group === selectedGroup || emp.dept === selectedGroup;
+          }
+
+          const matchesQuery =
+            emp.name.toLowerCase().includes(query) ||
+            emp.id.toLowerCase().includes(query) ||
+            emp.role.toLowerCase().includes(query) ||
+            emp.dept.toLowerCase().includes(query) ||
+            (emp.group && emp.group.toLowerCase().includes(query)) ||
+            emp.nationality.toLowerCase().includes(query) ||
+            (emp.iqamaNo && emp.iqamaNo.toLowerCase().includes(query)) ||
+            (emp.dmmId && emp.dmmId.toLowerCase().includes(query));
+
+          return matchesCard && matchesGroup && matchesQuery;
+        });
+
+        currentPage = 1;
+        renderEmployeeTable();
+      }
+
+      function onPageSizeChange() {
+        const val = document.getElementById("pageSize").value;
+        pageSize = val === "all" ? filteredData.length : parseInt(val, 10);
+        currentPage = 1;
+        renderEmployeeTable();
+      }
+
+      function renderEmployeeTable() {
+        const tbody = document.getElementById("employeeTableBody");
+        tbody.innerHTML = "";
+
+        const totalEntries = filteredData.length;
+        const effectivePageSize = pageSize === 0 ? totalEntries : pageSize;
+        const totalPages = Math.ceil(totalEntries / effectivePageSize) || 1;
+
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        const startIdx = (currentPage - 1) * effectivePageSize;
+        const endIdx = Math.min(startIdx + effectivePageSize, totalEntries);
+        const pageData = filteredData.slice(startIdx, endIdx);
+
+        if (pageData.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="13" class="text-center py-6 text-gray-400">No matching employees found</td></tr>`;
+        } else {
+          pageData.forEach((emp, index) => {
+            const row = document.createElement("tr");
+            row.className = "hover:bg-gray-50 transition";
+
+            const natBadgeClass =
+              emp.nationality === "Saudi"
+                ? "bg-emerald-100 text-emerald-800"
+                : emp.nationality === "Bangladeshi"
+                  ? "bg-blue-100 text-blue-800"
+                  : "bg-amber-100 text-amber-800";
+
+            const statusBadgeClass =
+              emp.status === "Active"
+                ? "bg-emerald-100 text-emerald-800"
+                : "bg-amber-100 text-amber-800";
+
+            row.innerHTML = `
+              <td class="px-3 py-3.5 text-center font-medium text-gray-500">${startIdx + index + 1}</td>
+              <td class="px-4 py-3.5 font-semibold text-indigo-600">${emp.id}</td>
+              <td class="px-4 py-3.5">
+                <div class="font-bold text-gray-900">${emp.name}</div>
+                <div class="text-xs text-gray-400">${emp.role}</div>
+              </td>
+              <td class="px-4 py-3.5">
+                <div class="text-xs"><i class="fa-solid fa-phone text-gray-400 mr-1"></i>${emp.phone || "N/A"}</div>
+                <div class="text-xs text-gray-500"><i class="fa-solid fa-envelope text-gray-400 mr-1"></i>${emp.email || "N/A"}</div>
+              </td>
+              <td class="px-4 py-3.5">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${natBadgeClass}">
+                  ${emp.nationality}
+                </span>
+              </td>
+              <td class="px-4 py-3.5">${emp.group || emp.dept}</td>
+              <td class="px-4 py-3.5">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusBadgeClass}">
+                  ${emp.status}
+                </span>
+              </td>
+              <td class="px-4 py-3.5 whitespace-nowrap">${emp.joined}</td>
+              <td class="px-4 py-3.5 font-mono font-semibold">${emp.iqamaNo || "-"}</td>
+              <td class="px-4 py-3.5 text-xs whitespace-nowrap">
+                <div class="text-gray-700"><strong>Iss:</strong> ${emp.issueDate || "-"}</div>
+                <div class="text-gray-500"><strong>Exp:</strong> ${emp.expiryDate || "-"}</div>
+              </td>
+              <td class="px-4 py-3.5 font-mono text-xs">${emp.dmmId || "-"}</td>
+              <td class="px-4 py-3.5 text-xs whitespace-nowrap">
+                <div class="text-gray-700"><strong>Iss:</strong> ${emp.dmmIssueDate || "-"}</div>
+                <div class="text-gray-500"><strong>Exp:</strong> ${emp.dmmExpiryDate || "-"}</div>
+              </td>
+              <td class="px-4 py-3.5 text-xs text-gray-500">${emp.note || "-"}</td>
+            `;
+            tbody.appendChild(row);
+          });
+        }
+
+        document.getElementById("paginationInfo").innerText =
+          totalEntries === 0
+            ? "Showing 0 to 0 of 0 entries"
+            : `Showing ${startIdx + 1} to ${endIdx} of ${totalEntries} entries`;
+
+        const controls = document.getElementById("paginationControls");
+        controls.innerHTML = "";
+
+        const prevBtn = document.createElement("button");
+        prevBtn.innerText = "Prev";
+        prevBtn.className =
+          "px-2.5 py-1 text-xs border rounded bg-white hover:bg-gray-100 disabled:opacity-50";
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => {
+          if (currentPage > 1) {
+            currentPage--;
+            renderEmployeeTable();
+          }
+        };
+        controls.appendChild(prevBtn);
+
+        for (let i = 1; i <= totalPages; i++) {
+          const btn = document.createElement("button");
+          btn.innerText = i;
+          btn.className = `px-2.5 py-1 text-xs border rounded ${i === currentPage ? "bg-indigo-600 text-white" : "bg-white hover:bg-gray-100"}`;
+          btn.onclick = () => {
+            currentPage = i;
+            renderEmployeeTable();
+          };
+          controls.appendChild(btn);
+        }
+
+        const nextBtn = document.createElement("button");
+        nextBtn.innerText = "Next";
+        nextBtn.className =
+          "px-2.5 py-1 text-xs border rounded bg-white hover:bg-gray-100 disabled:opacity-50";
+        nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+        nextBtn.onclick = () => {
+          if (currentPage < totalPages) {
+            currentPage++;
+            renderEmployeeTable();
+          }
+        };
+        controls.appendChild(nextBtn);
+      }
+
+      // --- IQAMA VIEW FILTERS & TABLE ---
+      function filterIqamaCard(filterType) {
+        iqamaCardFilter = filterType;
+        document
+          .querySelectorAll("#tab-iqama .kpi-card")
+          .forEach((card) => card.classList.remove("active-card", "ring-2"));
+
+        const banner = document.getElementById("iqamaFilterBanner");
+        const bannerText = document.getElementById("iqamaBannerText");
+
+        if (filterType === "soon") {
+          document
+            .getElementById("iqcard-soon")
+            .classList.add("active-card", "ring-2");
+          banner.classList.remove("hidden");
+          bannerText.innerText =
+            "Filtered View: Iqama Expiring Soon (30 Days or Less)";
+        } else if (filterType === "expired") {
+          document
+            .getElementById("iqcard-expired")
+            .classList.add("active-card", "ring-2");
+          banner.classList.remove("hidden");
+          bannerText.innerText = "Filtered View: Expired Iqama Documents";
+        } else if (filterType === "dmm-expired") {
+          document
+            .getElementById("iqcard-dmm-expired")
+            .classList.add("active-card", "ring-2");
+          banner.classList.remove("hidden");
+          bannerText.innerText = "Filtered View: Expired DMM ID Cards";
+        } else {
+          document
+            .getElementById("iqcard-all")
+            .classList.add("active-card", "ring-2");
+          banner.classList.add("hidden");
+        }
+
+        applyIqamaFilters();
+      }
+
+      function onIqamaSearchInput() {
+        applyIqamaFilters();
+      }
+
+      function applyIqamaFilters() {
+        const query = document
+          .getElementById("iqamaSearch")
+          .value.toLowerCase()
+          .trim();
+
+        filteredIqamaData = employeesData.filter((emp) => {
+          const daysLeft = calculateDaysRemaining(emp.expiryDate);
+          const dmmDaysLeft = calculateDaysRemaining(emp.dmmExpiryDate);
+          let matchesCard = true;
+
+          if (iqamaCardFilter === "soon")
+            matchesCard = daysLeft !== null && daysLeft >= 0 && daysLeft <= 30;
+          else if (iqamaCardFilter === "expired")
+            matchesCard = daysLeft !== null && daysLeft < 0;
+          else if (iqamaCardFilter === "dmm-expired")
+            matchesCard = dmmDaysLeft !== null && dmmDaysLeft < 0;
+
+          const matchesQuery =
+            emp.name.toLowerCase().includes(query) ||
+            emp.iqamaNo.toLowerCase().includes(query) ||
+            emp.dmmId.toLowerCase().includes(query);
+
+          return matchesCard && matchesQuery;
+        });
+
+        iqamaCurrentPage = 1;
+        renderIqamaTable();
+      }
+
+      function onIqamaPageSizeChange() {
+        const val = document.getElementById("iqamaPageSize").value;
+        iqamaPageSize = val === "all" ? filteredIqamaData.length : parseInt(val, 10);
+        iqamaCurrentPage = 1;
+        renderIqamaTable();
+      }
+
+      function renderIqamaTable() {
+        const tbody = document.getElementById("iqamaTableBody");
+        tbody.innerHTML = "";
+
+        const totalEntries = filteredIqamaData.length;
+        const effectivePageSize = iqamaPageSize === 0 ? totalEntries : iqamaPageSize;
+        const totalPages = Math.ceil(totalEntries / effectivePageSize) || 1;
+
+        if (iqamaCurrentPage > totalPages) iqamaCurrentPage = totalPages;
+
+        const startIdx = (iqamaCurrentPage - 1) * effectivePageSize;
+        const endIdx = Math.min(startIdx + effectivePageSize, totalEntries);
+        const pageData = filteredIqamaData.slice(startIdx, endIdx);
+
+        if (pageData.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-gray-400">No matching documents found</td></tr>`;
+        } else {
+          pageData.forEach((emp, index) => {
+            const daysLeft = calculateDaysRemaining(emp.expiryDate);
+            const dmmDaysLeft = calculateDaysRemaining(emp.dmmExpiryDate);
+
+            let statusBadge = `<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-xs font-semibold">Valid</span>`;
+            if (daysLeft !== null && daysLeft < 0) {
+              statusBadge = `<span class="bg-red-100 text-red-800 px-2 py-0.5 rounded-full text-xs font-semibold">Expired</span>`;
+            } else if (daysLeft !== null && daysLeft <= 30) {
+              statusBadge = `<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-xs font-semibold">Expiring Soon</span>`;
+            }
+
+            let dmmStatusBadge = `<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-xs font-semibold">Active</span>`;
+            if (dmmDaysLeft !== null && dmmDaysLeft < 0) {
+              dmmStatusBadge = `<span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full text-xs font-semibold">Expired</span>`;
+            }
+
+            const row = document.createElement("tr");
+            row.className = "hover:bg-gray-50 transition";
+            row.innerHTML = `
+              <td class="px-3 py-3.5 text-center font-medium text-gray-500">${startIdx + index + 1}</td>
+              <td class="px-4 py-3.5">
+                <div class="font-bold text-gray-900">${emp.name}</div>
+                <div class="text-xs text-gray-400">ID: ${emp.id}</div>
+              </td>
+              <td class="px-4 py-3.5 font-mono font-semibold">${emp.iqamaNo}</td>
+              <td class="px-4 py-3.5 text-xs">
+                <div><strong>Iss:</strong> ${emp.issueDate || "-"}</div>
+                <div><strong>Exp:</strong> ${emp.expiryDate || "-"}</div>
+              </td>
+              <td class="px-4 py-3.5">${statusBadge}</td>
+              <td class="px-4 py-3.5 font-mono">${emp.dmmId}</td>
+              <td class="px-4 py-3.5 text-xs">
+                <div><strong>Iss:</strong> ${emp.dmmIssueDate || "-"}</div>
+                <div><strong>Exp:</strong> ${emp.dmmExpiryDate || "-"}</div>
+              </td>
+              <td class="px-4 py-3.5">${dmmStatusBadge}</td>
+              <td class="px-4 py-3.5"><span class="text-xs font-medium bg-slate-100 text-slate-700 px-2 py-1 rounded">${emp.vacationStatus}</span></td>
+            `;
+            tbody.appendChild(row);
+          });
+        }
+
+        document.getElementById("iqamaPaginationInfo").innerText =
+          totalEntries === 0
+            ? "Showing 0 to 0 of 0 entries"
+            : `Showing ${startIdx + 1} to ${endIdx} of ${totalEntries} entries`;
+      }
+
+      // --- TAB SWITCHING & AUTO CLOSE ON MOBILE ---
+      function switchTab(tab) {
+        const tabs = [
+          "tab-dashboard",
+          "tab-iqama",
+          "tab-orgchart",
+          "tab-vacation",
+          "tab-heavy-equipment",
+          "tab-light-equipment"
+        ];
+
+        tabs.forEach((tabId) => {
+          const el = document.getElementById(tabId);
+          if (el) el.classList.add("hidden");
+        });
+
+        document.querySelectorAll("#sidebar-nav button").forEach((btn) => {
+          btn.className =
+            "nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition";
+        });
+
+        const tabConfig = {
+          dashboard: {
+            elementId: "tab-dashboard",
+            navId: "nav-dashboard",
+            title: "Employee Overview"
+          },
+          iqama: {
+            elementId: "tab-iqama",
+            navId: "nav-iqama",
+            title: "Iqama & DMM Expiry Center"
+          },
+          orgchart: {
+            elementId: "tab-orgchart",
+            navId: "nav-orgchart",
+            title: "Organizational Chart"
+          },
+          vacation: {
+            elementId: "tab-vacation",
+            navId: "nav-vacation",
+            title: "Vacation Management"
+          },
+          "heavy-equipment": {
+            elementId: "tab-heavy-equipment",
+            navId: "nav-heavy-equipment",
+            title: "Heavy Equipment Overview"
+          },
+          "light-equipment": {
+            elementId: "tab-light-equipment",
+            navId: "nav-light-equipment",
+            title: "Light Equipment Overview"
+          }
+        };
+
+        const activeTab = tabConfig[tab];
+        if (activeTab) {
+          const contentEl = document.getElementById(activeTab.elementId);
+          const navEl = document.getElementById(activeTab.navId);
+          const titleEl = document.getElementById("page-title");
+
+          if (contentEl) contentEl.classList.remove("hidden");
+          if (navEl) {
+            navEl.className =
+              "nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg bg-indigo-600 text-white font-medium transition";
+          }
+          if (titleEl) titleEl.innerText = activeTab.title;
+        }
+
+        // Auto-close sidebar on mobile after clicking a link
+        if (window.innerWidth < 768) {
+          const sidebar = document.getElementById("sidebar");
+          const overlay = document.getElementById("sidebar-overlay");
+          if (!sidebar.classList.contains("-translate-x-full")) {
+            sidebar.classList.add("-translate-x-full");
+            overlay.classList.add("hidden");
+          }
+        }
+      }
+
+      // --- EXPORT FUNCTIONS ---
+      function exportToExcel(type) {
+        const dataToExport = type === "iqama" ? filteredIqamaData : filteredData;
+        const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
+        XLSX.writeFile(workbook, `ProEMS_${type}_export.xlsx`);
+      }
+
+      function exportToPDF(type) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.text(`ProEMS ${type.toUpperCase()} Export`, 14, 15);
+
+        const data = type === "iqama" ? filteredIqamaData : filteredData;
+        const headers = type === "iqama"
+          ? [["ID", "Name", "Iqama No", "Iqama Exp", "DMM ID", "DMM Exp"]]
+          : [["ID", "Name", "Role", "Group", "Iqama No", "DMM ID"]];
+
+        const rows = data.map((e) =>
+          type === "iqama"
+            ? [e.id, e.name, e.iqamaNo, e.expiryDate, e.dmmId, e.dmmExpiryDate]
+            : [e.id, e.name, e.role, e.group || e.dept, e.iqamaNo, e.dmmId]
+        );
+
+        doc.autoTable({
+          head: headers,
+          body: rows,
+          startY: 20
+        });
+
+        doc.save(`ProEMS_${type}_export.pdf`);
+      }
+
+      // --- CHART INITIALIZATION ---
+      function initCharts() {
+        const ctxNat = document.getElementById("nationalityChart").getContext("2d");
+        new Chart(ctxNat, {
+          type: "doughnut",
+          data: {
+            labels: ["Indian", "Bangladeshi", "Saudi"],
+            datasets: [{
+              data: [1, 2, 1],
+              backgroundColor: ["#6366f1", "#3b82f6", "#10b981"]
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        const ctxDept = document.getElementById("deptChart").getContext("2d");
+        new Chart(ctxDept, {
+          type: "bar",
+          data: {
+            labels: ["Ecopower", "Administration", "IT", "HSE"],
+            datasets: [{
+              label: "Employees",
+              data: [2, 1, 1, 1],
+              backgroundColor: "#6366f1"
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+
+      // --- INITIALIZE ON LOAD ---
+      window.onload = () => {
+        updateKPIData();
+        renderEmployeeTable();
+        renderIqamaTable();
+        initCharts();
+      };
+    </script>
   </body>
 </html>

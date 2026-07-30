@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise EMS - Employee Management System</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Backdrop for Mobile -->
+        <div id="sidebar-backdrop" class="fixed inset-0 z-20 bg-black/50 hidden md:hidden"></div>
+
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-64 bg-slate-900 text-slate-300 flex flex-col transition-transform duration-300 transform -translate-x-full md:translate-x-0 md:static md:inset-auto">
+            <div class="p-5 flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-brand-500 p-2 rounded-lg text-white">
+                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-white tracking-wide">SAFARI EMS</h1>
+                        <p class="text-xs text-slate-400">Enterprise Portal</p>
+                    </div>
+                </div>
+                <button id="sidebar-close" class="md:hidden text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Nav Links -->
+            <nav class="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto">
+                <a href="#" onclick="switchTab('dashboard')" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors bg-brand-600 text-white" data-target="dashboard">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" onclick="switchTab('employees')" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 text-slate-300" data-target="employees">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                    <span>Employees Directory</span>
+                </a>
+                <a href="#" onclick="switchTab('iqama')" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 text-slate-300" data-target="iqama">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                    <span>Iqama Tracking</span>
+                </a>
+                <a href="#" onclick="switchTab('daco')" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 text-slate-300" data-target="daco">
+                    <i data-lucide="badge-check" class="w-5 h-5"></i>
+                    <span>DACO ID Tracking</span>
+                </a>
+                <a href="#" onclick="switchTab('vacation')" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 text-slate-300" data-target="vacation">
+                    <i data-lucide="calendar-range" class="w-5 h-5"></i>
+                    <span>Vacation Tracker</span>
+                </a>
+                <a href="#" onclick="switchTab('shifts')" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 text-slate-300" data-target="shifts">
+                    <i data-lucide="clock" class="w-5 h-5"></i>
+                    <span>Shift Management</span>
+                </a>
+                <a href="#" onclick="switchTab('idcards')" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 text-slate-300" data-target="idcards">
+                    <i data-lucide="id-card" class="w-5 h-5"></i>
+                    <span>ID Cards & Gallery</span>
+                </a>
+                <a href="#" onclick="switchTab('reports')" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 text-slate-300" data-target="reports">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                    <span>Reports & Analytics</span>
+                </a>
+                <a href="#" onclick="switchTab('settings')" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 text-slate-300" data-target="settings">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="p-4 border-t border-slate-800 text-xs text-slate-500 text-center">
+                Safari Contracting Co. v2.8
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Top Header Navbar -->
+            <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 z-10">
+                <div class="flex items-center space-x-4">
+                    <button id="sidebar-toggle" class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                    <h2 id="page-title" class="text-lg font-bold text-gray-800">Dashboard Overview</h2>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="flex items-center space-x-2 bg-gray-100 px-3 py-1.5 rounded-full">
+                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></div>
+                        <span class="text-xs font-semibold text-gray-600">Dammam HQ</span>
+                    </div>
+                    <div class="w-9 h-9 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-sm">
+                        MA
+                    </div>
+                </div>
+            </header>
+
+            <!-- Scrollable Content View -->
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-gray-50" id="main-content-container">
+
+                <!-- 1. DASHBOARD TAB -->
+                <section id="tab-dashboard" class="space-y-6 space-view">
+                    <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <div>
+                            <h3 class="font-bold text-gray-800">Dashboard Panel Visibility</h3>
+                            <p class="text-xs text-gray-500">Toggle metric cards display status</p>
+                        </div>
+                        <button onclick="toggleDashboardMetrics()" id="dashboard-toggle-btn" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-xs font-semibold text-gray-700 rounded-lg flex items-center space-x-1.5">
+                            <i data-lucide="eye-off" class="w-4 h-4"></i><span id="dashboard-toggle-text">Hide Metrics</span>
+                        </button>
+                    </div>
+
+                    <!-- Metric Cards Container -->
+                    <div id="dashboard-metrics-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Manpower</p>
+                                <h3 id="stat-manpower" class="text-2xl font-bold text-gray-900 mt-1">0</h3>
+                                <span class="text-xs text-green-600 font-medium flex items-center mt-1"><i data-lucide="trending-up" class="w-3.5 h-3.5 mr-1"></i> Active staff</span>
+                            </div>
+                            <div class="bg-blue-50 p-3 rounded-lg text-blue-600"><i data-lucide="users" class="w-6 h-6"></i></div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Nationalities</p>
+                                <h3 id="stat-nationalities" class="text-2xl font-bold text-gray-900 mt-1">0</h3>
+                                <span class="text-xs text-gray-500 mt-1 block">Global workforce</span>
+                            </div>
+                            <div class="bg-purple-50 p-3 rounded-lg text-purple-600"><i data-lucide="globe" class="w-6 h-6"></i></div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Vacations</p>
+                                <h3 id="stat-vacations" class="text-2xl font-bold text-gray-900 mt-1">0</h3>
+                                <span class="text-xs text-amber-600 mt-1 block">Currently on leave</span>
+                            </div>
+                            <div class="bg-amber-50 p-3 rounded-lg text-amber-600"><i data-lucide="calendar-range" class="w-6 h-6"></i></div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Urgent Expiry Alerts</p>
+                                <h3 id="stat-urgents" class="text-2xl font-bold text-red-600 mt-1">0</h3>
+                                <span class="text-xs text-red-500 mt-1 block">Within 30 days</span>
+                            </div>
+                            <div class="bg-red-50 p-3 rounded-lg text-red-600"><i data-lucide="alert-triangle" class="w-6 h-6"></i></div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Summary Widgets -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                            <h3 class="font-bold text-gray-800 mb-4 flex items-center"><i data-lucide="clock" class="w-4 h-4 mr-2 text-brand-600"></i> Expiring Documents Watchlist</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse text-sm min-w-[320px]">
+                                    <thead>
+                                        <tr class="border-b border-gray-100 text-xs text-gray-500 uppercase bg-gray-50">
+                                            <th class="py-2 px-3">Name</th>
+                                            <th class="py-2 px-3">Type</th>
+                                            <th class="py-2 px-3">Expiry Date</th>
+                                            <th class="py-2 px-3">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dashboard-urgent-table" class="divide-y divide-gray-100"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-gray-800 mb-4 flex items-center"><i data-lucide="pie-chart" class="w-4 h-4 mr-2 text-brand-600"></i> Quick Actions & Compliance</h3>
+                                <p class="text-sm text-gray-600 mb-4">Export master reports directly or navigate to tracking tabs to update official residency and permit records.</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="switchTab('employees')" class="p-3 bg-brand-50 text-brand-700 rounded-lg font-medium text-sm hover:bg-brand-100 transition-colors flex items-center justify-center space-x-2">
+                                    <i data-lucide="users" class="w-4 h-4"></i><span>View Directory</span>
+                                </button>
+                                <button onclick="exportTableToCSV('employees-table', 'Master_Employee_Directory.csv')" class="p-3 bg-gray-100 text-gray-700 rounded-lg font-medium text-sm hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2">
+                                    <i data-lucide="download" class="w-4 h-4"></i><span>Export CSV</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. EMPLOYEES DIRECTORY TAB -->
+                <section id="tab-employees" class="space-y-4 space-view hidden">
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div class="relative w-full md:w-80">
+                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-gray-400"></i>
+                            <input type="text" id="search-employees" onkeyup="handleSearch('employees')" placeholder="Search by name, ID..." class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-500">
+                        </div>
+                        <div class="flex items-center space-x-2 w-full md:w-auto justify-end">
+                            <button onclick="exportTableToCSV('employees-table', 'Employees_Directory.csv')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium text-sm rounded-lg flex items-center space-x-2">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i><span>Excel</span>
+                            </button>
+                            <button onclick="window.print()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm rounded-lg flex items-center space-x-2">
+                                <i data-lucide="printer" class="w-4 h-4"></i><span>Print / PDF</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table id="employees-table" class="w-full text-left border-collapse text-sm min-w-[500px]">
+                                <thead>
+                                    <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-600 uppercase">
+                                        <th class="py-3 px-4">Employee Name</th>
+                                        <th class="py-3 px-4">ID Code</th>
+                                        <th class="py-3 px-4">Department</th>
+                                        <th class="py-3 px-4">Nationality</th>
+                                        <th class="py-3 px-4">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body-employees" class="divide-y divide-gray-100"></tbody>
+                            </table>
+                        </div>
+                        <div class="p-4 border-t border-gray-100 flex items-center justify-between">
+                            <span id="pagination-info-employees" class="text-xs text-gray-500">Showing page 1</span>
+                            <div class="space-x-2">
+                                <button onclick="changePage('employees', -1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-semibold text-gray-700">Previous</button>
+                                <button onclick="changePage('employees', 1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-semibold text-gray-700">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. IQAMA TRACKING TAB -->
+                <section id="tab-iqama" class="space-y-4 space-view hidden">
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div class="relative w-full md:w-80">
+                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-gray-400"></i>
+                            <input type="text" id="search-iqama" onkeyup="handleSearch('iqama')" placeholder="Search Iqama records..." class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-500">
+                        </div>
+                        <button onclick="exportTableToCSV('iqama-table', 'Iqama_Tracking_Report.csv')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium text-sm rounded-lg flex items-center space-x-2">
+                            <i data-lucide="download" class="w-4 h-4"></i><span>Export Excel</span>
+                        </button>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table id="iqama-table" class="w-full text-left border-collapse text-sm min-w-[600px]">
+                                <thead>
+                                    <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-600 uppercase">
+                                        <th class="py-3 px-4">Employee Name</th>
+                                        <th class="py-3 px-4">Iqama Number</th>
+                                        <th class="py-3 px-4">Issue Date</th>
+                                        <th class="py-3 px-4">Expiry Date</th>
+                                        <th class="py-3 px-4">Remaining Days</th>
+                                        <th class="py-3 px-4">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body-iqama" class="divide-y divide-gray-100"></tbody>
+                            </table>
+                        </div>
+                        <div class="p-4 border-t border-gray-100 flex items-center justify-between">
+                            <span id="pagination-info-iqama" class="text-xs text-gray-500">Showing page 1</span>
+                            <div class="space-x-2">
+                                <button onclick="changePage('iqama', -1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-semibold text-gray-700">Previous</button>
+                                <button onclick="changePage('iqama', 1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-semibold text-gray-700">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. DACO ID TRACKING TAB -->
+                <section id="tab-daco" class="space-y-4 space-view hidden">
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div class="relative w-full md:w-80">
+                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-gray-400"></i>
+                            <input type="text" id="search-daco" onkeyup="handleSearch('daco')" placeholder="Search DACO records..." class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-500">
+                        </div>
+                        <button onclick="exportTableToCSV('daco-table', 'DACO_Tracking_Report.csv')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium text-sm rounded-lg flex items-center space-x-2">
+                            <i data-lucide="download" class="w-4 h-4"></i><span>Export Excel</span>
+                        </button>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table id="daco-table" class="w-full text-left border-collapse text-sm min-w-[600px]">
+                                <thead>
+                                    <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-600 uppercase">
+                                        <th class="py-3 px-4">Employee Name</th>
+                                        <th class="py-3 px-4">DACO ID Number</th>
+                                        <th class="py-3 px-4">Issue Date</th>
+                                        <th class="py-3 px-4">Expiry Date</th>
+                                        <th class="py-3 px-4">Remaining Days</th>
+                                        <th class="py-3 px-4">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body-daco" class="divide-y divide-gray-100"></tbody>
+                            </table>
+                        </div>
+                        <div class="p-4 border-t border-gray-100 flex items-center justify-between">
+                            <span id="pagination-info-daco" class="text-xs text-gray-500">Showing page 1</span>
+                            <div class="space-x-2">
+                                <button onclick="changePage('daco', -1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-semibold text-gray-700">Previous</button>
+                                <button onclick="changePage('daco', 1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-semibold text-gray-700">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. VACATION TRACKER TAB -->
+                <section id="tab-vacation" class="space-y-4 space-view hidden">
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div class="relative w-full md:w-80">
+                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-gray-400"></i>
+                            <input type="text" id="search-vacation" onkeyup="handleSearch('vacation')" placeholder="Search vacation schedules..." class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-500">
+                        </div>
+                        <button onclick="exportTableToCSV('vacation-table', 'Vacation_Tracker_Report.csv')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium text-sm rounded-lg flex items-center space-x-2">
+                            <i data-lucide="download" class="w-4 h-4"></i><span>Export Excel</span>
+                        </button>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table id="vacation-table" class="w-full text-left border-collapse text-sm min-w-[600px]">
+                                <thead>
+                                    <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-600 uppercase">
+                                        <th class="py-3 px-4">Employee Name</th>
+                                        <th class="py-3 px-4">Department</th>
+                                        <th class="py-3 px-4">Departure Date</th>
+                                        <th class="py-3 px-4">Return Date</th>
+                                        <th class="py-3 px-4">Duration</th>
+                                        <th class="py-3 px-4">Current Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body-vacation" class="divide-y divide-gray-100"></tbody>
+                            </table>
+                        </div>
+                        <div class="p-4 border-t border-gray-100 flex items-center justify-between">
+                            <span id="pagination-info-vacation" class="text-xs text-gray-500">Showing page 1</span>
+                            <div class="space-x-2">
+                                <button onclick="changePage('vacation', -1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-semibold text-gray-700">Previous</button>
+                                <button onclick="changePage('vacation', 1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-semibold text-gray-700">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. SHIFT MANAGEMENT TAB -->
+                <section id="tab-shifts" class="space-y-4 space-view hidden">
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div class="relative w-full md:w-80">
+                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-gray-400"></i>
+                            <input type="text" id="search-shifts" onkeyup="handleSearch('shifts')" placeholder="Search shift assignments..." class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-500">
+                        </div>
+                        <button onclick="exportTableToCSV('shifts-table', 'Shift_Roster_Report.csv')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium text-sm rounded-lg flex items-center space-x-2">
+                            <i data-lucide="download" class="w-4 h-4"></i><span>Export Excel</span>
+                        </button>
+                    </div>
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table id="shifts-table" class="w-full text-left border-collapse text-sm min-w-[500px]">
+                                <thead>
+                                    <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-600 uppercase">
+                                        <th class="py-3 px-4">Employee Name</th>
+                                        <th class="py-3 px-4">Department</th>
+                                        <th class="py-3 px-4">Shift Schedule</th>
+                                        <th class="py-3 px-4">Work Timing</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-body-shifts" class="divide-y divide-gray-100"></tbody>
+                            </table>
+                        </div>
+                        <div class="p-4 border-t border-gray-100 flex items-center justify-between">
+                            <span id="pagination-info-shifts" class="text-xs text-gray-500">Showing page 1</span>
+                            <div class="space-x-2">
+                                <button onclick="changePage('shifts', -1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-semibold text-gray-700">Previous</button>
+                                <button onclick="changePage('shifts', 1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-semibold text-gray-700">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 7. ID CARDS & GALLERY TAB -->
+                <section id="tab-idcards" class="space-y-4 space-view hidden">
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div class="relative w-full md:w-80">
+                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-gray-400"></i>
+                            <input type="text" id="search-idcards" onkeyup="filterIdCards()" placeholder="Search by empID (e.g. SAF-1001)..." class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-500">
+                        </div>
+                        <p class="text-xs text-gray-500">Browse official employee identification badges and photo records.</p>
+                    </div>
+                    <div id="idcards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Populated dynamically -->
+                    </div>
+                </section>
+
+                <!-- 8. REPORTS & ANALYTICS TAB -->
+                <section id="tab-reports" class="space-y-6 space-view hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                            <h3 class="font-bold text-gray-800 mb-3 flex items-center"><i data-lucide="pie-chart" class="w-4 h-4 mr-2 text-brand-600"></i> Nationality Distribution Summary</h3>
+                            <div id="nationality-stats-container" class="space-y-3 mt-4"></div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                            <h3 class="font-bold text-gray-800 mb-3 flex items-center"><i data-lucide="network" class="w-4 h-4 mr-2 text-brand-600"></i> Organization Structure & Hierarchy</h3>
+                            <div class="space-y-3 mt-4 text-sm">
+                                <div class="p-3 bg-slate-900 text-white rounded-lg font-medium text-center">Executive Management / Director</div>
+                                <div class="flex justify-center"><div class="w-0.5 h-4 bg-gray-300"></div></div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="p-2.5 bg-brand-50 text-brand-800 rounded-lg text-center font-medium border border-brand-200 text-xs">Admin & Development</div>
+                                    <div class="p-2.5 bg-blue-50 text-blue-800 rounded-lg text-center font-medium border border-blue-200 text-xs">Operations & Logistics</div>
+                                </div>
+                                <div class="flex justify-center"><div class="w-0.5 h-4 bg-gray-300"></div></div>
+                                <div class="p-2.5 bg-gray-100 text-gray-700 rounded-lg text-center font-medium border border-gray-200 text-xs">Field Technicians & Support Staff</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 9. SETTINGS TAB -->
+                <section id="tab-settings" class="space-y-6 space-view hidden">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm max-w-2xl">
+                        <h3 class="font-bold text-gray-800 mb-2">Company Configuration</h3>
+                        <p class="text-sm text-gray-500 mb-6">Update regional organization parameters and system preferences.</p>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Company Name</label>
+                                <input type="text" value="Safari Contracting Company" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Operational Base Location</label>
+                                <input type="text" value="Dammam, Saudi Arabia" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">System Theme Accent</label>
+                                <select class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand-500">
+                                    <option>Emerald Green (Default)</option>
+                                    <option>Corporate Blue</option>
+                                    <option>Slate Dark</option>
+                                </select>
+                            </div>
+                            <button onclick="alert('Settings saved successfully!')" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm rounded-lg transition-colors">
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Application Script Engine -->
+    <script>
+        const employeesData = [
+            { id: "SAF-1001", name: "Mahabub Alam", dept: "Full Stack Development", nationality: "Bangladeshi", status: "Active", iqamaNo: "2481928374", iqamaIssue: "2025-01-15", iqamaExpiry: "2026-12-10", dacoNo: "DC-9012", dacoIssue: "2025-02-10", dacoExpiry: "2026-10-15", vacDep: "2026-05-10", vacRet: "2026-06-10", vacStatus: "Working", shift: "Morning (08:00 - 16:00)", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300" },
+            { id: "SAF-1002", name: "Ahmed Al-Ghamdi", dept: "Administration", nationality: "Saudi", status: "Active", iqamaNo: "-", iqamaIssue: "-", iqamaExpiry: "-", dacoNo: "DC-8812", dacoIssue: "2024-05-01", dacoExpiry: "2027-05-01", vacDep: "2026-07-01", vacRet: "2026-07-25", vacStatus: "On Vacation", shift: "General (09:00 - 17:00)", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=300" },
+            { id: "SAF-1003", name: "Mohammed Rahman", dept: "Operations", nationality: "Bangladeshi", status: "Active", iqamaNo: "2391029384", iqamaIssue: "2025-08-20", iqamaExpiry: "2026-08-15", dacoNo: "DC-7721", dacoIssue: "2024-06-12", dacoExpiry: "2026-08-20", vacDep: "-", vacRet: "-", vacStatus: "Working", shift: "Night (22:00 - 06:00)", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=300" },
+            { id: "SAF-1004", name: "Rashedul Islam", dept: "Engineering", nationality: "Bangladeshi", status: "Active", iqamaNo: "2109384756", iqamaIssue: "2024-09-10", iqamaExpiry: "2026-07-10", dacoNo: "DC-6543", dacoIssue: "2024-03-10", dacoExpiry: "2026-08-05", vacDep: "-", vacRet: "-", vacStatus: "Working", shift: "Morning (08:00 - 16:00)", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=300" },
+            { id: "SAF-1005", name: "Faisal Al-Mutairi", dept: "Logistics", nationality: "Saudi", status: "Active", iqamaNo: "-", iqamaIssue: "-", iqamaExpiry: "-", dacoNo: "DC-5432", dacoIssue: "2024-01-15", dacoExpiry: "2026-08-12", vacDep: "2026-08-01", vacRet: "2026-09-01", vacStatus: "Upcoming", shift: "Evening (16:00 - 00:00)", img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=300" },
+            { id: "SAF-1006", name: "Anisur Rahman", dept: "Maintenance", nationality: "Bangladeshi", status: "Active", iqamaNo: "2561928374", iqamaIssue: "2024-08-12", iqamaExpiry: "2026-06-20", dacoNo: "DC-4321", dacoIssue: "2024-02-15", dacoExpiry: "2026-06-25", vacDep: "-", vacRet: "-", vacStatus: "Working", shift: "Morning (08:00 - 16:00)", img: "https://images.unsplash.com/photo-1628157582853-a796fa650a6a?auto=format&fit=crop&q=80&w=300" },
+            { id: "SAF-1007", name: "Sultan Al-Harbi", dept: "Management", nationality: "Saudi", status: "Active", iqamaNo: "-", iqamaIssue: "-", iqamaExpiry: "-", dacoNo: "DC-3210", dacoIssue: "2024-04-01", dacoExpiry: "2027-04-01", vacDep: "-", vacRet: "-", vacStatus: "Working", shift: "General (09:00 - 17:00)", img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=300" },
+            { id: "SAF-1008", name: "Vinod Kumar", dept: "Technical Support", nationality: "Indian", status: "Active", iqamaNo: "2419827364", iqamaIssue: "2024-11-01", iqamaExpiry: "2026-10-30", dacoNo: "DC-2109", dacoIssue: "2024-05-15", dacoExpiry: "2026-11-01", vacDep: "2026-06-01", vacRet: "2026-07-01", vacStatus: "Working", shift: "Evening (16:00 - 00:00)", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=300" },
+            { id: "SAF-1009", name: "Tanvir Ahmed", dept: "Field Operations", nationality: "Bangladeshi", status: "Active", iqamaNo: "2283940561", iqamaIssue: "2024-12-05", iqamaExpiry: "2026-08-02", dacoNo: "DC-1098", dacoIssue: "2024-06-01", dacoExpiry: "2026-08-10", vacDep: "-", vacRet: "-", vacStatus: "Working", shift: "Night (22:00 - 06:00)", img: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&q=80&w=300" }
+        ];
+
+        // Pagination State
+        const paginationState = {
+            employees: { page: 1, limit: 5 },
+            iqama: { page: 1, limit: 5 },
+            daco: { page: 1, limit: 5 },
+            vacation: { page: 1, limit: 5 },
+            shifts: { page: 1, limit: 5 }
+        };
+
+        function calculateRemainingDays(expiryDateStr) {
+            if (!expiryDateStr || expiryDateStr === '-') return { days: 999, statusBadge: '<span class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs font-semibold">N/A</span>' };
+            const today = new Date();
+            const expiry = new Date(expiryDateStr);
+            const diffTime = expiry - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            let badge = '';
+            if (diffDays < 0) {
+                badge = `<span class="px-2.5 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold">Expired (${Math.abs(diffDays)}d ago)</span>`;
+            } else if (diffDays <= 30) {
+                badge = `<span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">Expiring Soon (${diffDays}d)</span>`;
+            } else {
+                badge = `<span class="px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Active (${diffDays}d left)</span>`;
+            }
+            return { days: diffDays, statusBadge: badge };
+        }
+
+        function initApp() {
+            renderDashboardStats();
+            renderTableData('employees');
+            renderTableData('iqama');
+            renderTableData('daco');
+            renderTableData('vacation');
+            renderTableData('shifts');
+            renderIdCards(employeesData);
+            renderReports();
+            lucide.createIcons();
+        }
+
+        function toggleDashboardMetrics() {
+            const container = document.getElementById('dashboard-metrics-container');
+            const text = document.getElementById('dashboard-toggle-text');
+            if(container.classList.contains('hidden')) {
+                container.classList.remove('hidden');
+                text.innerText = "Hide Metrics";
+            } else {
+                container.classList.add('hidden');
+                text.innerText = "Show Metrics";
+            }
+        }
+
+        function renderDashboardStats() {
+            document.getElementById('stat-manpower').innerText = employeesData.length;
+            const nationalities = [...new Set(employeesData.map(e => e.nationality))];
+            document.getElementById('stat-nationalities').innerText = nationalities.length;
+            const onVacationCount = employeesData.filter(e => e.vacStatus === 'On Vacation' || e.vacStatus === 'Upcoming').length;
+            document.getElementById('stat-vacations').innerText = onVacationCount;
+
+            let urgentCount = 0;
+            let urgentRowsHtml = '';
+
+            employeesData.forEach(emp => {
+                if(emp.iqamaExpiry !== '-') {
+                    const iq = calculateRemainingDays(emp.iqamaExpiry);
+                    if(iq.days <= 30) {
+                        urgentCount++;
+                        urgentRowsHtml += `<tr><td class="py-2.5 px-3 font-medium">${emp.name}</td><td class="py-2.5 px-3 text-gray-500">Iqama</td><td class="py-2.5 px-3">${emp.iqamaExpiry}</td><td class="py-2.5 px-3">${iq.statusBadge}</td></tr>`;
+                    }
+                }
+                if(emp.dacoExpiry !== '-') {
+                    const dc = calculateRemainingDays(emp.dacoExpiry);
+                    if(dc.days <= 30) {
+                        urgentCount++;
+                        urgentRowsHtml += `<tr><td class="py-2.5 px-3 font-medium">${emp.name}</td><td class="py-2.5 px-3 text-gray-500">DACO ID</td><td class="py-2.5 px-3">${emp.dacoExpiry}</td><td class="py-2.5 px-3">${dc.statusBadge}</td></tr>`;
+                    }
+                }
+            });
+
+            document.getElementById('stat-urgents').innerText = urgentCount;
+            document.getElementById('dashboard-urgent-table').innerHTML = urgentRowsHtml || `<tr><td colspan="4" class="py-4 text-center text-gray-400 text-sm">No urgent expiries within 30 days. All clear!</td></tr>`;
+        }
+
+        function getFilteredData(tabKey) {
+            const query = document.getElementById(`search-${tabKey}`).value.toLowerCase();
+            return employeesData.filter(emp => {
+                return Object.values(emp).some(val => String(val).toLowerCase().includes(query));
+            });
+        }
+
+        function renderTableData(tabKey) {
+            const filtered = getFilteredData(tabKey);
+            const state = paginationState[tabKey];
+            const start = (state.page - 1) * state.limit;
+            const paginated = filtered.slice(start, start + state.limit);
+            const tbody = document.getElementById(`table-body-${tabKey}`);
+
+            let html = '';
+            if (paginated.length === 0) {
+                html = `<tr><td colspan="6" class="py-6 text-center text-gray-400 text-sm">No matching records found</td></tr>`;
+            } else if (tabKey === 'employees') {
+                html = paginated.map(emp => `
+                    <tr class="hover:bg-gray-50/80 transition-colors">
+                        <td class="py-3 px-4 font-medium text-gray-900">${emp.name}</td>
+                        <td class="py-3 px-4 text-gray-600 font-mono text-xs">${emp.id}</td>
+                        <td class="py-3 px-4 text-gray-600">${emp.dept}</td>
+                        <td class="py-3 px-4 text-gray-600">${emp.nationality}</td>
+                        <td class="py-3 px-4"><span class="px-2.5 py-1 bg-green-50 text-green-700 rounded-full text-xs font-semibold">${emp.status}</span></td>
+                    </tr>
+                `).join('');
+            } else if (tabKey === 'iqama') {
+                html = paginated.map(emp => {
+                    const calc = calculateRemainingDays(emp.iqamaExpiry);
+                    return `
+                        <tr class="hover:bg-gray-50/80 transition-colors">
+                            <td class="py-3 px-4 font-medium text-gray-900">${emp.name}</td>
+                            <td class="py-3 px-4 font-mono text-xs text-gray-600">${emp.iqamaNo}</td>
+                            <td class="py-3 px-4 text-gray-600">${emp.iqamaIssue}</td>
+                            <td class="py-3 px-4 text-gray-600">${emp.iqamaExpiry}</td>
+                            <td class="py-3 px-4 font-semibold text-gray-700">${calc.days} days</td>
+                            <td class="py-3 px-4">${calc.statusBadge}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } else if (tabKey === 'daco') {
+                html = paginated.map(emp => {
+                    const calc = calculateRemainingDays(emp.dacoExpiry);
+                    return `
+                        <tr class="hover:bg-gray-50/80 transition-colors">
+                            <td class="py-3 px-4 font-medium text-gray-900">${emp.name}</td>
+                            <td class="py-3 px-4 font-mono text-xs text-gray-600">${emp.dacoNo}</td>
+                            <td class="py-3 px-4 text-gray-600">${emp.dacoIssue}</td>
+                            <td class="py-3 px-4 text-gray-600">${emp.dacoExpiry}</td>
+                            <td class="py-3 px-4 font-semibold text-gray-700">${calc.days} days</td>
+                            <td class="py-3 px-4">${calc.statusBadge}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } else if (tabKey === 'vacation') {
+                html = paginated.map(emp => {
+                    let badgeClass = 'bg-gray-100 text-gray-700';
+                    if(emp.vacStatus === 'On Vacation') badgeClass = 'bg-amber-100 text-amber-800 font-bold';
+                    if(emp.vacStatus === 'Upcoming') badgeClass = 'bg-blue-100 text-blue-800';
+                    if(emp.vacStatus === 'Working') badgeClass = 'bg-green-100 text-green-700';
+
+                    return `
+                        <tr class="hover:bg-gray-50/80 transition-colors">
+                            <td class="py-3 px-4 font-medium text-gray-900">${emp.name}</td>
+                            <td class="py-3 px-4 text-gray-600">${emp.dept}</td>
+                            <td class="py-3 px-4 text-gray-600">${emp.vacDep}</td>
+                            <td class="py-3 px-4 text-gray-600">${emp.vacRet}</td>
+                            <td class="py-3 px-4 text-gray-600">30 Days</td>
+                            <td class="py-3 px-4"><span class="px-2.5 py-1 rounded-full text-xs ${badgeClass}">${emp.vacStatus}</span></td>
+                        </tr>
+                    `;
+                }).join('');
+            } else if (tabKey === 'shifts') {
+                html = paginated.map(emp => `
+                    <tr class="hover:bg-gray-50/80 transition-colors">
+                        <td class="py-3 px-4 font-medium text-gray-900">${emp.name}</td>
+                        <td class="py-3 px-4 text-gray-600">${emp.dept}</td>
+                        <td class="py-3 px-4 text-gray-600 font-semibold">${emp.shift.split(' ')[0]} Shift</td>
+                        <td class="py-3 px-4 text-gray-500 text-xs">${emp.shift}</td>
+                    </tr>
+                `).join('');
+            }
+
+            tbody.innerHTML = html;
+            const totalPages = Math.ceil(filtered.length / state.limit) || 1;
+            document.getElementById(`pagination-info-${tabKey}`).innerText = `Page ${state.page} of ${totalPages} (Total: ${filtered.length})`;
+        }
+
+        function handleSearch(tabKey) {
+            paginationState[tabKey].page = 1;
+            renderTableData(tabKey);
+        }
+
+        function changePage(tabKey, direction) {
+            const filtered = getFilteredData(tabKey);
+            const totalPages = Math.ceil(filtered.length / paginationState[tabKey].limit) || 1;
+            const newPage = paginationState[tabKey].page + direction;
+            if(newPage >= 1 && newPage <= totalPages) {
+                paginationState[tabKey].page = newPage;
+                renderTableData(tabKey);
+            }
+        }
+
+        function renderIdCards(data) {
+            const container = document.getElementById('idcards-grid');
+            container.innerHTML = data.map(emp => `
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
+                    <div class="h-48 overflow-hidden bg-gray-100 relative">
+                        <img src="${emp.img}" alt="${emp.name}" class="w-full h-full object-cover">
+                        <span class="absolute top-3 right-3 px-2 py-1 bg-black/60 backdrop-blur-sm text-white rounded text-xs font-mono font-bold">${emp.id}</span>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                        <div>
+                            <h4 class="font-bold text-gray-900">${emp.name}</h4>
+                            <p class="text-xs text-brand-600 font-medium">${emp.dept}</p>
+                        </div>
+                        <div class="pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+                            <span>Nationality: <strong class="text-gray-700">${emp.nationality}</strong></span>
+                            <span class="px-2 py-0.5 bg-gray-100 rounded text-gray-700 font-mono">ID: ${emp.id}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterIdCards() {
+            const query = document.getElementById('search-idcards').value.toLowerCase();
+            const filtered = employeesData.filter(emp => emp.id.toLowerCase().includes(query) || emp.name.toLowerCase().includes(query));
+            renderIdCards(filtered);
+        }
+
+        function renderReports() {
+            const natCounts = {};
+            employeesData.forEach(e => { natCounts[e.nationality] = (natCounts[e.nationality] || 0) + 1; });
+            const natContainer = document.getElementById('nationality-stats-container');
+            natContainer.innerHTML = Object.keys(natCounts).map(nat => {
+                const count = natCounts[nat];
+                const pct = Math.round((count / employeesData.length) * 100);
+                return `
+                    <div>
+                        <div class="flex justify-between text-sm font-medium mb-1 text-gray-700"><span>${nat}</span><span>${count} staff (${pct}%)</span></div>
+                        <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden"><div class="bg-brand-500 h-2 rounded-full" style="width: ${pct}%"></div></div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function exportTableToCSV(tableID, filename) {
+            let csv = [];
+            const rows = document.querySelectorAll(`#${tableID} tr`);
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+                for (let j = 0; j < cols.length; j++)
+                    row.push('"' + cols[j].innerText.replace(/"/g, '""') + '"');
+                csv.push(row.join(","));
+            }
+            const csvFile = new Blob([csv.join("\n")], { type: "text/csv" });
+            const downloadLink = document.createElement("a");
+            downloadLink.download = filename;
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.space-view').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('bg-brand-600', 'text-white');
+                link.classList.add('hover:bg-slate-800', 'text-slate-300');
+            });
+
+            const activeLink = document.querySelector(`.nav-link[data-target="${tabId}"]`);
+            if(activeLink) {
+                activeLink.classList.remove('hover:bg-slate-800', 'text-slate-300');
+                activeLink.classList.add('bg-brand-600', 'text-white');
+            }
+
+            const titles = {
+                'dashboard': 'Dashboard Overview',
+                'employees': 'Employees Directory',
+                'iqama': 'Iqama Permit Tracking',
+                'daco': 'DACO ID Permit Tracking',
+                'vacation': 'Employee Vacation & Leave Tracker',
+                'shifts': 'Shift Roster & Management',
+                'idcards': 'Employee ID Cards & Photo Gallery',
+                'reports': 'Reports & Analytics',
+                'settings': 'System Settings'
+            };
+            document.getElementById('page-title').innerText = titles[tabId] || 'Portal';
+
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('sidebar-backdrop').classList.add('hidden');
+        }
+
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebarClose = document.getElementById('sidebar-close');
+        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.remove('-translate-x-full');
+            sidebarBackdrop.classList.remove('hidden');
+        });
+
+        sidebarClose.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            sidebarBackdrop.classList.add('hidden');
+        });
+
+        sidebarBackdrop.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            sidebarBackdrop.classList.add('hidden');
+        });
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
