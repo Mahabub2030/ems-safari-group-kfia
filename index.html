@@ -1,1091 +1,1404 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ProEMS - Employee Management System</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome CDN -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- SheetJS (xlsx) CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <!-- jsPDF & AutoTable CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-
-    <style>
-      .sidebar-collapsed {
-        width: 5rem !important;
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Manpower &amp; HR Management System - Safari Contracting Company</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+          mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+        },
       }
-      .sidebar-collapsed .nav-text,
-      .sidebar-collapsed .brand-text {
-        display: none !important;
-      }
-      .sidebar-collapsed .nav-item {
-        justify-content: center !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-      }
-      .active-card {
-        border-color: #4f46e5 !important;
-      }
-    </style>
-  </head>
-  <body class="bg-slate-100 text-slate-800 font-sans antialiased">
-    <!-- MOBILE OVERLAY BACKDROP -->
-    <div
-      id="sidebar-overlay"
-      onclick="toggleSidebar()"
-      class="fixed inset-0 bg-black/50 z-20 hidden md:hidden transition-opacity"
-    ></div>
+    }
+  }
+</script>
+<style>
+  html, body { font-family: 'Inter', sans-serif; }
+  .mono-num { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 8px; }
+  .dark ::-webkit-scrollbar-thumb { background: #475569; }
+  .page-panel { display: none; }
+  .page-panel.active { display: block; }
+  .sidebar-collapsed .sidebar-label { display: none; }
+  .sidebar-collapsed { width: 4.5rem !important; }
+  .fade-in { animation: fadeIn .25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px);} to { opacity: 1; transform: translateY(0);} }
+  input[type="checkbox"] { accent-color: #059669; }
+</style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 transition-colors">
 
-    <div class="flex h-screen overflow-hidden">
-      <!-- SIDEBAR -->
-      <aside
-        id="sidebar"
-        class="fixed md:static inset-y-0 left-0 z-30 w-64 bg-slate-900 text-slate-300 transition-all duration-300 transform -translate-x-full md:translate-x-0 flex flex-col justify-between shrink-0"
-      >
-        <div>
-          <!-- Brand Header -->
-          <div class="h-16 flex items-center px-6 bg-slate-950 border-b border-slate-800">
-            <i class="fa-solid fa-users-gear text-indigo-500 text-2xl mr-3"></i>
-            <span class="brand-text font-bold text-xl text-white tracking-wide">ProEMS</span>
-          </div>
+<div class="flex h-screen overflow-hidden">
 
-          <!-- Navigation Links -->
-          <nav id="sidebar-nav" class="p-4 space-y-1.5">
-            <button
-              id="nav-dashboard"
-              onclick="switchTab('dashboard')"
-              class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg bg-indigo-600 text-white font-medium transition"
-            >
-              <i class="fa-solid fa-chart-line w-5 text-center"></i>
-              <span class="nav-text">Dashboard</span>
-            </button>
-
-            <button
-              id="nav-iqama"
-              onclick="switchTab('iqama')"
-              class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
-            >
-              <i class="fa-solid fa-id-card w-5 text-center"></i>
-              <span class="nav-text">Iqama & DMM Expiry</span>
-            </button>
-
-            <button
-              id="nav-orgchart"
-              onclick="switchTab('orgchart')"
-              class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
-            >
-              <i class="fa-solid fa-sitemap w-5 text-center"></i>
-              <span class="nav-text">Org Chart</span>
-            </button>
-
-            <button
-              id="nav-vacation"
-              onclick="switchTab('vacation')"
-              class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
-            >
-              <i class="fa-solid fa-plane-departure w-5 text-center"></i>
-              <span class="nav-text">Vacation</span>
-            </button>
-
-            <button
-              id="nav-heavy-equipment"
-              onclick="switchTab('heavy-equipment')"
-              class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
-            >
-              <i class="fa-solid fa-truck-monster w-5 text-center"></i>
-              <span class="nav-text">Heavy Equipment</span>
-            </button>
-
-            <button
-              id="nav-light-equipment"
-              onclick="switchTab('light-equipment')"
-              class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition"
-            >
-              <i class="fa-solid fa-truck-pickup w-5 text-center"></i>
-              <span class="nav-text">Light Equipment</span>
-            </button>
-          </nav>
-        </div>
-
-        <div class="p-4 border-t border-slate-800">
-          <div class="nav-text text-xs text-slate-500 text-center">
-            ProEMS v2.4 &bull; Safari Contracting
-          </div>
-        </div>
-      </aside>
-
-      <!-- MAIN WRAPPER -->
-      <div class="flex-1 flex flex-col overflow-y-auto">
-        <!-- TOP HEADER -->
-        <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-10">
-          <div class="flex items-center space-x-4">
-            <button
-              type="button"
-              onclick="toggleSidebar()"
-              class="text-slate-600 hover:text-slate-900 focus:outline-none p-1.5 rounded-md hover:bg-slate-100"
-            >
-              <i class="fa-solid fa-bars text-lg"></i>
-            </button>
-            <h1 id="page-title" class="text-xl font-bold text-slate-800">Employee Overview</h1>
-          </div>
-
-          <div class="flex items-center space-x-3">
-            <div class="relative">
-              <i class="fa-solid fa-bell text-slate-500 text-lg hover:text-slate-700 cursor-pointer"></i>
-              <span class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">1</span>
-            </div>
-            <div class="h-8 w-px bg-slate-200"></div>
-            <div class="flex items-center space-x-2">
-              <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-semibold text-sm">
-                MA
-              </div>
-              <span class="text-sm font-medium text-slate-700 hidden sm:inline">Mahabub Alam</span>
-            </div>
-          </div>
-        </header>
-
-        <!-- CONTENT CONTAINER -->
-        <main class="p-6 space-y-6">
-          <!-- TAB 1: DASHBOARD -->
-          <div id="tab-dashboard" class="space-y-6">
-            <!-- KPI CARDS -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div
-                id="card-all"
-                onclick="filterByCard('all')"
-                class="kpi-card bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition ring-2 active-card"
-              >
-                <div class="flex justify-between items-start">
-                  <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Employees</p>
-                    <h3 id="kpi-total" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
-                  </div>
-                  <div class="p-3 bg-indigo-50 text-indigo-600 rounded-lg">
-                    <i class="fa-solid fa-users text-xl"></i>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                id="card-vacation"
-                onclick="filterByCard('vacation')"
-                class="kpi-card bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition"
-              >
-                <div class="flex justify-between items-start">
-                  <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">On Vacation</p>
-                    <h3 id="kpi-vacation" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
-                  </div>
-                  <div class="p-3 bg-amber-50 text-amber-600 rounded-lg">
-                    <i class="fa-solid fa-plane text-xl"></i>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                id="card-saudi"
-                onclick="filterByCard('saudi')"
-                class="kpi-card bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition"
-              >
-                <div class="flex justify-between items-start">
-                  <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Saudi Nationals</p>
-                    <h3 id="kpi-saudi" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
-                  </div>
-                  <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
-                    <i class="fa-solid fa-flag text-xl"></i>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                id="card-bd"
-                onclick="filterByCard('bd')"
-                class="kpi-card bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition"
-              >
-                <div class="flex justify-between items-start">
-                  <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Bangladeshi</p>
-                    <h3 id="kpi-bd" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
-                  </div>
-                  <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
-                    <i class="fa-solid fa-globe text-xl"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- CHARTS SECTION -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                <h4 class="text-sm font-bold text-slate-700 mb-4">Nationality Breakdown</h4>
-                <div class="h-48">
-                  <canvas id="nationalityChart"></canvas>
-                </div>
-              </div>
-              <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                <h4 class="text-sm font-bold text-slate-700 mb-4">Employees by Department</h4>
-                <div class="h-48">
-                  <canvas id="deptChart"></canvas>
-                </div>
-              </div>
-            </div>
-
-            <!-- TABLE CONTAINER -->
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-              <!-- Filter Banner -->
-              <div id="filterBanner" class="hidden bg-indigo-50 border-b border-indigo-100 px-6 py-2.5 text-xs text-indigo-700 font-medium flex justify-between items-center">
-                <span id="bannerText">Filtered View</span>
-                <button onclick="filterByCard('all')" class="hover:underline text-indigo-900 font-bold">Clear Filter</button>
-              </div>
-
-              <!-- Controls Toolbar -->
-              <div class="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div class="flex items-center space-x-3 w-full sm:w-auto">
-                  <input
-                    type="text"
-                    id="tableSearch"
-                    oninput="onSearchInput()"
-                    placeholder="Search employees..."
-                    class="px-3.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-64"
-                  />
-                  <select
-                    id="groupFilter"
-                    onchange="applyFilters()"
-                    class="px-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="all">All Groups</option>
-                    <option value="Ecopower">Ecopower</option>
-                    <option value="Administration">Administration</option>
-                  </select>
-                </div>
-
-                <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
-                  <select
-                    id="pageSize"
-                    onchange="onPageSizeChange()"
-                    class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="3" selected>3 per page</option>
-                    <option value="5">5 per page</option>
-                    <option value="10">10 per page</option>
-                    <option value="all">Show All</option>
-                  </select>
-                  <button onclick="exportToExcel('main')" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition">
-                    <i class="fa-solid fa-file-excel mr-1"></i> Excel
-                  </button>
-                  <button onclick="exportToPDF('main')" class="px-3 py-1.5 bg-rose-600 text-white rounded-lg text-xs font-semibold hover:bg-rose-700 transition">
-                    <i class="fa-solid fa-file-pdf mr-1"></i> PDF
-                  </button>
-                </div>
-              </div>
-
-              <!-- Table -->
-              <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider">
-                      <th class="px-3 py-3 text-center">#</th>
-                      <th class="px-4 py-3">Emp ID</th>
-                      <th class="px-4 py-3">Name & Role</th>
-                      <th class="px-4 py-3">Contact</th>
-                      <th class="px-4 py-3">Nationality</th>
-                      <th class="px-4 py-3">Group/Dept</th>
-                      <th class="px-4 py-3">Status</th>
-                      <th class="px-4 py-3">Joined</th>
-                      <th class="px-4 py-3">Iqama No</th>
-                      <th class="px-4 py-3">Iqama Dates</th>
-                      <th class="px-4 py-3">DMM ID</th>
-                      <th class="px-4 py-3">DMM Dates</th>
-                      <th class="px-4 py-3">Notes</th>
-                    </tr>
-                  </thead>
-                  <tbody id="employeeTableBody" class="divide-y divide-slate-100">
-                    <!-- Dynamic Data -->
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- Pagination Footer -->
-              <div class="p-4 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 gap-2">
-                <span id="paginationInfo">Showing 0 to 0 of 0 entries</span>
-                <div id="paginationControls" class="flex items-center space-x-1"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- TAB 2: IQAMA & DMM EXPIRY -->
-          <div id="tab-iqama" class="space-y-6 hidden">
-            <!-- IQAMA KPI CARDS -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div id="iqcard-all" onclick="filterIqamaCard('all')" class="kpi-card bg-white p-5 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:shadow-md transition ring-2 active-card">
-                <p class="text-xs font-semibold uppercase text-slate-500">Total Documents</p>
-                <h3 id="iqkpi-total" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
-              </div>
-              <div id="iqcard-soon" onclick="filterIqamaCard('soon')" class="kpi-card bg-white p-5 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:shadow-md transition">
-                <p class="text-xs font-semibold uppercase text-slate-500">Expiring Soon (<=30 Days)</p>
-                <h3 id="iqkpi-soon" class="text-2xl font-bold text-amber-600 mt-1">0</h3>
-              </div>
-              <div id="iqcard-expired" onclick="filterIqamaCard('expired')" class="kpi-card bg-white p-5 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:shadow-md transition">
-                <p class="text-xs font-semibold uppercase text-slate-500">Iqama Expired</p>
-                <h3 id="iqkpi-expired" class="text-2xl font-bold text-rose-600 mt-1">0</h3>
-              </div>
-              <div id="iqcard-dmm-expired" onclick="filterIqamaCard('dmm-expired')" class="kpi-card bg-white p-5 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:shadow-md transition">
-                <p class="text-xs font-semibold uppercase text-slate-500">DMM Expired</p>
-                <h3 id="iqkpi-dmm-expired" class="text-2xl font-bold text-rose-600 mt-1">0</h3>
-              </div>
-            </div>
-
-            <!-- IQAMA TABLE CONTAINER -->
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-              <div id="iqamaFilterBanner" class="hidden bg-amber-50 border-b border-amber-100 px-6 py-2.5 text-xs text-amber-800 font-medium flex justify-between items-center">
-                <span id="iqamaBannerText">Filtered View</span>
-                <button onclick="filterIqamaCard('all')" class="hover:underline font-bold">Clear Filter</button>
-              </div>
-
-              <div class="p-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <input
-                  type="text"
-                  id="iqamaSearch"
-                  oninput="onIqamaSearchInput()"
-                  placeholder="Search Iqama / Name / DMM..."
-                  class="px-3.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-64"
-                />
-
-                <div class="flex items-center space-x-2">
-                  <select
-                    id="iqamaPageSize"
-                    onchange="onIqamaPageSizeChange()"
-                    class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="3" selected>3 per page</option>
-                    <option value="5">5 per page</option>
-                    <option value="10">10 per page</option>
-                    <option value="all">Show All</option>
-                  </select>
-                  <button onclick="exportToExcel('iqama')" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition">
-                    <i class="fa-solid fa-file-excel mr-1"></i> Excel
-                  </button>
-                </div>
-              </div>
-
-              <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase">
-                      <th class="px-3 py-3 text-center">#</th>
-                      <th class="px-4 py-3">Employee</th>
-                      <th class="px-4 py-3">Iqama No</th>
-                      <th class="px-4 py-3">Iqama Validity</th>
-                      <th class="px-4 py-3">Status</th>
-                      <th class="px-4 py-3">DMM ID</th>
-                      <th class="px-4 py-3">DMM Validity</th>
-                      <th class="px-4 py-3">DMM Status</th>
-                      <th class="px-4 py-3">Vacation Status</th>
-                    </tr>
-                  </thead>
-                  <tbody id="iqamaTableBody" class="divide-y divide-slate-100">
-                    <!-- Dynamic Data -->
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="p-4 border-t border-slate-200 text-xs text-slate-500">
-                <span id="iqamaPaginationInfo">Showing 0 to 0 of 0 entries</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- TAB 3: ORG CHART -->
-          <div id="tab-orgchart" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hidden">
-            <h3 class="text-base font-bold text-slate-800 mb-4">Company Organization Hierarchy</h3>
-            <div class="p-8 bg-slate-50 border border-dashed border-slate-300 rounded-lg text-center text-slate-500">
-              <i class="fa-solid fa-sitemap text-4xl text-slate-400 mb-2"></i>
-              <p class="text-sm">Interactive Organizational Tree Chart View</p>
-            </div>
-          </div>
-
-          <!-- TAB 4: VACATION -->
-          <div id="tab-vacation" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hidden">
-            <h3 class="text-base font-bold text-slate-800 mb-4">Vacation Schedule & Logs</h3>
-            <p class="text-sm text-slate-500">Vacation tracking workflow and leave approval logs.</p>
-          </div>
-
-          <!-- TAB 5: HEAVY EQUIPMENT -->
-          <div id="tab-heavy-equipment" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hidden">
-            <h3 class="text-base font-bold text-slate-800 mb-4">Heavy Equipment Tracking</h3>
-            <p class="text-sm text-slate-500">Fleet management and active site allocations for heavy machinery.</p>
-          </div>
-
-          <!-- TAB 6: LIGHT EQUIPMENT -->
-          <div id="tab-light-equipment" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hidden">
-            <h3 class="text-base font-bold text-slate-800 mb-4">Light Equipment & Vehicles</h3>
-            <p class="text-sm text-slate-500">Light vehicle inventory and maintenance tracking.</p>
-          </div>
-        </main>
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="w-64 shrink-0 bg-slate-900 text-slate-300 flex flex-col transition-all duration-200 border-r border-slate-800">
+    <div class="flex items-center gap-3 px-5 h-16 border-b border-slate-800 shrink-0">
+      <div class="w-8 h-8 rounded-md bg-emerald-500 flex items-center justify-center shrink-0">
+        <i data-lucide="hard-hat" class="w-4.5 h-4.5 text-slate-900" style="width:18px;height:18px"></i>
+      </div>
+      <div class="sidebar-label overflow-hidden">
+        <p class="text-sm font-bold text-white leading-tight">Safari Contracting</p>
+        <p class="text-[11px] text-slate-500 leading-tight">Workforce Systems</p>
       </div>
     </div>
 
-    <!-- JAVASCRIPT CODE -->
-    <script>
-      // --- MOCK DATA ---
-      const employeesData = [
-        {
-          id: "EMP-001",
-          name: "Suresh Kumar",
-          role: "Site Manager",
-          phone: "+966 50 123 4567",
-          email: "suresh@safaricontracting.com",
-          nationality: "Indian",
-          group: "Ecopower",
-          dept: "Operations",
-          status: "Active",
-          joined: "2021-03-15",
-          iqamaNo: "2450198234",
-          issueDate: "2023-01-10",
-          expiryDate: "2026-08-15",
-          dmmId: "DMM-8841",
-          dmmIssueDate: "2023-02-01",
-          dmmExpiryDate: "2026-09-01",
-          vacationStatus: "On Site",
-          note: "Lead engineer"
-        },
-        {
-          id: "EMP-002",
-          name: "Mahabub Alam",
-          role: "Full Stack Developer",
-          phone: "+966 55 987 6543",
-          email: "mahabub@safaricontracting.com",
-          nationality: "Bangladeshi",
-          group: "Administration",
-          dept: "IT",
-          status: "Active",
-          joined: "2022-06-01",
-          iqamaNo: "2398410293",
-          issueDate: "2023-05-10",
-          expiryDate: "2026-07-20",
-          dmmId: "DMM-9012",
-          dmmIssueDate: "2023-05-15",
-          dmmExpiryDate: "2026-05-15",
-          vacationStatus: "On Site",
-          note: "ProEMS Admin"
-        },
-        {
-          id: "EMP-003",
-          name: "Tariq Al-Harbi",
-          role: "Safety Officer",
-          phone: "+966 51 444 3322",
-          email: "tariq@safaricontracting.com",
-          nationality: "Saudi",
-          group: "Administration",
-          dept: "HSE",
-          status: "On Vacation",
-          joined: "2020-01-10",
-          iqamaNo: "1092837465",
-          issueDate: "2022-01-01",
-          expiryDate: "2028-01-01",
-          dmmId: "DMM-1022",
-          dmmIssueDate: "2022-01-05",
-          dmmExpiryDate: "2028-01-05",
-          vacationStatus: "Annual Leave",
-          note: "Returning Aug 10"
-        },
-        {
-          id: "EMP-004",
-          name: "Mohammed Rahman",
-          role: "Civil Engineer",
-          phone: "+966 56 222 1100",
-          email: "m.rahman@safaricontracting.com",
-          nationality: "Bangladeshi",
-          group: "Ecopower",
-          dept: "Engineering",
-          status: "Active",
-          joined: "2023-02-14",
-          iqamaNo: "2501928374",
-          issueDate: "2023-02-15",
-          expiryDate: "2026-08-01",
-          dmmId: "DMM-3341",
-          dmmIssueDate: "2023-03-01",
-          dmmExpiryDate: "2026-06-01",
-          vacationStatus: "On Site",
-          note: "Needs DMM Renewal"
-        }
-      ];
+    <nav class="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+      <button data-page="dashboard" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
+        <span class="sidebar-label">Executive Dashboard</span>
+      </button>
+      <button data-page="iqama" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="file-clock" class="w-4 h-4 shrink-0"></i>
+        <span class="sidebar-label">Iqama &amp; Documents</span>
+      </button>
+      <button data-page="org" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="network" class="w-4 h-4 shrink-0"></i>
+        <span class="sidebar-label">Org &amp; Shift Craft</span>
+      </button>
+      <button data-page="manpower" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="users" class="w-4 h-4 shrink-0"></i>
+        <span class="sidebar-label">Total Manpower</span>
+      </button>
+      <button data-page="equipment" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="wrench" class="w-4 h-4 shrink-0"></i>
+        <span class="sidebar-label">Equipment &amp; Assets</span>
+      </button>
+      <button data-page="vacation" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+        <i data-lucide="plane-takeoff" class="w-4 h-4 shrink-0"></i>
+        <span class="sidebar-label">Vacation &amp; Leave</span>
+      </button>
+    </nav>
 
-      // --- MAIN DASHBOARD STATE ---
-      let currentPage = 1;
-      let pageSize = 3;
-      let currentCardFilter = "all";
-      let filteredData = [...employeesData];
+    <div class="p-3 border-t border-slate-800">
+      <button id="collapseBtn" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+        <i data-lucide="panel-left-close" class="w-4 h-4 shrink-0"></i>
+        <span class="sidebar-label">Collapse</span>
+      </button>
+      <div class="flex items-center gap-3 px-3 py-2 mt-1">
+        <div class="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-xs font-bold text-white shrink-0">MA</div>
+        <div class="sidebar-label overflow-hidden">
+          <p class="text-xs font-semibold text-white leading-tight">Mahabub Alam</p>
+          <p class="text-[11px] text-slate-500 leading-tight">Admin &amp; Full Stack Dev</p>
+        </div>
+      </div>
+    </div>
+  </aside>
 
-      // --- IQAMA VIEW STATE ---
-      let iqamaCurrentPage = 1;
-      let iqamaPageSize = 3;
-      let iqamaCardFilter = "all";
-      let filteredIqamaData = [...employeesData];
+  <!-- MAIN -->
+  <div class="flex-1 flex flex-col min-w-0">
+    <!-- TOPBAR -->
+    <header class="h-16 shrink-0 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between px-6">
+      <div>
+        <h1 id="pageTitle" class="text-lg font-bold text-slate-900 dark:text-white">Executive Dashboard</h1>
+        <p id="pageSubtitle" class="text-xs text-slate-500 dark:text-slate-400">Safari Contracting Company — Dammam, Saudi Arabia</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="themeToggle" class="w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <i data-lucide="moon" class="w-4 h-4"></i>
+        </button>
+        <div class="w-px h-6 bg-slate-200 dark:bg-slate-700"></div>
+        <div class="flex items-center gap-2 pr-1">
+          <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs font-bold">MA</div>
+        </div>
+      </div>
+    </header>
 
-      // --- FIXED SIDEBAR TOGGLE MECHANISM ---
-      function toggleSidebar() {
-        const sidebar = document.getElementById("sidebar");
-        const overlay = document.getElementById("sidebar-overlay");
-        const isMobile = window.innerWidth < 768;
+    <main class="flex-1 overflow-y-auto p-6 space-y-6">
 
-        if (isMobile) {
-          sidebar.classList.toggle("-translate-x-full");
-          overlay.classList.toggle("hidden");
-        } else {
-          sidebar.classList.toggle("sidebar-collapsed");
-        }
+      <!-- ================= PAGE 1: DASHBOARD ================= -->
+      <section id="page-dashboard" class="page-panel active fade-in space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" id="kpiCards"></div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+          <div class="xl:col-span-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white">Nationality Distribution</h3>
+              <i data-lucide="globe-2" class="w-4 h-4 text-slate-400"></i>
+            </div>
+            <canvas id="nationalityChart" height="220"></canvas>
+          </div>
+          <div class="xl:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-semibold text-sm text-slate-900 dark:text-white">Monthly Vacation &amp; Departure Trends</h3>
+              <i data-lucide="bar-chart-3" class="w-4 h-4 text-slate-400"></i>
+            </div>
+            <canvas id="trendChart" height="130"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+              <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
+              Quick Alert Panel — Urgent Iqama Renewals (≤14 Days)
+            </h3>
+            <button data-page="iqama" class="nav-link-btn text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline">View all →</button>
+          </div>
+          <div id="alertPanel" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3"></div>
+        </div>
+      </section>
+
+      <!-- ================= PAGE 2: IQAMA TRACKER ================= -->
+      <section id="page-iqama" class="page-panel fade-in space-y-6">
+        <div id="iqamaAlertCards" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3"></div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+          <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap gap-2" id="iqamaFilterPills"></div>
+            <div class="relative">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+              <input id="iqamaSearch" type="text" placeholder="Search name, ID, iqama no..." class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 w-64" />
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wide">
+                <tr>
+                  <th class="text-left font-semibold px-4 py-3">Employee</th>
+                  <th class="text-left font-semibold px-4 py-3">Iqama No.</th>
+                  <th class="text-left font-semibold px-4 py-3">Issue Date</th>
+                  <th class="text-left font-semibold px-4 py-3">Expiry Date</th>
+                  <th class="text-left font-semibold px-4 py-3">Remaining</th>
+                  <th class="text-left font-semibold px-4 py-3">Status</th>
+                  <th class="text-left font-semibold px-4 py-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="iqamaTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+            </table>
+          </div>
+          <div id="iqamaPagination" class="flex items-center justify-between px-4 py-3 border-t border-slate-200 dark:border-slate-800 text-sm"></div>
+        </div>
+      </section>
+
+      <!-- ================= PAGE 3: ORG & SHIFT CRAFT ================= -->
+      <section id="page-org" class="page-panel fade-in space-y-6">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
+          <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-5 flex items-center gap-2">
+            <i data-lucide="network" class="w-4 h-4 text-indigo-500"></i> Organization Chart
+          </h3>
+          <div id="orgChart" class="overflow-x-auto pb-2"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4" id="shiftCards"></div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
+          <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-4">Craft Distribution</h3>
+          <div id="craftGrid" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3"></div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+          <div class="p-4 border-b border-slate-200 dark:border-slate-800">
+            <h3 class="font-semibold text-sm text-slate-900 dark:text-white">Crew Assignment — Job Site Mapping</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wide">
+                <tr>
+                  <th class="text-left font-semibold px-4 py-3">Employee</th>
+                  <th class="text-left font-semibold px-4 py-3">Craft</th>
+                  <th class="text-left font-semibold px-4 py-3">Shift Team</th>
+                  <th class="text-left font-semibold px-4 py-3">Job Site</th>
+                </tr>
+              </thead>
+              <tbody id="crewTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PAGE 4: TOTAL MANPOWER LIST ================= -->
+      <section id="page-manpower" class="page-panel fade-in space-y-6">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+          <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-3 justify-between">
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="relative">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input id="mpSearch" type="text" placeholder="Search name, ID, craft, iqama..." class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 w-64" />
+              </div>
+              <select id="mpDeptFilter" class="text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 focus:outline-none"></select>
+              <select id="mpCraftFilter" class="text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 focus:outline-none"></select>
+              <select id="mpStatusFilter" class="text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 focus:outline-none">
+                <option value="all">All Statuses</option>
+                <option value="On Duty">On Duty</option>
+                <option value="On Leave">On Leave</option>
+                <option value="Site Transfer">Site Transfer</option>
+              </select>
+              <div class="relative">
+                <button id="colToggleBtn" class="flex items-center gap-1.5 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-700">
+                  <i data-lucide="columns-3" class="w-3.5 h-3.5"></i> Columns
+                </button>
+                <div id="colToggleMenu" class="hidden absolute z-20 mt-1 right-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-2 w-44 text-sm space-y-1"></div>
+              </div>
+              <div class="flex items-center rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <button id="mpViewTableBtn" class="flex items-center gap-1.5 text-sm font-medium px-3 py-2 bg-slate-900 text-white">
+                  <i data-lucide="table" class="w-3.5 h-3.5"></i> Table
+                </button>
+                <button id="mpViewCardBtn" class="flex items-center gap-1.5 text-sm font-medium px-3 py-2 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                  <i data-lucide="credit-card" class="w-3.5 h-3.5"></i> Cards
+                </button>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="exportExcelBtn" class="flex items-center gap-1.5 text-sm font-medium rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 transition-colors">
+                <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Download Excel
+              </button>
+              <button id="exportPdfBtn" class="flex items-center gap-1.5 text-sm font-medium rounded-lg bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 transition-colors">
+                <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Export PDF
+              </button>
+            </div>
+          </div>
+          <div id="mpTableView" class="overflow-x-auto">
+            <table class="w-full text-sm" id="mpTable">
+              <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wide">
+                <tr id="mpTableHead"></tr>
+              </thead>
+              <tbody id="mpTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+            </table>
+          </div>
+          <div id="mpCardView" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4"></div>
+          <div id="mpPagination" class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-slate-200 dark:border-slate-800 text-sm"></div>
+        </div>
+      </section>
+
+      <!-- ================= PAGE: EQUIPMENT & ASSETS ================= -->
+      <section id="page-equipment" class="page-panel fade-in space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" id="equipKpis"></div>
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+          <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap gap-2" id="equipFilterPills"></div>
+            <div class="relative">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+              <input id="equipSearch" type="text" placeholder="Search equipment, ID, assignee..." class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 w-64" />
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wide">
+                <tr>
+                  <th class="text-left font-semibold px-4 py-3">Equipment ID</th>
+                  <th class="text-left font-semibold px-4 py-3">Name</th>
+                  <th class="text-left font-semibold px-4 py-3">Category</th>
+                  <th class="text-left font-semibold px-4 py-3">Assigned To</th>
+                  <th class="text-left font-semibold px-4 py-3">Status</th>
+                  <th class="text-left font-semibold px-4 py-3">Assigned Date</th>
+                  <th class="text-left font-semibold px-4 py-3">Next Inspection</th>
+                </tr>
+              </thead>
+              <tbody id="equipTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+            </table>
+          </div>
+          <div id="equipPagination" class="flex items-center justify-between px-4 py-3 border-t border-slate-200 dark:border-slate-800 text-sm"></div>
+        </div>
+      </section>
+
+      <!-- ================= PAGE 5: VACATION & LEAVE ANALYTICS ================= -->
+      <section id="page-vacation" class="page-panel fade-in space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="leaveKpis"></div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
+          <h3 class="font-semibold text-sm text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+            <i data-lucide="calendar-range" class="w-4 h-4 text-sky-500"></i> Upcoming Vacation Timeline
+          </h3>
+          <div id="ganttChart" class="space-y-2 overflow-x-auto"></div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+          <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+            <h3 class="font-semibold text-sm text-slate-900 dark:text-white">Vacation Requests</h3>
+            <div class="relative">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+              <input id="vacSearch" type="text" placeholder="Search employee..." class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 w-56" />
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-slate-50 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wide">
+                <tr>
+                  <th class="text-left font-semibold px-4 py-3">Employee</th>
+                  <th class="text-left font-semibold px-4 py-3">Leave Type</th>
+                  <th class="text-left font-semibold px-4 py-3">Start</th>
+                  <th class="text-left font-semibold px-4 py-3">End</th>
+                  <th class="text-left font-semibold px-4 py-3">Exit/Re-entry Visa</th>
+                  <th class="text-left font-semibold px-4 py-3">Flight</th>
+                  <th class="text-left font-semibold px-4 py-3">Approval</th>
+                </tr>
+              </thead>
+              <tbody id="vacTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+            </table>
+          </div>
+          <div id="vacPagination" class="flex items-center justify-between px-4 py-3 border-t border-slate-200 dark:border-slate-800 text-sm"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ID CARD MODAL -->
+<div id="idCardModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden relative">
+    <button id="idCardCloseBtn" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white z-10">
+      <i data-lucide="x" class="w-4 h-4"></i>
+    </button>
+    <div id="idCardContent"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   DATA GENERATION
+   ============================================================ */
+const saudiFirst = ["Abdullah","Mohammed","Ahmed","Khalid","Faisal","Turki","Saad","Nasser","Fahad","Sultan","Omar","Yousef","Bandar","Talal","Majed","Rakan"];
+const saudiLast = ["Al-Qahtani","Al-Ghamdi","Al-Otaibi","Al-Harbi","Al-Zahrani","Al-Shehri","Al-Dosari","Al-Malki","Al-Anazi","Al-Mutairi"];
+
+const expatPools = {
+  "India": { flag:"🇮🇳", first:["Rajesh","Suresh","Anil","Vijay","Ramesh","Manoj","Sanjay","Deepak","Arun","Prakash"], last:["Kumar","Patel","Sharma","Singh","Nair","Reddy","Gupta","Menon","Iyer","Yadav"] },
+  "Pakistan": { flag:"🇵🇰", first:["Imran","Tariq","Asif","Waqar","Shahid","Zulfiqar","Naveed","Rashid","Farhan","Adeel"], last:["Khan","Mahmood","Ali","Hussain","Iqbal","Chaudhry","Butt","Malik","Sheikh","Raza"] },
+  "Philippines": { flag:"🇵🇭", first:["Jose","Ramon","Mark","Angelo","Ricardo","Ernesto","Danilo","Rodel","Ferdinand","Noel"], last:["Santos","Cruz","Reyes","Bautista","Garcia","Mendoza","Torres","Flores","Ramos","Aquino"] },
+  "Egypt": { flag:"🇪🇬", first:["Mahmoud","Ahmed","Karim","Youssef","Mostafa","Hassan","Tarek","Sherif","Amr","Waleed"], last:["Hassan","Fathy","Said","Ibrahim","Mansour","El-Sayed","Kamal","Farouk","Abdelrahman","Nour"] },
+  "Bangladesh": { flag:"🇧🇩", first:["Rafiq","Shahid","Kamal","Jahangir","Habibur","Mizanur","Rashedul","Nasir","Shakil","Anisur"], last:["Islam","Hossain","Ahmed","Rahman","Chowdhury","Karim","Uddin","Alam","Miah","Khan"] },
+  "Jordan": { flag:"🇯🇴", first:["Ziad","Hussein","Firas","Ala'a","Basil","Nabil","Rami","Samer","Loai","Anas"], last:["Nasser","Khalil","Odeh","Haddad","Qasem","Freij","Zoubi","Hijazi","Barakat","Salameh"] },
+  "Nepal": { flag:"🇳🇵", first:["Bikash","Suman","Prakash","Dipesh","Rajan","Bijay","Santosh","Nabin","Deepak","Sagar"], last:["Thapa","Shrestha","Gurung","Rai","Tamang","Karki","Adhikari","Basnet","Magar","Bista"] },
+  "Sudan": { flag:"🇸🇩", first:["Osman","Ibrahim","Mustafa","Salah","Adam","Bakri","Hisham","Amin","Tariq","Sami"], last:["Idris","Suleiman","Awad","Hamid","Ahmed","Elzein","Ballal","Mekki","Fadl","Abbas"] }
+};
+const nationalities = ["Saudi Arabia", ...Object.keys(expatPools)];
+const nationalityFlags = { "Saudi Arabia":"🇸🇦", ...Object.fromEntries(Object.entries(expatPools).map(([k,v])=>[k,v.flag])) };
+
+const departments = ["Operations","Maintenance","Safety (HSE)","Electrical","Mechanical","Civil","Administration","Logistics"];
+const crafts = ["Electrician","Welder","Pipefitter","Safety Officer","Mechanic","Civil Laborer","Scaffolder","Rigger","Crane Operator","Foreman","HR Coordinator","Supervisor"];
+const shifts = ["Day Shift","Night Shift","Off Duty","Standby"];
+const dutyStatuses = ["On Duty","On Leave","Site Transfer"];
+const jobSites = ["Dammam Yard 3", "King Fahad Int. Airport (KFIA)", "Jubail Site A", "Yanbu Refinery", "Ras Tanura Plant", "Riyadh HQ Depot"];
+
+function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function pad(n,len){ return String(n).padStart(len,"0"); }
+function fmtDate(d){ return d.toISOString().slice(0,10); }
+
+function safeCreateIcons(){
+  if (typeof lucide !== "undefined" && lucide.createIcons){
+    try { lucide.createIcons(); } catch(err){ console.warn("Icon render skipped:", err); }
+  }
+}
+
+function genIqamaNumber(){
+  return (rand(["1","2"])) + Array.from({length:9},()=>randInt(0,9)).join("");
+}
+
+const today = new Date();
+const EMP_COUNT = 90;
+let employees = [];
+
+for (let i=1; i<=EMP_COUNT; i++){
+  const isSaudi = Math.random() < 0.22;
+  let nationality, first, last;
+  if (isSaudi){
+    nationality = "Saudi Arabia"; first = rand(saudiFirst); last = rand(saudiLast);
+  } else {
+    const natKey = rand(Object.keys(expatPools));
+    nationality = natKey;
+    first = rand(expatPools[natKey].first);
+    last = rand(expatPools[natKey].last);
+  }
+  const issueDate = new Date(today.getTime() - randInt(30, 700)*86400000);
+  const bucket = Math.random();
+  let expiryOffsetDays;
+  if (bucket < 0.08) expiryOffsetDays = randInt(-40,-1);
+  else if (bucket < 0.20) expiryOffsetDays = randInt(0,14);
+  else if (bucket < 0.34) expiryOffsetDays = randInt(15,30);
+  else expiryOffsetDays = randInt(31,540);
+  const expiryDate = new Date(today.getTime() + expiryOffsetDays*86400000);
+  const daysRemaining = Math.ceil((expiryDate - today)/86400000);
+
+  let status;
+  if (daysRemaining < 0) status = "Expired";
+  else if (daysRemaining <= 14) status = "Critical";
+  else if (daysRemaining <= 30) status = "Expiring Soon";
+  else status = "Valid";
+
+  const dutyStatus = Math.random() < 0.12 ? "On Leave" : (Math.random() < 0.1 ? "Site Transfer" : "On Duty");
+
+  employees.push({
+    id: "EMP-" + pad(1000+i,5),
+    name: first + " " + last,
+    nationality, isSaudi,
+    craft: rand(crafts),
+    department: rand(departments),
+    shift: dutyStatus === "On Leave" ? "Off Duty" : rand(shifts),
+    iqama: genIqamaNumber(),
+    issueDate, expiryDate, daysRemaining, status,
+    dutyStatus,
+    jobSite: rand(jobSites)
+  });
+}
+
+const leaveTypes = ["Annual","Emergency","Medical"];
+const approvalStatuses = ["Approved","Pending","Rejected"];
+let vacationRequests = [];
+const vacPool = employees.filter(e => Math.random() < 0.4).slice(0,26);
+vacPool.forEach((e,idx) => {
+  const start = new Date(today.getTime() + randInt(-10,45)*86400000);
+  const end = new Date(start.getTime() + randInt(7,30)*86400000);
+  vacationRequests.push({
+    name: e.name, id: e.id,
+    leaveType: rand(leaveTypes),
+    start, end,
+    visaStatus: rand(["Issued","Pending","Not Required"]),
+    flight: rand(["SV 1042 - DMM","SV 2207 - RUH","EK 815 - DXB","QR 1102 - DOH","Not Booked"]),
+    approval: idx < 4 ? "Pending" : rand(approvalStatuses)
+  });
+});
+
+const equipmentCatalog = [
+  { name:"Safety Helmet", category:"PPE" },
+  { name:"Full PPE Kit", category:"PPE" },
+  { name:"Safety Harness", category:"PPE" },
+  { name:"Welding Machine", category:"Tools & Machinery" },
+  { name:"Power Drill", category:"Tools & Machinery" },
+  { name:"Portable Generator", category:"Tools & Machinery" },
+  { name:"Two-Way Radio", category:"Communication" },
+  { name:"Pickup Truck", category:"Vehicles" },
+  { name:"Crew Bus", category:"Vehicles" },
+  { name:"Mobile Crane", category:"Heavy Equipment" },
+  { name:"Forklift", category:"Heavy Equipment" },
+  { name:"Scaffold Tower", category:"Heavy Equipment" },
+  { name:"Fire Extinguisher", category:"Safety" },
+  { name:"Gas Detector", category:"Safety" },
+];
+const equipmentStatuses = ["In Use","Available","Under Maintenance","Retired"];
+let equipmentList = [];
+const EQUIP_COUNT = 48;
+for (let i=1; i<=EQUIP_COUNT; i++){
+  const item = rand(equipmentCatalog);
+  const status = rand(equipmentStatuses);
+  const assignedEmp = status === "In Use" ? rand(employees) : null;
+  const assignedDate = new Date(today.getTime() - randInt(15,600)*86400000);
+  const nextInspection = new Date(today.getTime() + randInt(-15,180)*86400000);
+  equipmentList.push({
+    id: "EQ-" + pad(3000+i,5),
+    name: item.name,
+    category: item.category,
+    status,
+    assignedTo: assignedEmp ? assignedEmp.name : "—",
+    assignedDate, nextInspection
+  });
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function statusBadge(status){
+  const map = {
+    "Valid": "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400",
+    "Expiring Soon": "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400",
+    "Critical": "bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-400",
+    "Expired": "bg-slate-200 text-slate-600 dark:bg-slate-700/40 dark:text-slate-400",
+    "On Duty": "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400",
+    "On Leave": "bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-400",
+    "Site Transfer": "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-400",
+    "Approved": "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400",
+    "Pending": "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400",
+    "Rejected": "bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-400",
+    "In Use": "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-400",
+    "Available": "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400",
+    "Under Maintenance": "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400",
+    "Retired": "bg-slate-200 text-slate-600 dark:bg-slate-700/40 dark:text-slate-400",
+  };
+  return `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${map[status]||'bg-slate-100 text-slate-600'}">${status}</span>`;
+}
+function remainingLabel(days){
+  if (days < 0) return `<span class="text-slate-500 dark:text-slate-400 font-semibold mono-num">Expired ${Math.abs(days)}d ago</span>`;
+  if (days === 0) return `<span class="text-rose-600 font-bold mono-num">Expires Today!</span>`;
+  return `<span class="mono-num">${days} days left</span>`;
+}
+
+/* ============================================================
+   NAVIGATION & STATE
+   ============================================================ */
+let currentPage = "dashboard";
+const pageTitles = {
+  dashboard: ["Executive Dashboard", "Safari Contracting Company — Workforce Overview"],
+  iqama: ["Iqama & Document Tracking", "Monitor work permit expiry and renewals"],
+  org: ["Organization & Shift Craft", "Department hierarchies and shift distribution"],
+  manpower: ["Total Manpower Directory", "Complete workforce roster and deployment records"],
+  equipment: ["Equipment & Assets", "Tool, machinery, and safety gear allocation"],
+  vacation: ["Vacation & Leave Analytics", "Leave schedules, visa status, and flight bookings"]
+};
+
+function switchPage(pageId){
+  currentPage = pageId;
+  document.querySelectorAll(".page-panel").forEach(p => p.classList.remove("active"));
+  const target = document.getElementById("page-" + pageId);
+  if(target) target.classList.add("active");
+
+  document.querySelectorAll(".nav-btn").forEach(btn => {
+    if(btn.dataset.page === pageId){
+      btn.className = "nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium bg-emerald-600 text-white transition-colors shadow-sm";
+    } else {
+      btn.className = "nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors";
+    }
+  });
+
+  const t = pageTitles[pageId] || ["Dashboard", ""];
+  document.getElementById("pageTitle").textContent = t[0];
+  document.getElementById("pageSubtitle").textContent = t[1];
+
+  if(pageId === "dashboard") renderDashboard();
+  else if(pageId === "iqama") renderIqama();
+  else if(pageId === "org") renderOrg();
+  else if(pageId === "manpower") renderManpower();
+  else if(pageId === "equipment") renderEquipment();
+  else if(pageId === "vacation") renderVacation();
+
+  safeCreateIcons();
+}
+
+document.querySelectorAll("[data-page]").forEach(el => {
+  el.addEventListener("click", () => switchPage(el.dataset.page));
+});
+
+// Sidebar Collapse
+let sidebarCollapsed = false;
+document.getElementById("collapseBtn").addEventListener("click", () => {
+  sidebarCollapsed = !sidebarCollapsed;
+  const sb = document.getElementById("sidebar");
+  sb.classList.toggle("sidebar-collapsed", sidebarCollapsed);
+  const icon = document.getElementById("collapseBtn").querySelector("i");
+  if(icon) icon.setAttribute("data-lucide", sidebarCollapsed ? "panel-left-open" : "panel-left-close");
+  safeCreateIcons();
+});
+
+// Theme Toggle
+let darkMode = true;
+document.getElementById("themeToggle").addEventListener("click", () => {
+  darkMode = !darkMode;
+  document.documentElement.classList.toggle("dark", darkMode);
+  const icon = document.getElementById("themeToggle").querySelector("i");
+  if(icon) icon.setAttribute("data-lucide", darkMode ? "moon" : "sun");
+  safeCreateIcons();
+});
+document.documentElement.classList.add("dark");
+
+/* ============================================================
+   1. RENDER DASHBOARD
+   ============================================================ */
+let nationalityChartInstance = null;
+let trendChartInstance = null;
+
+function renderDashboard(){
+  const totalEmp = employees.length;
+  const criticalIqama = employees.filter(e => e.daysRemaining <= 14).length;
+  const onLeave = employees.filter(e => e.dutyStatus === "On Leave").length;
+  const activeEquip = equipmentList.filter(e => e.status === "In Use").length;
+
+  document.getElementById("kpiCards").innerHTML = `
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Workforce</p>
+        <p class="text-2xl font-bold text-slate-900 dark:text-white mt-1 mono-num">${totalEmp}</p>
+        <p class="text-xs text-emerald-600 mt-1 flex items-center gap-1 font-medium"><i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i> +4 this month</p>
+      </div>
+      <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+        <i data-lucide="users" class="w-6 h-6"></i>
+      </div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Critical Iqamas (≤14d)</p>
+        <p class="text-2xl font-bold text-rose-600 mt-1 mono-num">${criticalIqama}</p>
+        <p class="text-xs text-rose-500 mt-1 font-medium">Requires immediate action</p>
+      </div>
+      <div class="w-12 h-12 rounded-xl bg-rose-500/10 text-rose-600 flex items-center justify-center">
+        <i data-lucide="alert-circle" class="w-6 h-6"></i>
+      </div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Personnel On Leave</p>
+        <p class="text-2xl font-bold text-slate-900 dark:text-white mt-1 mono-num">${onLeave}</p>
+        <p class="text-xs text-sky-500 mt-1 font-medium">Scheduled departures</p>
+      </div>
+      <div class="w-12 h-12 rounded-xl bg-sky-500/10 text-sky-500 flex items-center justify-center">
+        <i data-lucide="plane-takeoff" class="w-6 h-6"></i>
+      </div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Active Equipment</p>
+        <p class="text-2xl font-bold text-slate-900 dark:text-white mt-1 mono-num">${activeEquip} / ${equipmentList.length}</p>
+        <p class="text-xs text-indigo-500 mt-1 font-medium">Deployed on job sites</p>
+      </div>
+      <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
+        <i data-lucide="wrench" class="w-6 h-6"></i>
+      </div>
+    </div>
+  `;
+
+  // Quick Alert Panel (≤14 days)
+  const urgent = employees.filter(e => e.daysRemaining <= 14).slice(0, 4);
+  document.getElementById("alertPanel").innerHTML = urgent.length === 0 ?
+    `<p class="text-sm text-slate-500 col-span-full py-4 text-center">No critical iqama renewals due within 14 days.</p>` :
+    urgent.map(e => `
+      <div class="border border-rose-200 dark:border-rose-900/50 bg-rose-50/50 dark:bg-rose-950/20 rounded-xl p-4 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-bold text-rose-600 dark:text-rose-400">${e.id}</span>
+            <span class="text-xs">${nationalityFlags[e.nationality]||'🌐'}</span>
+          </div>
+          <p class="font-semibold text-sm text-slate-900 dark:text-white">${e.name}</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Iqama: <span class="mono-num">${e.iqama}</span></p>
+        </div>
+        <div class="mt-4 pt-3 border-t border-rose-200 dark:border-rose-900/30 flex items-center justify-between text-xs">
+          <span class="text-slate-500">Expiry: <span class="mono-num">${fmtDate(e.expiryDate)}</span></span>
+          <span class="font-bold text-rose-600">${e.daysRemaining < 0 ? 'Expired' : e.daysRemaining + ' days left'}</span>
+        </div>
+      </div>
+    `).join("");
+
+  // Charts
+  const natCounts = {};
+  nationalities.forEach(n => natCounts[n] = employees.filter(e => e.nationality === n).length);
+  const topNats = Object.entries(natCounts).sort((a,b)=>b[1]-a[1]).slice(0,6);
+
+  if(nationalityChartInstance) nationalityChartInstance.destroy();
+  const natCtx = document.getElementById("nationalityChart").getContext("2d");
+  nationalityChartInstance = new Chart(natCtx, {
+    type: 'doughnut',
+    data: {
+      labels: topNats.map(x => (nationalityFlags[x[0]]||'') + ' ' + x[0]),
+      datasets: [{
+        data: topNats.map(x => x[1]),
+        backgroundColor: ['#059669','#3b82f6','#8b5cf6','#f59e0b','#ec4899','#64748b'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Inter', size: 11 }, color: darkMode ? '#cbd5e1' : '#475569' } }
+      },
+      cutout: '65%'
+    }
+  });
+
+  if(trendChartInstance) trendChartInstance.destroy();
+  const trendCtx = document.getElementById("trendChart").getContext("2d");
+  trendChartInstance = new Chart(trendCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+      datasets: [
+        { label: 'Vacation Departures', data: [8, 12, 15, 22, 18, 14], backgroundColor: '#3b82f6', borderRadius: 4 },
+        { label: 'New Mobilizations', data: [10, 14, 18, 25, 20, 16], backgroundColor: '#059669', borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 12, font: { family: 'Inter', size: 11 }, color: darkMode ? '#cbd5e1' : '#475569' } }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: darkMode ? '#94a3b8' : '#64748b' } },
+        y: { grid: { color: darkMode ? '#334155' : '#e2e8f0' }, ticks: { color: darkMode ? '#94a3b8' : '#64748b' } }
       }
-
-      function calculateDaysRemaining(expiryDateStr) {
-        if (!expiryDateStr) return null;
-        const today = new Date();
-        const expiry = new Date(expiryDateStr);
-        if (isNaN(expiry.getTime())) return null;
-        return Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
-      }
-
-      function updateKPIData() {
-        document.getElementById("kpi-total").innerText = employeesData.length;
-        document.getElementById("kpi-vacation").innerText =
-          employeesData.filter((e) => e.status === "On Vacation").length;
-        document.getElementById("kpi-saudi").innerText = employeesData.filter(
-          (e) => e.nationality === "Saudi"
-        ).length;
-        document.getElementById("kpi-bd").innerText = employeesData.filter(
-          (e) => e.nationality === "Bangladeshi"
-        ).length;
-
-        document.getElementById("iqkpi-total").innerText = employeesData.length;
-        document.getElementById("iqkpi-soon").innerText = employeesData.filter(
-          (e) => {
-            const days = calculateDaysRemaining(e.expiryDate);
-            return days !== null && days >= 0 && days <= 30;
-          }
-        ).length;
-        document.getElementById("iqkpi-expired").innerText =
-          employeesData.filter((e) => {
-            const days = calculateDaysRemaining(e.expiryDate);
-            return days !== null && days < 0;
-          }).length;
-        document.getElementById("iqkpi-dmm-expired").innerText =
-          employeesData.filter((e) => {
-            const days = calculateDaysRemaining(e.dmmExpiryDate);
-            return days !== null && days < 0;
-          }).length;
-      }
-
-      // --- MAIN DASHBOARD FILTERS ---
-      function filterByCard(filterType) {
-        currentCardFilter = filterType;
-        document
-          .querySelectorAll("#tab-dashboard .kpi-card")
-          .forEach((card) => card.classList.remove("active-card", "ring-2"));
-
-        const filterBanner = document.getElementById("filterBanner");
-        const bannerText = document.getElementById("bannerText");
-
-        if (filterType === "vacation") {
-          document
-            .getElementById("card-vacation")
-            .classList.add("active-card", "ring-2");
-          filterBanner.classList.remove("hidden");
-          bannerText.innerText = "Filtered View: Showing On Vacation Employees";
-        } else if (filterType === "saudi") {
-          document
-            .getElementById("card-saudi")
-            .classList.add("active-card", "ring-2");
-          filterBanner.classList.remove("hidden");
-          bannerText.innerText = "Filtered View: Showing Saudi Nationals";
-        } else if (filterType === "bd") {
-          document
-            .getElementById("card-bd")
-            .classList.add("active-card", "ring-2");
-          filterBanner.classList.remove("hidden");
-          bannerText.innerText =
-            "Filtered View: Showing Bangladeshi Nationals";
-        } else {
-          document
-            .getElementById("card-all")
-            .classList.add("active-card", "ring-2");
-          filterBanner.classList.add("hidden");
-        }
-
-        applyFilters();
-      }
-
-      function onSearchInput() {
-        applyFilters();
-      }
-
-      function applyFilters() {
-        const query = document
-          .getElementById("tableSearch")
-          .value.toLowerCase()
-          .trim();
-        const selectedGroup = document.getElementById("groupFilter").value;
-
-        filteredData = employeesData.filter((emp) => {
-          let matchesCard = true;
-          if (currentCardFilter === "vacation")
-            matchesCard = emp.status === "On Vacation";
-          else if (currentCardFilter === "saudi")
-            matchesCard = emp.nationality === "Saudi";
-          else if (currentCardFilter === "bd")
-            matchesCard = emp.nationality === "Bangladeshi";
-
-          let matchesGroup = true;
-          if (selectedGroup !== "all") {
-            matchesGroup = emp.group === selectedGroup || emp.dept === selectedGroup;
-          }
-
-          const matchesQuery =
-            emp.name.toLowerCase().includes(query) ||
-            emp.id.toLowerCase().includes(query) ||
-            emp.role.toLowerCase().includes(query) ||
-            emp.dept.toLowerCase().includes(query) ||
-            (emp.group && emp.group.toLowerCase().includes(query)) ||
-            emp.nationality.toLowerCase().includes(query) ||
-            (emp.iqamaNo && emp.iqamaNo.toLowerCase().includes(query)) ||
-            (emp.dmmId && emp.dmmId.toLowerCase().includes(query));
-
-          return matchesCard && matchesGroup && matchesQuery;
-        });
-
-        currentPage = 1;
-        renderEmployeeTable();
-      }
-
-      function onPageSizeChange() {
-        const val = document.getElementById("pageSize").value;
-        pageSize = val === "all" ? filteredData.length : parseInt(val, 10);
-        currentPage = 1;
-        renderEmployeeTable();
-      }
-
-      function renderEmployeeTable() {
-        const tbody = document.getElementById("employeeTableBody");
-        tbody.innerHTML = "";
-
-        const totalEntries = filteredData.length;
-        const effectivePageSize = pageSize === 0 ? totalEntries : pageSize;
-        const totalPages = Math.ceil(totalEntries / effectivePageSize) || 1;
-
-        if (currentPage > totalPages) currentPage = totalPages;
-
-        const startIdx = (currentPage - 1) * effectivePageSize;
-        const endIdx = Math.min(startIdx + effectivePageSize, totalEntries);
-        const pageData = filteredData.slice(startIdx, endIdx);
-
-        if (pageData.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="13" class="text-center py-6 text-gray-400">No matching employees found</td></tr>`;
-        } else {
-          pageData.forEach((emp, index) => {
-            const row = document.createElement("tr");
-            row.className = "hover:bg-gray-50 transition";
-
-            const natBadgeClass =
-              emp.nationality === "Saudi"
-                ? "bg-emerald-100 text-emerald-800"
-                : emp.nationality === "Bangladeshi"
-                  ? "bg-blue-100 text-blue-800"
-                  : "bg-amber-100 text-amber-800";
-
-            const statusBadgeClass =
-              emp.status === "Active"
-                ? "bg-emerald-100 text-emerald-800"
-                : "bg-amber-100 text-amber-800";
-
-            row.innerHTML = `
-              <td class="px-3 py-3.5 text-center font-medium text-gray-500">${startIdx + index + 1}</td>
-              <td class="px-4 py-3.5 font-semibold text-indigo-600">${emp.id}</td>
-              <td class="px-4 py-3.5">
-                <div class="font-bold text-gray-900">${emp.name}</div>
-                <div class="text-xs text-gray-400">${emp.role}</div>
-              </td>
-              <td class="px-4 py-3.5">
-                <div class="text-xs"><i class="fa-solid fa-phone text-gray-400 mr-1"></i>${emp.phone || "N/A"}</div>
-                <div class="text-xs text-gray-500"><i class="fa-solid fa-envelope text-gray-400 mr-1"></i>${emp.email || "N/A"}</div>
-              </td>
-              <td class="px-4 py-3.5">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${natBadgeClass}">
-                  ${emp.nationality}
-                </span>
-              </td>
-              <td class="px-4 py-3.5">${emp.group || emp.dept}</td>
-              <td class="px-4 py-3.5">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusBadgeClass}">
-                  ${emp.status}
-                </span>
-              </td>
-              <td class="px-4 py-3.5 whitespace-nowrap">${emp.joined}</td>
-              <td class="px-4 py-3.5 font-mono font-semibold">${emp.iqamaNo || "-"}</td>
-              <td class="px-4 py-3.5 text-xs whitespace-nowrap">
-                <div class="text-gray-700"><strong>Iss:</strong> ${emp.issueDate || "-"}</div>
-                <div class="text-gray-500"><strong>Exp:</strong> ${emp.expiryDate || "-"}</div>
-              </td>
-              <td class="px-4 py-3.5 font-mono text-xs">${emp.dmmId || "-"}</td>
-              <td class="px-4 py-3.5 text-xs whitespace-nowrap">
-                <div class="text-gray-700"><strong>Iss:</strong> ${emp.dmmIssueDate || "-"}</div>
-                <div class="text-gray-500"><strong>Exp:</strong> ${emp.dmmExpiryDate || "-"}</div>
-              </td>
-              <td class="px-4 py-3.5 text-xs text-gray-500">${emp.note || "-"}</td>
-            `;
-            tbody.appendChild(row);
-          });
-        }
-
-        document.getElementById("paginationInfo").innerText =
-          totalEntries === 0
-            ? "Showing 0 to 0 of 0 entries"
-            : `Showing ${startIdx + 1} to ${endIdx} of ${totalEntries} entries`;
-
-        const controls = document.getElementById("paginationControls");
-        controls.innerHTML = "";
-
-        const prevBtn = document.createElement("button");
-        prevBtn.innerText = "Prev";
-        prevBtn.className =
-          "px-2.5 py-1 text-xs border rounded bg-white hover:bg-gray-100 disabled:opacity-50";
-        prevBtn.disabled = currentPage === 1;
-        prevBtn.onclick = () => {
-          if (currentPage > 1) {
-            currentPage--;
-            renderEmployeeTable();
-          }
-        };
-        controls.appendChild(prevBtn);
-
-        for (let i = 1; i <= totalPages; i++) {
-          const btn = document.createElement("button");
-          btn.innerText = i;
-          btn.className = `px-2.5 py-1 text-xs border rounded ${i === currentPage ? "bg-indigo-600 text-white" : "bg-white hover:bg-gray-100"}`;
-          btn.onclick = () => {
-            currentPage = i;
-            renderEmployeeTable();
-          };
-          controls.appendChild(btn);
-        }
-
-        const nextBtn = document.createElement("button");
-        nextBtn.innerText = "Next";
-        nextBtn.className =
-          "px-2.5 py-1 text-xs border rounded bg-white hover:bg-gray-100 disabled:opacity-50";
-        nextBtn.disabled = currentPage === totalPages || totalPages === 0;
-        nextBtn.onclick = () => {
-          if (currentPage < totalPages) {
-            currentPage++;
-            renderEmployeeTable();
-          }
-        };
-        controls.appendChild(nextBtn);
-      }
-
-      // --- IQAMA VIEW FILTERS & TABLE ---
-      function filterIqamaCard(filterType) {
-        iqamaCardFilter = filterType;
-        document
-          .querySelectorAll("#tab-iqama .kpi-card")
-          .forEach((card) => card.classList.remove("active-card", "ring-2"));
-
-        const banner = document.getElementById("iqamaFilterBanner");
-        const bannerText = document.getElementById("iqamaBannerText");
-
-        if (filterType === "soon") {
-          document
-            .getElementById("iqcard-soon")
-            .classList.add("active-card", "ring-2");
-          banner.classList.remove("hidden");
-          bannerText.innerText =
-            "Filtered View: Iqama Expiring Soon (30 Days or Less)";
-        } else if (filterType === "expired") {
-          document
-            .getElementById("iqcard-expired")
-            .classList.add("active-card", "ring-2");
-          banner.classList.remove("hidden");
-          bannerText.innerText = "Filtered View: Expired Iqama Documents";
-        } else if (filterType === "dmm-expired") {
-          document
-            .getElementById("iqcard-dmm-expired")
-            .classList.add("active-card", "ring-2");
-          banner.classList.remove("hidden");
-          bannerText.innerText = "Filtered View: Expired DMM ID Cards";
-        } else {
-          document
-            .getElementById("iqcard-all")
-            .classList.add("active-card", "ring-2");
-          banner.classList.add("hidden");
-        }
-
-        applyIqamaFilters();
-      }
-
-      function onIqamaSearchInput() {
-        applyIqamaFilters();
-      }
-
-      function applyIqamaFilters() {
-        const query = document
-          .getElementById("iqamaSearch")
-          .value.toLowerCase()
-          .trim();
-
-        filteredIqamaData = employeesData.filter((emp) => {
-          const daysLeft = calculateDaysRemaining(emp.expiryDate);
-          const dmmDaysLeft = calculateDaysRemaining(emp.dmmExpiryDate);
-          let matchesCard = true;
-
-          if (iqamaCardFilter === "soon")
-            matchesCard = daysLeft !== null && daysLeft >= 0 && daysLeft <= 30;
-          else if (iqamaCardFilter === "expired")
-            matchesCard = daysLeft !== null && daysLeft < 0;
-          else if (iqamaCardFilter === "dmm-expired")
-            matchesCard = dmmDaysLeft !== null && dmmDaysLeft < 0;
-
-          const matchesQuery =
-            emp.name.toLowerCase().includes(query) ||
-            emp.iqamaNo.toLowerCase().includes(query) ||
-            emp.dmmId.toLowerCase().includes(query);
-
-          return matchesCard && matchesQuery;
-        });
-
-        iqamaCurrentPage = 1;
-        renderIqamaTable();
-      }
-
-      function onIqamaPageSizeChange() {
-        const val = document.getElementById("iqamaPageSize").value;
-        iqamaPageSize = val === "all" ? filteredIqamaData.length : parseInt(val, 10);
-        iqamaCurrentPage = 1;
-        renderIqamaTable();
-      }
-
-      function renderIqamaTable() {
-        const tbody = document.getElementById("iqamaTableBody");
-        tbody.innerHTML = "";
-
-        const totalEntries = filteredIqamaData.length;
-        const effectivePageSize = iqamaPageSize === 0 ? totalEntries : iqamaPageSize;
-        const totalPages = Math.ceil(totalEntries / effectivePageSize) || 1;
-
-        if (iqamaCurrentPage > totalPages) iqamaCurrentPage = totalPages;
-
-        const startIdx = (iqamaCurrentPage - 1) * effectivePageSize;
-        const endIdx = Math.min(startIdx + effectivePageSize, totalEntries);
-        const pageData = filteredIqamaData.slice(startIdx, endIdx);
-
-        if (pageData.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-gray-400">No matching documents found</td></tr>`;
-        } else {
-          pageData.forEach((emp, index) => {
-            const daysLeft = calculateDaysRemaining(emp.expiryDate);
-            const dmmDaysLeft = calculateDaysRemaining(emp.dmmExpiryDate);
-
-            let statusBadge = `<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-xs font-semibold">Valid</span>`;
-            if (daysLeft !== null && daysLeft < 0) {
-              statusBadge = `<span class="bg-red-100 text-red-800 px-2 py-0.5 rounded-full text-xs font-semibold">Expired</span>`;
-            } else if (daysLeft !== null && daysLeft <= 30) {
-              statusBadge = `<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-xs font-semibold">Expiring Soon</span>`;
-            }
-
-            let dmmStatusBadge = `<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-xs font-semibold">Active</span>`;
-            if (dmmDaysLeft !== null && dmmDaysLeft < 0) {
-              dmmStatusBadge = `<span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full text-xs font-semibold">Expired</span>`;
-            }
-
-            const row = document.createElement("tr");
-            row.className = "hover:bg-gray-50 transition";
-            row.innerHTML = `
-              <td class="px-3 py-3.5 text-center font-medium text-gray-500">${startIdx + index + 1}</td>
-              <td class="px-4 py-3.5">
-                <div class="font-bold text-gray-900">${emp.name}</div>
-                <div class="text-xs text-gray-400">ID: ${emp.id}</div>
-              </td>
-              <td class="px-4 py-3.5 font-mono font-semibold">${emp.iqamaNo}</td>
-              <td class="px-4 py-3.5 text-xs">
-                <div><strong>Iss:</strong> ${emp.issueDate || "-"}</div>
-                <div><strong>Exp:</strong> ${emp.expiryDate || "-"}</div>
-              </td>
-              <td class="px-4 py-3.5">${statusBadge}</td>
-              <td class="px-4 py-3.5 font-mono">${emp.dmmId}</td>
-              <td class="px-4 py-3.5 text-xs">
-                <div><strong>Iss:</strong> ${emp.dmmIssueDate || "-"}</div>
-                <div><strong>Exp:</strong> ${emp.dmmExpiryDate || "-"}</div>
-              </td>
-              <td class="px-4 py-3.5">${dmmStatusBadge}</td>
-              <td class="px-4 py-3.5"><span class="text-xs font-medium bg-slate-100 text-slate-700 px-2 py-1 rounded">${emp.vacationStatus}</span></td>
-            `;
-            tbody.appendChild(row);
-          });
-        }
-
-        document.getElementById("iqamaPaginationInfo").innerText =
-          totalEntries === 0
-            ? "Showing 0 to 0 of 0 entries"
-            : `Showing ${startIdx + 1} to ${endIdx} of ${totalEntries} entries`;
-      }
-
-      // --- TAB SWITCHING & AUTO CLOSE ON MOBILE ---
-      function switchTab(tab) {
-        const tabs = [
-          "tab-dashboard",
-          "tab-iqama",
-          "tab-orgchart",
-          "tab-vacation",
-          "tab-heavy-equipment",
-          "tab-light-equipment"
-        ];
-
-        tabs.forEach((tabId) => {
-          const el = document.getElementById(tabId);
-          if (el) el.classList.add("hidden");
-        });
-
-        document.querySelectorAll("#sidebar-nav button").forEach((btn) => {
-          btn.className =
-            "nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-gray-300 font-medium transition";
-        });
-
-        const tabConfig = {
-          dashboard: {
-            elementId: "tab-dashboard",
-            navId: "nav-dashboard",
-            title: "Employee Overview"
-          },
-          iqama: {
-            elementId: "tab-iqama",
-            navId: "nav-iqama",
-            title: "Iqama & DMM Expiry Center"
-          },
-          orgchart: {
-            elementId: "tab-orgchart",
-            navId: "nav-orgchart",
-            title: "Organizational Chart"
-          },
-          vacation: {
-            elementId: "tab-vacation",
-            navId: "nav-vacation",
-            title: "Vacation Management"
-          },
-          "heavy-equipment": {
-            elementId: "tab-heavy-equipment",
-            navId: "nav-heavy-equipment",
-            title: "Heavy Equipment Overview"
-          },
-          "light-equipment": {
-            elementId: "tab-light-equipment",
-            navId: "nav-light-equipment",
-            title: "Light Equipment Overview"
-          }
-        };
-
-        const activeTab = tabConfig[tab];
-        if (activeTab) {
-          const contentEl = document.getElementById(activeTab.elementId);
-          const navEl = document.getElementById(activeTab.navId);
-          const titleEl = document.getElementById("page-title");
-
-          if (contentEl) contentEl.classList.remove("hidden");
-          if (navEl) {
-            navEl.className =
-              "nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg bg-indigo-600 text-white font-medium transition";
-          }
-          if (titleEl) titleEl.innerText = activeTab.title;
-        }
-
-        // Auto-close sidebar on mobile after clicking a link
-        if (window.innerWidth < 768) {
-          const sidebar = document.getElementById("sidebar");
-          const overlay = document.getElementById("sidebar-overlay");
-          if (!sidebar.classList.contains("-translate-x-full")) {
-            sidebar.classList.add("-translate-x-full");
-            overlay.classList.add("hidden");
-          }
-        }
-      }
-
-      // --- EXPORT FUNCTIONS ---
-      function exportToExcel(type) {
-        const dataToExport = type === "iqama" ? filteredIqamaData : filteredData;
-        const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
-        XLSX.writeFile(workbook, `ProEMS_${type}_export.xlsx`);
-      }
-
-      function exportToPDF(type) {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        doc.text(`ProEMS ${type.toUpperCase()} Export`, 14, 15);
-
-        const data = type === "iqama" ? filteredIqamaData : filteredData;
-        const headers = type === "iqama"
-          ? [["ID", "Name", "Iqama No", "Iqama Exp", "DMM ID", "DMM Exp"]]
-          : [["ID", "Name", "Role", "Group", "Iqama No", "DMM ID"]];
-
-        const rows = data.map((e) =>
-          type === "iqama"
-            ? [e.id, e.name, e.iqamaNo, e.expiryDate, e.dmmId, e.dmmExpiryDate]
-            : [e.id, e.name, e.role, e.group || e.dept, e.iqamaNo, e.dmmId]
-        );
-
-        doc.autoTable({
-          head: headers,
-          body: rows,
-          startY: 20
-        });
-
-        doc.save(`ProEMS_${type}_export.pdf`);
-      }
-
-      // --- CHART INITIALIZATION ---
-      function initCharts() {
-        const ctxNat = document.getElementById("nationalityChart").getContext("2d");
-        new Chart(ctxNat, {
-          type: "doughnut",
-          data: {
-            labels: ["Indian", "Bangladeshi", "Saudi"],
-            datasets: [{
-              data: [1, 2, 1],
-              backgroundColor: ["#6366f1", "#3b82f6", "#10b981"]
-            }]
-          },
-          options: { responsive: true, maintainAspectRatio: false }
-        });
-
-        const ctxDept = document.getElementById("deptChart").getContext("2d");
-        new Chart(ctxDept, {
-          type: "bar",
-          data: {
-            labels: ["Ecopower", "Administration", "IT", "HSE"],
-            datasets: [{
-              label: "Employees",
-              data: [2, 1, 1, 1],
-              backgroundColor: "#6366f1"
-            }]
-          },
-          options: { responsive: true, maintainAspectRatio: false }
-        });
-      }
-
-      // --- INITIALIZE ON LOAD ---
-      window.onload = () => {
-        updateKPIData();
-        renderEmployeeTable();
-        renderIqamaTable();
-        initCharts();
-      };
-    </script>
-  </body>
+    }
+  });
+}
+
+/* ============================================================
+   2. RENDER IQAMA & DOCUMENTS
+   ============================================================ */
+let iqamaFilter = "all";
+let iqamaSearchQuery = "";
+let iqamaPage = 1;
+const iqamaPerPage = 10;
+
+function renderIqama(){
+  const counts = {
+    all: employees.length,
+    critical: employees.filter(e => e.daysRemaining <= 14).length,
+    soon: employees.filter(e => e.daysRemaining > 14 && e.daysRemaining <= 30).length,
+    valid: employees.filter(e => e.daysRemaining > 30).length,
+    expired: employees.filter(e => e.daysRemaining < 0).length,
+  };
+
+  document.getElementById("iqamaAlertCards").innerHTML = `
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase text-slate-500">Expired &amp; Critical</p>
+        <p class="text-xl font-bold text-rose-600 mt-1 mono-num">${counts.critical}</p>
+      </div>
+      <div class="w-10 h-10 rounded-lg bg-rose-500/10 text-rose-600 flex items-center justify-center"><i data-lucide="alert-octagon" class="w-5 h-5"></i></div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase text-slate-500">Expiring Soon (15-30d)</p>
+        <p class="text-xl font-bold text-amber-500 mt-1 mono-num">${counts.soon}</p>
+      </div>
+      <div class="w-10 h-10 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center"><i data-lucide="clock" class="w-5 h-5"></i></div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase text-slate-500">Valid Permits</p>
+        <p class="text-xl font-bold text-emerald-600 mt-1 mono-num">${counts.valid}</p>
+      </div>
+      <div class="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center"><i data-lucide="check-circle-2" class="w-5 h-5"></i></div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase text-slate-500">Total Monitored</p>
+        <p class="text-xl font-bold text-slate-900 dark:text-white mt-1 mono-num">${counts.all}</p>
+      </div>
+      <div class="w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center"><i data-lucide="file-text" class="w-5 h-5"></i></div>
+    </div>
+  `;
+
+  const filters = [
+    { key: "all", label: "All Permits" },
+    { key: "critical", label: `Critical (≤14d) (${counts.critical})` },
+    { key: "soon", label: `Expiring Soon (15-30d) (${counts.soon})` },
+    { key: "valid", label: `Valid (${counts.valid})` },
+    { key: "expired", label: `Expired (${counts.expired})` }
+  ];
+
+  document.getElementById("iqamaFilterPills").innerHTML = filters.map(f => `
+    <button onclick="setIqamaFilter('${f.key}')" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${iqamaFilter === f.key ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300'}">
+      ${f.label}
+    </button>
+  `).join("");
+
+  // Filter & Search
+  let filtered = employees.filter(e => {
+    if(iqamaFilter === "critical") return e.daysRemaining <= 14;
+    if(iqamaFilter === "soon") return e.daysRemaining > 14 && e.daysRemaining <= 30;
+    if(iqamaFilter === "valid") return e.daysRemaining > 30;
+    if(iqamaFilter === "expired") return e.daysRemaining < 0;
+    return true;
+  });
+
+  if(iqamaSearchQuery.trim()){
+    const q = iqamaSearchQuery.toLowerCase();
+    filtered = filtered.filter(e => e.name.toLowerCase().includes(q) || e.id.toLowerCase().includes(q) || e.iqama.includes(q) || e.craft.toLowerCase().includes(q));
+  }
+
+  const totalPages = Math.ceil(filtered.length / iqamaPerPage) || 1;
+  if(iqamaPage > totalPages) iqamaPage = totalPages;
+  const startIdx = (iqamaPage - 1) * iqamaPerPage;
+  const pageData = filtered.slice(startIdx, startIdx + iqamaPerPage);
+
+  document.getElementById("iqamaTableBody").innerHTML = pageData.length === 0 ?
+    `<tr><td colspan="7" class="text-center py-8 text-slate-500">No records found.</td></tr>` :
+    pageData.map(e => `
+      <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs font-bold shrink-0">${e.name.split(' ').map(n=>n[0]).join('')}</div>
+            <div>
+              <p class="font-medium text-slate-900 dark:text-white">${e.name}</p>
+              <p class="text-xs text-slate-500">${e.id} • ${e.craft}</p>
+            </div>
+          </div>
+        </td>
+        <td class="px-4 py-3 mono-num font-medium text-slate-900 dark:text-white">${e.iqama}</td>
+        <td class="px-4 py-3 mono-num text-slate-600 dark:text-slate-400">${fmtDate(e.issueDate)}</td>
+        <td class="px-4 py-3 mono-num text-slate-600 dark:text-slate-400">${fmtDate(e.expiryDate)}</td>
+        <td class="px-4 py-3">${remainingLabel(e.daysRemaining)}</td>
+        <td class="px-4 py-3">${statusBadge(e.status)}</td>
+        <td class="px-4 py-3">
+          <button onclick="openIdCardModal('${e.id}')" class="px-2.5 py-1 text-xs font-medium rounded bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:text-indigo-400">View ID</button>
+        </td>
+      </tr>
+    `).join("");
+
+  document.getElementById("iqamaPagination").innerHTML = `
+    <span>Showing ${filtered.length === 0 ? 0 : startIdx + 1} to ${Math.min(startIdx + iqamaPerPage, filtered.length)} of ${filtered.length} entries</span>
+    <div class="flex items-center gap-1">
+      <button onclick="changeIqamaPage(${iqamaPage - 1})" ${iqamaPage <= 1 ? 'disabled class="opacity-40 cursor-not-allowed"' : ''} class="px-3 py-1 rounded border border-slate-200 dark:border-slate-700">Prev</button>
+      <span class="px-3 py-1 font-medium mono-num">${iqamaPage} / ${totalPages}</span>
+      <button onclick="changeIqamaPage(${iqamaPage + 1})" ${iqamaPage >= totalPages ? 'disabled class="opacity-40 cursor-not-allowed"' : ''} class="px-3 py-1 rounded border border-slate-200 dark:border-slate-700">Next</button>
+    </div>
+  `;
+}
+
+function setIqamaFilter(f){ iqamaFilter = f; iqamaPage = 1; renderIqama(); }
+function changeIqamaPage(p){ iqamaPage = p; renderIqama(); }
+document.getElementById("iqamaSearch").addEventListener("input", (e) => {
+  iqamaSearchQuery = e.target.value; iqamaPage = 1; renderIqama();
+});
+
+/* ============================================================
+   3. RENDER ORG & SHIFT CRAFT
+   ============================================================ */
+function renderOrg(){
+  // Org Tree Representation
+  document.getElementById("orgChart").innerHTML = `
+    <div class="flex flex-col items-center min-w-[700px] py-4">
+      <div class="bg-slate-900 text-white rounded-xl p-4 text-center shadow-lg w-64 border border-slate-700">
+        <p class="text-xs font-semibold text-emerald-400 uppercase">General Management</p>
+        <p class="font-bold text-sm mt-0.5">Safari Contracting Company</p>
+        <p class="text-xs text-slate-400 mt-1">Dammam HQ • Saudi Arabia</p>
+      </div>
+      <div class="w-px h-8 bg-slate-300 dark:bg-slate-700"></div>
+      <div class="grid grid-cols-4 gap-6 w-full max-w-4xl px-4">
+        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-center shadow-sm">
+          <p class="text-xs font-semibold text-indigo-600 dark:text-indigo-400">Operations</p>
+          <p class="text-xs text-slate-500 mt-1">${employees.filter(e=>e.department==='Operations').length} Personnel</p>
+        </div>
+        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-center shadow-sm">
+          <p class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">Maintenance</p>
+          <p class="text-xs text-slate-500 mt-1">${employees.filter(e=>e.department==='Maintenance').length} Personnel</p>
+        </div>
+        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-center shadow-sm">
+          <p class="text-xs font-semibold text-amber-600 dark:text-amber-400">Safety (HSE)</p>
+          <p class="text-xs text-slate-500 mt-1">${employees.filter(e=>e.department==='Safety (HSE)').length} Personnel</p>
+        </div>
+        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-center shadow-sm">
+          <p class="text-xs font-semibold text-sky-600 dark:text-sky-400">Engineering</p>
+          <p class="text-xs text-slate-500 mt-1">${employees.filter(e=>['Electrical','Mechanical','Civil'].includes(e.department)).length} Personnel</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Shift Cards
+  const shiftCounts = {};
+  shifts.forEach(s => shiftCounts[s] = employees.filter(e => e.shift === s).length);
+  document.getElementById("shiftCards").innerHTML = Object.entries(shiftCounts).map(([sh, count]) => `
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase text-slate-500">${sh}</p>
+        <p class="text-xl font-bold text-slate-900 dark:text-white mt-1 mono-num">${count} <span class="text-xs font-normal text-slate-500">workers</span></p>
+      </div>
+      <div class="w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
+        <i data-lucide="clock" class="w-5 h-5"></i>
+      </div>
+    </div>
+  `).join("");
+
+  // Craft Distribution Grid
+  const craftCounts = {};
+  crafts.forEach(c => craftCounts[c] = employees.filter(e => e.craft === c).length);
+  document.getElementById("craftGrid").innerHTML = Object.entries(craftCounts).map(([cr, count]) => `
+    <div class="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 rounded-lg p-3 text-center">
+      <p class="text-xs text-slate-500 font-medium truncate">${cr}</p>
+      <p class="text-lg font-bold text-slate-900 dark:text-white mt-1 mono-num">${count}</p>
+    </div>
+  `).join("");
+
+  // Crew Assignment
+  document.getElementById("crewTableBody").innerHTML = employees.slice(0, 12).map(e => `
+    <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+      <td class="px-4 py-3">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs font-bold">${e.name.split(' ').map(n=>n[0]).join('')}</div>
+          <div>
+            <p class="font-medium text-slate-900 dark:text-white">${e.name}</p>
+            <p class="text-xs text-slate-500">${e.id}</p>
+          </div>
+        </div>
+      </td>
+      <td class="px-4 py-3 font-medium text-slate-700 dark:text-slate-300">${e.craft}</td>
+      <td class="px-4 py-3"><span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400">${e.shift}</span></td>
+      <td class="px-4 py-3 text-slate-600 dark:text-slate-400 font-medium">${e.jobSite}</td>
+    </tr>
+  `).join("");
+}
+
+/* ============================================================
+   4. RENDER TOTAL MANPOWER DIRECTORY
+   ============================================================ */
+let mpSearchQuery = "";
+let mpDeptFilter = "all";
+let mpCraftFilter = "all";
+let mpStatusFilter = "all";
+let mpViewMode = "table"; // 'table' or 'card'
+let mpPage = 1;
+const mpPerPage = 12;
+
+let visibleColumns = {
+  id: true,
+  name: true,
+  nationality: true,
+  craft: true,
+  department: true,
+  iqama: true,
+  expiryDate: true,
+  dutyStatus: true,
+  jobSite: true
+};
+
+function renderManpowerFilters(){
+  // Populate dropdowns
+  const deptSelect = document.getElementById("mpDeptFilter");
+  deptSelect.innerHTML = `<option value="all">All Departments</option>` + departments.map(d => `<option value="${d}">${d}</option>`).join("");
+  deptSelect.value = mpDeptFilter;
+
+  const craftSelect = document.getElementById("mpCraftFilter");
+  craftSelect.innerHTML = `<option value="all">All Crafts</option>` + crafts.map(c => `<option value="${c}">${c}</option>`).join("");
+  craftSelect.value = mpCraftFilter;
+
+  document.getElementById("mpStatusFilter").value = mpStatusFilter;
+
+  // Column toggle menu
+  const colNames = {
+    id: "Employee ID", name: "Name", nationality: "Nationality", craft: "Craft",
+    department: "Department", iqama: "Iqama No.", expiryDate: "Expiry Date", dutyStatus: "Status", jobSite: "Job Site"
+  };
+  document.getElementById("colToggleMenu").innerHTML = Object.entries(colNames).map(([key, label]) => `
+    <label class="flex items-center gap-2 px-2 py-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded cursor-pointer">
+      <input type="checkbox" ${visibleColumns[key] ? 'checked' : ''} onchange="toggleColumn('${key}')" />
+      <span class="text-xs">${label}</span>
+    </label>
+  `).join("");
+}
+
+function renderManpower(){
+  renderManpowerFilters();
+
+  let filtered = employees.filter(e => {
+    if(mpDeptFilter !== "all" && e.department !== mpDeptFilter) return false;
+    if(mpCraftFilter !== "all" && e.craft !== mpCraftFilter) return false;
+    if(mpStatusFilter !== "all" && e.dutyStatus !== mpStatusFilter) return false;
+    if(mpSearchQuery.trim()){
+      const q = mpSearchQuery.toLowerCase();
+      return e.name.toLowerCase().includes(q) || e.id.toLowerCase().includes(q) || e.iqama.includes(q) || e.craft.toLowerCase().includes(q);
+    }
+    return true;
+  });
+
+  const totalPages = Math.ceil(filtered.length / mpPerPage) || 1;
+  if(mpPage > totalPages) mpPage = totalPages;
+  const startIdx = (mpPage - 1) * mpPerPage;
+  const pageData = filtered.slice(startIdx, startIdx + mpPerPage);
+
+  // Table view headers
+  const colDefs = [
+    { key: "id", label: "ID" },
+    { key: "name", label: "Employee Name" },
+    { key: "nationality", label: "Nationality" },
+    { key: "craft", label: "Craft" },
+    { key: "department", label: "Department" },
+    { key: "iqama", label: "Iqama No." },
+    { key: "expiryDate", label: "Expiry Date" },
+    { key: "dutyStatus", label: "Status" },
+    { key: "jobSite", label: "Job Site" }
+  ];
+
+  document.getElementById("mpTableHead").innerHTML = colDefs.filter(c => visibleColumns[c.key]).map(c => `
+    <th class="text-left font-semibold px-4 py-3">${c.label}</th>
+  `).join("") + `<th class="text-left font-semibold px-4 py-3">Actions</th>`;
+
+  document.getElementById("mpTableBody").innerHTML = pageData.length === 0 ?
+    `<tr><td colspan="10" class="text-center py-8 text-slate-500">No matching manpower records found.</td></tr>` :
+    pageData.map(e => `
+      <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+        ${visibleColumns.id ? `<td class="px-4 py-3 font-semibold text-slate-900 dark:text-white">${e.id}</td>` : ''}
+        ${visibleColumns.name ? `
+          <td class="px-4 py-3">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs font-bold">${e.name.split(' ').map(n=>n[0]).join('')}</div>
+              <span class="font-medium text-slate-900 dark:text-white">${e.name}</span>
+            </div>
+          </td>` : ''}
+        ${visibleColumns.nationality ? `<td class="px-4 py-3">${nationalityFlags[e.nationality]||''} ${e.nationality}</td>` : ''}
+        ${visibleColumns.craft ? `<td class="px-4 py-3 text-slate-700 dark:text-slate-300 font-medium">${e.craft}</td>` : ''}
+        ${visibleColumns.department ? `<td class="px-4 py-3 text-slate-600 dark:text-slate-400">${e.department}</td>` : ''}
+        ${visibleColumns.iqama ? `<td class="px-4 py-3 mono-num">${e.iqama}</td>` : ''}
+        ${visibleColumns.expiryDate ? `<td class="px-4 py-3 mono-num">${fmtDate(e.expiryDate)}</td>` : ''}
+        ${visibleColumns.dutyStatus ? `<td class="px-4 py-3">${statusBadge(e.dutyStatus)}</td>` : ''}
+        ${visibleColumns.jobSite ? `<td class="px-4 py-3 text-slate-600 dark:text-slate-400">${e.jobSite}</td>` : ''}
+        <td class="px-4 py-3">
+          <button onclick="openIdCardModal('${e.id}')" class="px-2.5 py-1 text-xs font-medium rounded bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:text-indigo-400">View ID</button>
+        </td>
+      </tr>
+    `).join("");
+
+  // Card view
+  document.getElementById("mpCardView").innerHTML = pageData.map(e => `
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400">${e.id}</span>
+          <span>${nationalityFlags[e.nationality]||''}</span>
+        </div>
+        <p class="font-semibold text-base text-slate-900 dark:text-white">${e.name}</p>
+        <p class="text-xs font-medium text-emerald-600 mt-0.5">${e.craft} • ${e.department}</p>
+        <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-1 text-xs text-slate-500">
+          <p>Iqama: <span class="mono-num text-slate-800 dark:text-slate-200">${e.iqama}</span></p>
+          <p>Job Site: <span class="text-slate-800 dark:text-slate-200">${e.jobSite}</span></p>
+        </div>
+      </div>
+      <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        ${statusBadge(e.dutyStatus)}
+        <button onclick="openIdCardModal('${e.id}')" class="px-3 py-1 text-xs font-medium rounded bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:text-indigo-400">View ID</button>
+      </div>
+    </div>
+  `).join("");
+
+  document.getElementById("mpPagination").innerHTML = `
+    <span>Showing ${filtered.length === 0 ? 0 : startIdx + 1} to ${Math.min(startIdx + mpPerPage, filtered.length)} of ${filtered.length} entries</span>
+    <div class="flex items-center gap-1">
+      <button onclick="changeMpPage(${mpPage - 1})" ${mpPage <= 1 ? 'disabled class="opacity-40 cursor-not-allowed"' : ''} class="px-3 py-1 rounded border border-slate-200 dark:border-slate-700">Prev</button>
+      <span class="px-3 py-1 font-medium mono-num">${mpPage} / ${totalPages}</span>
+      <button onclick="changeMpPage(${mpPage + 1})" ${mpPage >= totalPages ? 'disabled class="opacity-40 cursor-not-allowed"' : ''} class="px-3 py-1 rounded border border-slate-200 dark:border-slate-700">Next</button>
+    </div>
+  `;
+}
+
+function toggleColumn(key){
+  visibleColumns[key] = !visibleColumns[key];
+  renderManpower();
+}
+
+document.getElementById("mpSearch").addEventListener("input", (e) => { mpSearchQuery = e.target.value; mpPage = 1; renderManpower(); });
+document.getElementById("mpDeptFilter").addEventListener("change", (e) => { mpDeptFilter = e.target.value; mpPage = 1; renderManpower(); });
+document.getElementById("mpCraftFilter").addEventListener("change", (e) => { mpCraftFilter = e.target.value; mpPage = 1; renderManpower(); });
+document.getElementById("mpStatusFilter").addEventListener("change", (e) => { mpStatusFilter = e.target.value; mpPage = 1; renderManpower(); });
+function changeMpPage(p){ mpPage = p; renderManpower(); }
+
+document.getElementById("colToggleBtn").addEventListener("click", () => {
+  const menu = document.getElementById("colToggleMenu");
+  menu.classList.toggle("hidden");
+});
+
+document.getElementById("mpViewTableBtn").addEventListener("click", () => {
+  mpViewMode = "table";
+  document.getElementById("mpTableView").classList.remove("hidden");
+  document.getElementById("mpCardView").classList.add("hidden");
+  document.getElementById("mpViewTableBtn").className = "flex items-center gap-1.5 text-sm font-medium px-3 py-2 bg-slate-900 text-white";
+  document.getElementById("mpViewCardBtn").className = "flex items-center gap-1.5 text-sm font-medium px-3 py-2 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400";
+});
+
+document.getElementById("mpViewCardBtn").addEventListener("click", () => {
+  mpViewMode = "card";
+  document.getElementById("mpTableView").classList.add("hidden");
+  document.getElementById("mpCardView").classList.remove("hidden");
+  document.getElementById("mpViewCardBtn").className = "flex items-center gap-1.5 text-sm font-medium px-3 py-2 bg-slate-900 text-white";
+  document.getElementById("mpViewTableBtn").className = "flex items-center gap-1.5 text-sm font-medium px-3 py-2 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400";
+});
+
+/* ============================================================
+   EXCEL & PDF EXPORT
+   ============================================================ */
+document.getElementById("exportExcelBtn").addEventListener("click", () => {
+  const exportData = employees.map(e => ({
+    "Employee ID": e.id,
+    "Full Name": e.name,
+    "Nationality": e.nationality,
+    "Craft": e.craft,
+    "Department": e.department,
+    "Shift": e.shift,
+    "Iqama No.": e.iqama,
+    "Iqama Expiry": fmtDate(e.expiryDate),
+    "Duty Status": e.dutyStatus,
+    "Job Site": e.jobSite
+  }));
+  const ws = XLSX.utils.json_to_sheet(exportData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Manpower");
+  XLSX.writeFile(wb, "Safari_Manpower_Directory.xlsx");
+});
+
+document.getElementById("exportPdfBtn").addEventListener("click", () => {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF('landscape');
+  doc.text("Safari Contracting Company - Total Manpower Report", 14, 15);
+  doc.setFontSize(10);
+  doc.text(`Generated on: ${fmtDate(today)} | Total Employees: ${employees.length}`, 14, 22);
+
+  const tableData = employees.map(e => [e.id, e.name, e.nationality, e.craft, e.department, e.iqama, fmtDate(e.expiryDate), e.dutyStatus, e.jobSite]);
+  doc.autoTable({
+    startY: 28,
+    head: [['ID', 'Name', 'Nationality', 'Craft', 'Department', 'Iqama No.', 'Expiry', 'Status', 'Job Site']],
+    body: tableData,
+    theme: 'grid',
+    headStyles: { fillColor: [15, 23, 42] },
+    styles: { fontSize: 8 }
+  });
+  doc.save("Safari_Manpower_Report.pdf");
+});
+
+/* ============================================================
+   5. RENDER EQUIPMENT & ASSETS
+   ============================================================ */
+let equipFilter = "all";
+let equipSearchQuery = "";
+let equipPage = 1;
+const equipPerPage = 10;
+
+function renderEquipment(){
+  const counts = {
+    all: equipmentList.length,
+    inUse: equipmentList.filter(e => e.status === "In Use").length,
+    available: equipmentList.filter(e => e.status === "Available").length,
+    maintenance: equipmentList.filter(e => e.status === "Under Maintenance").length,
+  };
+
+  document.getElementById("equipKpis").innerHTML = `
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase text-slate-500">In Use on Site</p>
+        <p class="text-xl font-bold text-indigo-600 mt-1 mono-num">${counts.inUse}</p>
+      </div>
+      <div class="w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-600 flex items-center justify-center"><i data-lucide="wrench" class="w-5 h-5"></i></div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase text-slate-500">Available Inventory</p>
+        <p class="text-xl font-bold text-emerald-600 mt-1 mono-num">${counts.available}</p>
+      </div>
+      <div class="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center"><i data-lucide="check-circle" class="w-5 h-5"></i></div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase text-slate-500">Under Maintenance</p>
+        <p class="text-xl font-bold text-amber-500 mt-1 mono-num">${counts.maintenance}</p>
+      </div>
+      <div class="w-10 h-10 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase text-slate-500">Total Assets</p>
+        <p class="text-xl font-bold text-slate-900 dark:text-white mt-1 mono-num">${counts.all}</p>
+      </div>
+      <div class="w-10 h-10 rounded-lg bg-slate-500/10 text-slate-500 flex items-center justify-center"><i data-lucide="layers" class="w-5 h-5"></i></div>
+    </div>
+  `;
+
+  const pills = [
+    { key: "all", label: "All Assets" },
+    { key: "In Use", label: `In Use (${counts.inUse})` },
+    { key: "Available", label: `Available (${counts.available})` },
+    { key: "Under Maintenance", label: `Maintenance (${counts.maintenance})` }
+  ];
+
+  document.getElementById("equipFilterPills").innerHTML = pills.map(p => `
+    <button onclick="setEquipFilter('${p.key}')" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${equipFilter === p.key ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300'}">
+      ${p.label}
+    </button>
+  `).join("");
+
+  let filtered = equipmentList.filter(e => {
+    if(equipFilter !== "all" && e.status !== equipFilter) return false;
+    if(equipSearchQuery.trim()){
+      const q = equipSearchQuery.toLowerCase();
+      return e.name.toLowerCase().includes(q) || e.id.toLowerCase().includes(q) || e.assignedTo.toLowerCase().includes(q) || e.category.toLowerCase().includes(q);
+    }
+    return true;
+  });
+
+  const totalPages = Math.ceil(filtered.length / equipPerPage) || 1;
+  if(equipPage > totalPages) equipPage = totalPages;
+  const startIdx = (equipPage - 1) * equipPerPage;
+  const pageData = filtered.slice(startIdx, startIdx + equipPerPage);
+
+  document.getElementById("equipTableBody").innerHTML = pageData.length === 0 ?
+    `<tr><td colspan="7" class="text-center py-8 text-slate-500">No equipment found.</td></tr>` :
+    pageData.map(e => `
+      <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+        <td class="px-4 py-3 font-bold text-slate-900 dark:text-white">${e.id}</td>
+        <td class="px-4 py-3 font-medium text-slate-800 dark:text-slate-200">${e.name}</td>
+        <td class="px-4 py-3 text-slate-600 dark:text-slate-400">${e.category}</td>
+        <td class="px-4 py-3 text-slate-700 dark:text-slate-300">${e.assignedTo}</td>
+        <td class="px-4 py-3">${statusBadge(e.status)}</td>
+        <td class="px-4 py-3 mono-num text-slate-600 dark:text-slate-400">${fmtDate(e.assignedDate)}</td>
+        <td class="px-4 py-3 mono-num text-slate-600 dark:text-slate-400">${fmtDate(e.nextInspection)}</td>
+      </tr>
+    `).join("");
+
+  document.getElementById("equipPagination").innerHTML = `
+    <span>Showing ${filtered.length === 0 ? 0 : startIdx + 1} to ${Math.min(startIdx + equipPerPage, filtered.length)} of ${filtered.length} entries</span>
+    <div class="flex items-center gap-1">
+      <button onclick="changeEquipPage(${equipPage - 1})" ${equipPage <= 1 ? 'disabled class="opacity-40 cursor-not-allowed"' : ''} class="px-3 py-1 rounded border border-slate-200 dark:border-slate-700">Prev</button>
+      <span class="px-3 py-1 font-medium mono-num">${equipPage} / ${totalPages}</span>
+      <button onclick="changeEquipPage(${equipPage + 1})" ${equipPage >= totalPages ? 'disabled class="opacity-40 cursor-not-allowed"' : ''} class="px-3 py-1 rounded border border-slate-200 dark:border-slate-700">Next</button>
+    </div>
+  `;
+}
+
+function setEquipFilter(f){ equipFilter = f; equipPage = 1; renderEquipment(); }
+function changeEquipPage(p){ equipPage = p; renderEquipment(); }
+document.getElementById("equipSearch").addEventListener("input", (e) => {
+  equipSearchQuery = e.target.value; equipPage = 1; renderEquipment();
+});
+
+/* ============================================================
+   6. RENDER VACATION & LEAVE ANALYTICS
+   ============================================================ */
+let vacSearchQuery = "";
+let vacPage = 1;
+const vacPerPage = 8;
+
+function renderVacation(){
+  const totalLeave = vacationRequests.length;
+  const pendingApproval = vacationRequests.filter(v => v.approval === "Pending").length;
+  const approved = vacationRequests.filter(v => v.approval === "Approved").length;
+
+  document.getElementById("leaveKpis").innerHTML = `
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase text-slate-500">Pending Approvals</p>
+        <p class="text-xl font-bold text-amber-500 mt-1 mono-num">${pendingApproval}</p>
+      </div>
+      <div class="w-10 h-10 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center"><i data-lucide="clock" class="w-5 h-5"></i></div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase text-slate-500">Approved Leaves</p>
+        <p class="text-xl font-bold text-emerald-600 mt-1 mono-num">${approved}</p>
+      </div>
+      <div class="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center"><i data-lucide="check-circle-2" class="w-5 h-5"></i></div>
+    </div>
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase text-slate-500">Total Leave Requests</p>
+        <p class="text-xl font-bold text-slate-900 dark:text-white mt-1 mono-num">${totalLeave}</p>
+      </div>
+      <div class="w-10 h-10 rounded-lg bg-sky-500/10 text-sky-500 flex items-center justify-center"><i data-lucide="plane" class="w-5 h-5"></i></div>
+    </div>
+  `;
+
+  // Timeline Gantt Representation (Top 6)
+  document.getElementById("ganttChart").innerHTML = vacationRequests.slice(0, 6).map(v => {
+    const durationDays = Math.ceil((v.end - v.start)/86400000);
+    return `
+      <div class="flex items-center gap-4 text-xs py-1.5 border-b border-slate-100 dark:border-slate-800/60 last:border-0">
+        <div class="w-40 font-medium text-slate-900 dark:text-white truncate">${v.name}</div>
+        <div class="w-24 text-slate-500">${v.leaveType}</div>
+        <div class="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-3 overflow-hidden relative">
+          <div class="absolute left-0 top-0 bottom-0 bg-sky-500 rounded-full" style="width: ${Math.min(100, Math.max(20, durationDays * 3))}%;"></div>
+        </div>
+        <div class="w-32 text-right mono-num text-slate-500">${fmtDate(v.start)} → ${fmtDate(v.end)}</div>
+      </div>
+    `;
+  }).join("");
+
+  let filtered = vacationRequests;
+  if(vacSearchQuery.trim()){
+    const q = vacSearchQuery.toLowerCase();
+    filtered = filtered.filter(v => v.name.toLowerCase().includes(q) || v.id.toLowerCase().includes(q) || v.leaveType.toLowerCase().includes(q));
+  }
+
+  const totalPages = Math.ceil(filtered.length / vacPerPage) || 1;
+  if(vacPage > totalPages) vacPage = totalPages;
+  const startIdx = (vacPage - 1) * vacPerPage;
+  const pageData = filtered.slice(startIdx, startIdx + vacPerPage);
+
+  document.getElementById("vacTableBody").innerHTML = pageData.length === 0 ?
+    `<tr><td colspan="7" class="text-center py-8 text-slate-500">No vacation requests found.</td></tr>` :
+    pageData.map(v => `
+      <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+        <td class="px-4 py-3 font-medium text-slate-900 dark:text-white">${v.name} <span class="text-xs text-slate-500 block font-normal">${v.id}</span></td>
+        <td class="px-4 py-3 text-slate-700 dark:text-slate-300">${v.leaveType}</td>
+        <td class="px-4 py-3 mono-num text-slate-600 dark:text-slate-400">${fmtDate(v.start)}</td>
+        <td class="px-4 py-3 mono-num text-slate-600 dark:text-slate-400">${fmtDate(v.end)}</td>
+        <td class="px-4 py-3"><span class="px-2 py-0.5 rounded text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">${v.visaStatus}</span></td>
+        <td class="px-4 py-3 text-slate-600 dark:text-slate-400 font-mono text-xs">${v.flight}</td>
+        <td class="px-4 py-3">${statusBadge(v.approval)}</td>
+      </tr>
+    `).join("");
+
+  document.getElementById("vacPagination").innerHTML = `
+    <span>Showing ${filtered.length === 0 ? 0 : startIdx + 1} to ${Math.min(startIdx + vacPerPage, filtered.length)} of ${filtered.length} entries</span>
+    <div class="flex items-center gap-1">
+      <button onclick="changeVacPage(${vacPage - 1})" ${vacPage <= 1 ? 'disabled class="opacity-40 cursor-not-allowed"' : ''} class="px-3 py-1 rounded border border-slate-200 dark:border-slate-700">Prev</button>
+      <span class="px-3 py-1 font-medium mono-num">${vacPage} / ${totalPages}</span>
+      <button onclick="changeVacPage(${vacPage + 1})" ${vacPage >= totalPages ? 'disabled class="opacity-40 cursor-not-allowed"' : ''} class="px-3 py-1 rounded border border-slate-200 dark:border-slate-700">Next</button>
+    </div>
+  `;
+}
+
+document.getElementById("vacSearch").addEventListener("input", (e) => {
+  vacSearchQuery = e.target.value; vacPage = 1; renderVacation();
+});
+function changeVacPage(p){ vacPage = p; renderVacation(); }
+
+/* ============================================================
+   ID CARD MODAL
+   ============================================================ */
+function openIdCardModal(empId){
+  const e = employees.find(emp => emp.id === empId);
+  if(!e) return;
+
+  document.getElementById("idCardContent").innerHTML = `
+    <div class="bg-gradient-to-br from-slate-900 to-slate-950 text-white p-6 relative overflow-hidden">
+      <div class="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl"></div>
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div>
+          <p class="text-[11px] font-bold tracking-wider text-emerald-400 uppercase">Safari Contracting Company</p>
+          <p class="text-xs text-slate-400">Official Identification Badge</p>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center font-bold text-emerald-400 text-sm">
+          ${nationalityFlags[e.nationality]||'🌐'}
+        </div>
+      </div>
+      <div class="flex items-center gap-4 my-5">
+        <div class="w-16 h-16 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-xl font-bold text-white shrink-0">
+          ${e.name.split(' ').map(n=>n[0]).join('')}
+        </div>
+        <div>
+          <h3 class="font-bold text-base text-white leading-tight">${e.name}</h3>
+          <p class="text-xs text-emerald-400 font-medium mt-0.5">${e.craft}</p>
+          <p class="text-[11px] text-slate-400 mt-1">ID: <span class="mono-num text-white">${e.id}</span></p>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-2 bg-slate-800/60 rounded-xl p-3 text-xs border border-slate-700/50">
+        <div>
+          <p class="text-slate-400 text-[10px]">Department</p>
+          <p class="font-medium text-white truncate mt-0.5">${e.department}</p>
+        </div>
+        <div>
+          <p class="text-slate-400 text-[10px]">Iqama No.</p>
+          <p class="font-medium mono-num text-white truncate mt-0.5">${e.iqama}</p>
+        </div>
+        <div>
+          <p class="text-slate-400 text-[10px]">Job Site</p>
+          <p class="font-medium text-white truncate mt-0.5">${e.jobSite}</p>
+        </div>
+        <div>
+          <p class="text-slate-400 text-[10px]">Permit Expiry</p>
+          <p class="font-medium mono-num text-white truncate mt-0.5">${fmtDate(e.expiryDate)}</p>
+        </div>
+      </div>
+      <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-[11px]">
+        <span class="text-slate-400">Status: <strong class="text-emerald-400">${e.dutyStatus}</strong></span>
+        <span class="font-mono text-slate-500">Dammam, KSA</span>
+      </div>
+    </div>
+  `;
+  document.getElementById("idCardModal").classList.remove("hidden");
+  safeCreateIcons();
+}
+
+document.getElementById("idCardCloseBtn").addEventListener("click", () => {
+  document.getElementById("idCardModal").classList.add("hidden");
+});
+document.getElementById("idCardModal").addEventListener("click", (evt) => {
+  if(evt.target === document.getElementById("idCardModal")) document.getElementById("idCardModal").classList.add("hidden");
+});
+
+/* ============================================================
+   INITIALIZATION
+   ============================================================ */
+document.addEventListener("DOMContentLoaded", () => {
+  switchPage("dashboard");
+  safeCreateIcons();
+});
+</script>
+</body>
 </html>

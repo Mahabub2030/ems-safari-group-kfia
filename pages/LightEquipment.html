@@ -3,9 +3,1276 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>ProEMS - Employee Management System</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- SheetJS (XLSX Export) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <!-- jsPDF & AutoTable -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+  <style>
+    .active-card {
+      border-color: #6366f1 !important;
+      background-color: #eef2ff !important;
+    }
+    .sidebar-collapsed {
+      width: 4.5rem !important;
+    }
+    .sidebar-collapsed .sidebar-text {
+      display: none !important;
+    }
+  </style>
 </head>
-<body>
-<h1>LightEquipment</h1>
+<body class="bg-slate-100 font-sans antialiased text-slate-800">
+
+  <div class="flex h-screen overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="bg-slate-900 text-slate-300 w-64 flex-shrink-0 flex flex-col justify-between transition-all duration-300 z-30">
+      <div>
+        <!-- Logo -->
+        <div class="h-16 flex items-center justify-between px-4 border-b border-slate-800">
+          <div class="flex items-center space-x-3 overflow-hidden">
+            <div class="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-black text-xl flex-shrink-0">
+              P
+            </div>
+            <span class="sidebar-text font-bold text-lg text-white tracking-wide">ProEMS</span>
+          </div>
+          <button onclick="toggleSidebar()" class="text-slate-400 hover:text-white focus:outline-none">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="p-3 space-y-1 text-sm font-medium">
+          <button id="nav-dashboard" onclick="switchTab('dashboard')" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg bg-indigo-600 text-white transition">
+            <i class="fa-solid fa-chart-pie w-5 text-center"></i>
+            <span class="sidebar-text whitespace-nowrap">Dashboard</span>
+          </button>
+
+          <button id="nav-manpower" onclick="switchTab('manpower')" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 transition">
+            <i class="fa-solid fa-users-gear w-5 text-center"></i>
+            <span class="sidebar-text whitespace-nowrap">Total Manpower List</span>
+          </button>
+
+          <button id="nav-iqama" onclick="switchTab('iqama')" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 transition">
+            <i class="fa-solid fa-id-card w-5 text-center"></i>
+            <span class="sidebar-text whitespace-nowrap">Iqama & DMM Expiry</span>
+          </button>
+
+          <button id="nav-daco" onclick="switchTab('daco')" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 transition">
+            <i class="fa-solid fa-plane-arrival w-5 text-center"></i>
+            <span class="sidebar-text whitespace-nowrap">DACO ID Management</span>
+          </button>
+
+          <button id="nav-orgchart" onclick="switchTab('orgchart')" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 transition">
+            <i class="fa-solid fa-sitemap w-5 text-center"></i>
+            <span class="sidebar-text whitespace-nowrap">Org Chart</span>
+          </button>
+
+          <button id="nav-vacation" onclick="switchTab('vacation')" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 transition">
+            <i class="fa-solid fa-plane-departure w-5 text-center"></i>
+            <span class="sidebar-text whitespace-nowrap">Vacations</span>
+          </button>
+
+          <button id="nav-heavy-equipment" onclick="switchTab('heavy-equipment')" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 transition">
+            <i class="fa-solid fa-truck-monster w-5 text-center"></i>
+            <span class="sidebar-text whitespace-nowrap">Heavy Equipment</span>
+          </button>
+
+          <button id="nav-light-equipment" onclick="switchTab('light-equipment')" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-300 transition">
+            <i class="fa-solid fa-car w-5 text-center"></i>
+            <span class="sidebar-text whitespace-nowrap">Light Fleet</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- User Profile Bottom -->
+      <div class="p-3 border-t border-slate-800 flex items-center space-x-3">
+        <img src="https://ui-avatars.com/api/?name=Mahabub+Alam&background=4f46e5&color=fff" class="w-9 h-9 rounded-full flex-shrink-0" alt="Avatar">
+        <div class="sidebar-text overflow-hidden text-xs">
+          <div class="font-bold text-white truncate">Mahabub Alam</div>
+          <div class="text-slate-400 truncate">Admin Officer & Dev</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- OVERLAY FOR MOBILE SIDEBAR -->
+    <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden"></div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="flex-1 flex flex-col h-full overflow-y-auto">
+
+      <!-- TOP NAVBAR -->
+      <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+        <div>
+          <h1 id="page-title" class="text-xl font-bold text-slate-800">Employee Overview</h1>
+          <p class="text-xs text-slate-400 mt-0.5">Safari Contracting Co. &bull; Dammam, Saudi Arabia</p>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <button class="p-2 text-slate-500 hover:text-slate-700 bg-slate-100 rounded-lg text-sm">
+            <i class="fa-regular fa-bell"></i>
+          </button>
+          <div class="h-6 w-px bg-slate-200"></div>
+          <span class="text-xs font-semibold px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full">
+            <i class="fa-solid fa-circle text-[8px] mr-1"></i> Live Database
+          </span>
+        </div>
+      </header>
+
+      <!-- CONTENT BODY -->
+      <main class="p-6 space-y-6">
+
+        <!-- TAB 1: DASHBOARD OVERVIEW -->
+        <div id="tab-dashboard" class="space-y-6">
+          <!-- KPI Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div id="card-all" onclick="filterByCard('all')" class="kpi-card bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer transition hover:border-indigo-500">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Staff</div>
+                  <div id="kpi-total" class="text-2xl font-black text-slate-800 mt-1">0</div>
+                </div>
+                <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg"><i class="fa-solid fa-users text-lg"></i></div>
+              </div>
+            </div>
+
+            <div id="card-vacation" onclick="filterByCard('vacation')" class="kpi-card bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer transition hover:border-indigo-500">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">On Vacation</div>
+                  <div id="kpi-vacation" class="text-2xl font-black text-amber-600 mt-1">0</div>
+                </div>
+                <div class="p-2 bg-amber-50 text-amber-600 rounded-lg"><i class="fa-solid fa-plane text-lg"></i></div>
+              </div>
+            </div>
+
+            <div id="card-saudi" onclick="filterByCard('saudi')" class="kpi-card bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer transition hover:border-indigo-500">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Saudi Staff</div>
+                  <div id="kpi-saudi" class="text-2xl font-black text-emerald-600 mt-1">0</div>
+                </div>
+                <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg"><i class="fa-solid fa-flag text-lg"></i></div>
+              </div>
+            </div>
+
+            <div id="card-bd" onclick="filterByCard('bd')" class="kpi-card bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer transition hover:border-indigo-500">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Bangladeshi Staff</div>
+                  <div id="kpi-bd" class="text-2xl font-black text-blue-600 mt-1">0</div>
+                </div>
+                <div class="p-2 bg-blue-50 text-blue-600 rounded-lg"><i class="fa-solid fa-passport text-lg"></i></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active Filter Banner -->
+          <div id="filterBanner" class="hidden bg-indigo-50 border border-indigo-200 text-indigo-900 px-4 py-2 rounded-lg text-xs font-medium flex justify-between items-center">
+            <span id="bannerText">Filtered View Active</span>
+            <button onclick="filterByCard('all')" class="text-indigo-600 hover:underline font-bold">Reset Filter</button>
+          </div>
+
+          <!-- Charts Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <h3 class="text-sm font-bold text-slate-700 mb-4">Department Distribution</h3>
+              <div class="h-56">
+                <canvas id="deptChart"></canvas>
+              </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+              <h3 class="text-sm font-bold text-slate-700 mb-4">Nationality Breakdown</h3>
+              <div class="h-56">
+                <canvas id="nationalityChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table Container -->
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex flex-col md:flex-row gap-3 justify-between items-center bg-slate-50">
+              <div class="flex items-center space-x-2 w-full md:w-auto">
+                <div class="relative w-full md:w-64">
+                  <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                  <input id="tableSearch" oninput="onSearchInput()" type="text" placeholder="Search employee, ID..." class="w-full pl-9 pr-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+
+                <select id="groupFilter" onchange="applyFilters()" class="text-xs bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                  <option value="all">All Groups / Depts</option>
+                  <option value="Administration">Administration</option>
+                  <option value="Ecopower">Ecopower</option>
+                  <option value="IT & Admin">IT & Admin</option>
+                  <option value="Engineering">Engineering</option>
+                  <option value="Operations">Operations</option>
+                </select>
+              </div>
+
+              <div class="flex items-center space-x-2 w-full md:w-auto justify-end">
+                <button onclick="exportToExcel('main')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1 transition">
+                  <i class="fa-solid fa-file-excel"></i>
+                  <span>Excel</span>
+                </button>
+                <button onclick="exportToPDF('main')" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1 transition">
+                  <i class="fa-solid fa-file-pdf"></i>
+                  <span>PDF</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
+                    <th class="px-3 py-3 text-center">#</th>
+                    <th class="px-4 py-3">Emp ID</th>
+                    <th class="px-4 py-3">Name & Role</th>
+                    <th class="px-4 py-3">Contact</th>
+                    <th class="px-4 py-3">Nationality</th>
+                    <th class="px-4 py-3">Group/Dept</th>
+                    <th class="px-4 py-3">Status</th>
+                    <th class="px-4 py-3">Joined</th>
+                    <th class="px-4 py-3">Iqama No</th>
+                    <th class="px-4 py-3">Iqama Validity</th>
+                    <th class="px-4 py-3">DMM ID</th>
+                    <th class="px-4 py-3">DMM Validity</th>
+                    <th class="px-4 py-3">Notes</th>
+                  </tr>
+                </thead>
+                <tbody id="employeeTableBody">
+                  <!-- JS Injected -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="p-4 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-3 bg-slate-50 text-xs">
+              <div class="flex items-center space-x-2">
+                <span class="text-slate-500">Show</span>
+                <select id="pageSize" onchange="onPageSizeChange()" class="border border-slate-300 rounded px-2 py-1 bg-white font-semibold">
+                  <option value="3">3</option>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="all">All</option>
+                </select>
+                <span id="paginationInfo" class="text-slate-500">Showing 0 to 0 of 0 entries</span>
+              </div>
+              <div id="paginationControls" class="flex items-center space-x-1"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: TOTAL MANPOWER LIST -->
+        <div id="tab-manpower" class="hidden space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+              <div>
+                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active On-Site Staff</div>
+                <div id="mp-kpi-active" class="text-2xl font-black text-emerald-600 mt-1">0</div>
+              </div>
+              <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg"><i class="fa-solid fa-user-check text-xl"></i></div>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+              <div>
+                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Direct Employees</div>
+                <div id="mp-kpi-direct" class="text-2xl font-black text-indigo-600 mt-1">0</div>
+              </div>
+              <div class="p-3 bg-indigo-50 text-indigo-600 rounded-lg"><i class="fa-solid fa-address-card text-xl"></i></div>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+              <div>
+                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Subcontractor Staff</div>
+                <div id="mp-kpi-subcontract" class="text-2xl font-black text-purple-600 mt-1">0</div>
+              </div>
+              <div class="p-3 bg-purple-50 text-purple-600 rounded-lg"><i class="fa-solid fa-people-arrows text-xl"></i></div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <h3 class="font-bold text-sm text-slate-800">Unified Personnel Directory</h3>
+              <button onclick="exportToExcel('manpower')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">
+                Export Roster
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
+                    <th class="px-3 py-3 text-center">#</th>
+                    <th class="px-4 py-3">ID</th>
+                    <th class="px-4 py-3">Full Name</th>
+                    <th class="px-4 py-3">Designation</th>
+                    <th class="px-4 py-3">Group / Entity</th>
+                    <th class="px-4 py-3">Iqama / ID</th>
+                    <th class="px-4 py-3">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="manpowerTableBody">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: DACO ID MANAGEMENT -->
+        <div id="tab-daco" class="hidden space-y-6">
+          <div class="bg-indigo-900 text-white p-6 rounded-2xl shadow-lg border border-indigo-800 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+              <span class="text-xs font-bold bg-indigo-500/30 text-indigo-200 px-3 py-1 rounded-full border border-indigo-400/30">Dammam Airport Company (DACO)</span>
+              <h2 class="text-xl font-bold mt-2">Dammam Airport Access Pass Management</h2>
+              <p class="text-xs text-indigo-200 mt-1">Track active DACO Airside/Landside security badges, issuance dates, and renewal alerts.</p>
+            </div>
+            <button onclick="exportToExcel('daco')" class="bg-white text-indigo-900 hover:bg-indigo-50 px-4 py-2 rounded-xl text-xs font-bold transition shadow">
+              <i class="fa-solid fa-download mr-1.5"></i> Export DACO Registry
+            </button>
+          </div>
+
+          <!-- Badge Showcase Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="dacoCardsContainer">
+            <!-- Dynamic DACO Badge Cards Injected via JS -->
+          </div>
+
+          <!-- Detailed DACO Table -->
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-4 border-b border-slate-100 bg-slate-50 font-bold text-xs text-slate-700 uppercase tracking-wider">
+              DACO Security Pass Register
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
+                    <th class="px-3 py-3 text-center">#</th>
+                    <th class="px-4 py-3">DACO Pass ID</th>
+                    <th class="px-4 py-3">Badge Holder</th>
+                    <th class="px-4 py-3">Access Zone</th>
+                    <th class="px-4 py-3">Issue Date</th>
+                    <th class="px-4 py-3">Expiry Date</th>
+                    <th class="px-4 py-3">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="dacoTableBody">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: IQAMA & DOCUMENT EXPIRY VIEW -->
+        <div id="tab-iqama" class="hidden space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div id="iqcard-all" onclick="filterIqamaCard('all')" class="kpi-card bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer transition hover:border-indigo-500">
+              <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Evaluated</div>
+              <div id="iqkpi-total" class="text-2xl font-black text-slate-800 mt-1">0</div>
+            </div>
+            <div id="iqcard-soon" onclick="filterIqamaCard('soon')" class="kpi-card bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer transition hover:border-amber-500">
+              <div class="text-xs font-bold text-amber-600 uppercase tracking-wider">Iqama Expiring Soon (30d)</div>
+              <div id="iqkpi-soon" class="text-2xl font-black text-amber-600 mt-1">0</div>
+            </div>
+            <div id="iqcard-expired" onclick="filterIqamaCard('expired')" class="kpi-card bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer transition hover:border-rose-500">
+              <div class="text-xs font-bold text-rose-600 uppercase tracking-wider">Iqama Expired</div>
+              <div id="iqkpi-expired" class="text-2xl font-black text-rose-600 mt-1">0</div>
+            </div>
+            <div id="iqcard-dmm-expired" onclick="filterIqamaCard('dmm-expired')" class="kpi-card bg-white p-4 rounded-xl border border-slate-200 shadow-sm cursor-pointer transition hover:border-purple-500">
+              <div class="text-xs font-bold text-purple-600 uppercase tracking-wider">DMM Badge Expired</div>
+              <div id="iqkpi-dmm-expired" class="text-2xl font-black text-purple-600 mt-1">0</div>
+            </div>
+          </div>
+
+          <div id="iqamaFilterBanner" class="hidden bg-amber-50 border border-amber-200 text-amber-900 px-4 py-2 rounded-lg text-xs font-medium flex justify-between items-center">
+            <span id="iqamaBannerText">Filtered View Active</span>
+            <button onclick="filterIqamaCard('all')" class="text-amber-700 hover:underline font-bold">Reset Filter</button>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <div class="relative w-64">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                <input id="iqamaSearch" oninput="onIqamaSearchInput()" type="text" placeholder="Search by name, Iqama, DMM..." class="w-full pl-9 pr-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+              </div>
+              <div class="flex space-x-2">
+                <button onclick="exportToExcel('iqama')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">
+                  Export Excel
+                </button>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
+                    <th class="px-3 py-3 text-center">#</th>
+                    <th class="px-4 py-3">Employee</th>
+                    <th class="px-4 py-3">Iqama No</th>
+                    <th class="px-4 py-3">Iqama Expiry</th>
+                    <th class="px-4 py-3">Iqama Status</th>
+                    <th class="px-4 py-3">DMM ID</th>
+                    <th class="px-4 py-3">DMM Expiry</th>
+                    <th class="px-4 py-3">DMM Status</th>
+                    <th class="px-4 py-3">Employment</th>
+                  </tr>
+                </thead>
+                <tbody id="iqamaTableBody">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="p-4 border-t border-slate-100 flex justify-between items-center bg-slate-50 text-xs">
+              <div class="flex items-center space-x-2">
+                <span class="text-slate-500">Show</span>
+                <select id="iqamaPageSize" onchange="onIqamaPageSizeChange()" class="border border-slate-300 rounded px-2 py-1 bg-white">
+                  <option value="3">3</option>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                </select>
+                <span id="iqamaPaginationInfo" class="text-slate-500">Showing 0 to 0 of 0 entries</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: ORGANIZATIONAL CHART -->
+        <div id="tab-orgchart" class="hidden bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+          <!-- Tree view rendered dynamically via JS -->
+        </div>
+
+        <!-- OTHER TAB PLACEHOLDERS -->
+        <div id="tab-vacation" class="hidden bg-white p-8 rounded-xl border border-slate-200 text-center text-slate-500">
+          <i class="fa-solid fa-plane-departure text-4xl text-slate-300 mb-3"></i>
+          <h3 class="font-bold text-base text-slate-700">Vacation Management Module</h3>
+          <p class="text-xs mt-1">Leave requests, approval workflows, and exit-reentry tracking.</p>
+        </div>
+
+        <div id="tab-heavy-equipment" class="hidden bg-white p-8 rounded-xl border border-slate-200 text-center text-slate-500">
+          <i class="fa-solid fa-truck-monster text-4xl text-slate-300 mb-3"></i>
+          <h3 class="font-bold text-base text-slate-700">Heavy Equipment Logistics</h3>
+          <p class="text-xs mt-1">Cranes, excavators, site assignments, and operator deployments.</p>
+        </div>
+
+        <div id="tab-light-equipment" class="hidden bg-white p-8 rounded-xl border border-slate-200 text-center text-slate-500">
+          <i class="fa-solid fa-car text-4xl text-slate-300 mb-3"></i>
+          <h3 class="font-bold text-base text-slate-700">Light Vehicles & Fleet</h3>
+          <p class="text-xs mt-1">Pickups, sedans, Istimara renewals, and maintenance logs.</p>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ID CARD PREVIEW MODAL -->
+  <div id="idCardModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center hidden p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all relative">
+      <button onclick="closeIDCardModal()" class="absolute top-3 right-3 text-slate-300 hover:text-white z-10 p-1">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+      <div id="idCardContent">
+        <!-- Dynamic Card Injection -->
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT ENGINE -->
+  <script>
+    // --- DATA STORE ---
+    const employeesData = [
+      {
+        id: "EMP-1001",
+        name: "Mahabub Alam",
+        role: "Administrative Officer & Developer",
+        phone: "+966 50 000 0000",
+        email: "mahabub@safaricontracting.com",
+        nationality: "Bangladeshi",
+        group: "Administration",
+        dept: "IT & Admin",
+        status: "Active",
+        joined: "2022-03-15",
+        iqamaNo: "2458901234",
+        issueDate: "2023-01-10",
+        expiryDate: "2026-08-15",
+        dmmId: "DMM-8841",
+        dmmIssueDate: "2023-02-01",
+        dmmExpiryDate: "2026-08-01",
+        dacoId: "DACO-9921",
+        dacoZone: "Zone A - Airside Pass",
+        dacoIssueDate: "2023-05-10",
+        dacoExpiryDate: "2027-05-10",
+        note: "Key Administrator",
+        avatar: "https://ui-avatars.com/api/?name=Mahabub+Alam&background=4f46e5&color=fff"
+      },
+      {
+        id: "EMP-1002",
+        name: "Ahmed Al-Ghamdi",
+        role: "Project Engineer",
+        phone: "+966 55 123 4567",
+        email: "ahmed.g@safaricontracting.com",
+        nationality: "Saudi",
+        group: "Ecopower",
+        dept: "Engineering",
+        status: "Active",
+        joined: "2021-06-01",
+        iqamaNo: "1098765432",
+        issueDate: "2022-05-10",
+        expiryDate: "2027-05-10",
+        dmmId: "DMM-9012",
+        dmmIssueDate: "2022-06-01",
+        dmmExpiryDate: "2027-06-01",
+        dacoId: "DACO-4412",
+        dacoZone: "Zone B - Terminal Access",
+        dacoIssueDate: "2022-08-01",
+        dacoExpiryDate: "2026-08-01",
+        note: "Site Supervisor",
+        avatar: "https://ui-avatars.com/api/?name=Ahmed+Al-Ghamdi&background=059669&color=fff"
+      },
+      {
+        id: "EMP-1003",
+        name: "Tariqul Islam",
+        role: "Heavy Equipment Operator",
+        phone: "+966 54 987 6543",
+        email: "tariqul@safaricontracting.com",
+        nationality: "Bangladeshi",
+        group: "Ecopower",
+        dept: "Operations",
+        status: "On Vacation",
+        joined: "2020-11-20",
+        iqamaNo: "2341122334",
+        issueDate: "2023-11-01",
+        expiryDate: "2026-08-10",
+        dmmId: "DMM-7721",
+        dmmIssueDate: "2023-11-15",
+        dmmExpiryDate: "2026-07-20",
+        dacoId: "DACO-1029",
+        dacoZone: "Zone C - Apron & Runway",
+        dacoIssueDate: "2023-01-15",
+        dacoExpiryDate: "2026-07-30",
+        note: "Crane Operator",
+        avatar: "https://ui-avatars.com/api/?name=Tariqul+Islam&background=d97706&color=fff"
+      }
+    ];
+
+    // Additional sample records for truncated pagination testing
+    for (let i = 4; i <= 35; i++) {
+      const isBd = i % 2 === 0;
+      employeesData.push({
+        id: `EMP-${1000 + i}`,
+        name: isBd ? `Worker ${i} Rahman` : `Staff ${i} Al-Harbi`,
+        role: isBd ? "Technician" : "Coordinator",
+        phone: `+966 50 ${100 + i} ${200 + i}`,
+        email: `emp${i}@safaricontracting.com`,
+        nationality: isBd ? "Bangladeshi" : "Saudi",
+        group: i % 3 === 0 ? "Administration" : "Ecopower",
+        dept: i % 3 === 0 ? "Logistics" : "Field Ops",
+        status: i % 7 === 0 ? "On Vacation" : "Active",
+        joined: "2022-05-10",
+        iqamaNo: `${isBd ? '2' : '1'}${100000000 + i}`,
+        issueDate: "2023-01-01",
+        expiryDate: i % 5 === 0 ? "2026-08-05" : "2027-01-01",
+        dmmId: `DMM-${5000 + i}`,
+        dmmIssueDate: "2023-01-01",
+        dmmExpiryDate: i % 4 === 0 ? "2026-07-01" : "2027-01-01",
+        dacoId: `DACO-${3000 + i}`,
+        dacoZone: i % 2 === 0 ? "Zone A - Airside" : "Zone B - Terminal",
+        dacoIssueDate: "2023-03-01",
+        dacoExpiryDate: i % 3 === 0 ? "2026-08-10" : "2028-01-01",
+        note: "Generated Entry",
+        avatar: `https://ui-avatars.com/api/?name=Emp+${i}&background=6366f1&color=fff`
+      });
+    }
+
+    // --- STATE VARIABLES ---
+    let currentPage = 1;
+    let pageSize = 3;
+    let currentCardFilter = "all";
+    let filteredData = [...employeesData];
+
+    let iqamaCurrentPage = 1;
+    let iqamaPageSize = 3;
+    let iqamaCardFilter = "all";
+    let filteredIqamaData = [...employeesData];
+
+    // --- INITIALIZATION ---
+    document.addEventListener("DOMContentLoaded", () => {
+      updateKPIData();
+      applyFilters();
+      applyIqamaFilters();
+      renderManpowerTable();
+      renderDacoModule();
+      initCharts();
+      renderOrgChart();
+    });
+
+    // --- NAVIGATION SWITCHING ---
+    function switchTab(tabId) {
+      const tabs = ["dashboard", "manpower", "iqama", "daco", "orgchart", "vacation", "heavy-equipment", "light-equipment"];
+      tabs.forEach((t) => {
+        const el = document.getElementById(`tab-${t}`);
+        const navBtn = document.getElementById(`nav-${t}`);
+        if (el) el.classList.add("hidden");
+        if (navBtn) {
+          navBtn.classList.remove("bg-indigo-600", "text-white");
+          navBtn.classList.add("hover:bg-slate-800", "text-slate-300");
+        }
+      });
+
+      const activeTab = document.getElementById(`tab-${tabId}`);
+      const activeNav = document.getElementById(`nav-${tabId}`);
+      if (activeTab) activeTab.classList.remove("hidden");
+      if (activeNav) {
+        activeNav.classList.add("bg-indigo-600", "text-white");
+        activeNav.classList.remove("hover:bg-slate-800", "text-slate-300");
+      }
+
+      const titles = {
+        dashboard: "Employee Overview",
+        manpower: "Total Manpower Directory",
+        iqama: "Iqama & DMM Document Expiry",
+        daco: "DACO Airport Access Badges",
+        orgchart: "Organizational Structure",
+        vacation: "Vacation Management",
+        "heavy-equipment": "Heavy Equipment Logistics",
+        "light-equipment": "Light Vehicles & Fleet"
+      };
+      document.getElementById("page-title").innerText = titles[tabId] || "Dashboard";
+    }
+
+    // --- SIDEBAR TOGGLE ---
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      const overlay = document.getElementById("sidebar-overlay");
+      const isMobile = window.innerWidth < 768;
+
+      if (isMobile) {
+        sidebar.classList.toggle("-translate-x-full");
+        overlay.classList.toggle("hidden");
+      } else {
+        sidebar.classList.toggle("sidebar-collapsed");
+      }
+    }
+
+    // --- UTILITIES ---
+    function calculateDaysRemaining(expiryDateStr) {
+      if (!expiryDateStr) return null;
+      const today = new Date();
+      const expiry = new Date(expiryDateStr);
+      if (isNaN(expiry.getTime())) return null;
+      return Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+    }
+
+    function updateKPIData() {
+      document.getElementById("kpi-total").innerText = employeesData.length;
+      document.getElementById("kpi-vacation").innerText = employeesData.filter((e) => e.status === "On Vacation").length;
+      document.getElementById("kpi-saudi").innerText = employeesData.filter((e) => e.nationality === "Saudi").length;
+      document.getElementById("kpi-bd").innerText = employeesData.filter((e) => e.nationality === "Bangladeshi").length;
+
+      document.getElementById("iqkpi-total").innerText = employeesData.length;
+      document.getElementById("iqkpi-soon").innerText = employeesData.filter((e) => {
+        const d = calculateDaysRemaining(e.expiryDate);
+        return d !== null && d >= 0 && d <= 30;
+      }).length;
+      document.getElementById("iqkpi-expired").innerText = employeesData.filter((e) => {
+        const d = calculateDaysRemaining(e.expiryDate);
+        return d !== null && d < 0;
+      }).length;
+      document.getElementById("iqkpi-dmm-expired").innerText = employeesData.filter((e) => {
+        const d = calculateDaysRemaining(e.dmmExpiryDate);
+        return d !== null && d < 0;
+      }).length;
+
+      // Manpower KPIs
+      document.getElementById("mp-kpi-active").innerText = employeesData.filter(e => e.status === 'Active').length;
+      document.getElementById("mp-kpi-direct").innerText = employeesData.filter(e => e.group === 'Administration' || e.group === 'Ecopower').length;
+      document.getElementById("mp-kpi-subcontract").innerText = employeesData.length - employeesData.filter(e => e.group === 'Administration' || e.group === 'Ecopower').length;
+    }
+
+    // --- MAIN DASHBOARD ENGINE ---
+    function filterByCard(type) {
+      currentCardFilter = type;
+      document.querySelectorAll("#tab-dashboard .kpi-card").forEach((c) => c.classList.remove("active-card", "ring-2"));
+
+      const banner = document.getElementById("filterBanner");
+      const bannerText = document.getElementById("bannerText");
+
+      if (type !== "all") {
+        banner.classList.remove("hidden");
+        bannerText.innerText = `Filtered View: Showing ${type.toUpperCase()} records`;
+        const cardMap = { vacation: "card-vacation", saudi: "card-saudi", bd: "card-bd" };
+        if (cardMap[type]) document.getElementById(cardMap[type]).classList.add("active-card", "ring-2");
+      } else {
+        banner.classList.add("hidden");
+        document.getElementById("card-all").classList.add("active-card", "ring-2");
+      }
+
+      applyFilters();
+    }
+
+    function onSearchInput() { applyFilters(); }
+
+    function applyFilters() {
+      const query = document.getElementById("tableSearch").value.toLowerCase().trim();
+      const group = document.getElementById("groupFilter").value;
+
+      filteredData = employeesData.filter((emp) => {
+        let matchCard = true;
+        if (currentCardFilter === "vacation") matchCard = emp.status === "On Vacation";
+        if (currentCardFilter === "saudi") matchCard = emp.nationality === "Saudi";
+        if (currentCardFilter === "bd") matchCard = emp.nationality === "Bangladeshi";
+
+        let matchGroup = group === "all" || emp.group === group || emp.dept === group;
+
+        let matchQuery =
+          emp.name.toLowerCase().includes(query) ||
+          emp.id.toLowerCase().includes(query) ||
+          emp.role.toLowerCase().includes(query) ||
+          emp.dept.toLowerCase().includes(query) ||
+          emp.nationality.toLowerCase().includes(query) ||
+          (emp.iqamaNo && emp.iqamaNo.includes(query));
+
+        return matchCard && matchGroup && matchQuery;
+      });
+
+      currentPage = 1;
+      renderEmployeeTable();
+    }
+
+    function onPageSizeChange() {
+      const val = document.getElementById("pageSize").value;
+      pageSize = val === "all" ? filteredData.length : parseInt(val, 10);
+      currentPage = 1;
+      renderEmployeeTable();
+    }
+
+    function renderEmployeeTable() {
+      const tbody = document.getElementById("employeeTableBody");
+      tbody.innerHTML = "";
+
+      const totalEntries = filteredData.length;
+      const effectivePageSize = pageSize === 0 ? totalEntries : pageSize;
+      const totalPages = Math.ceil(totalEntries / effectivePageSize) || 1;
+
+      if (currentPage > totalPages) currentPage = totalPages;
+
+      const startIdx = (currentPage - 1) * effectivePageSize;
+      const endIdx = Math.min(startIdx + effectivePageSize, totalEntries);
+      const pageData = filteredData.slice(startIdx, endIdx);
+
+      if (pageData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="13" class="text-center py-6 text-slate-400">No matching employees found</td></tr>`;
+      } else {
+        pageData.forEach((emp, index) => {
+          const row = document.createElement("tr");
+          row.className = "hover:bg-slate-50 transition border-b border-slate-100";
+
+          const natBadge =
+            emp.nationality === "Saudi"
+              ? "bg-emerald-100 text-emerald-800"
+              : emp.nationality === "Bangladeshi"
+              ? "bg-blue-100 text-blue-800"
+              : "bg-amber-100 text-amber-800";
+
+          const statusBadge = emp.status === "Active" ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800";
+
+          row.innerHTML = `
+            <td class="px-3 py-3 text-center font-medium text-slate-500">${startIdx + index + 1}</td>
+            <td class="px-4 py-3 font-semibold text-indigo-600 hover:underline cursor-pointer" onclick="openIDCardModal('${emp.id}')">${emp.id}</td>
+            <td class="px-4 py-3">
+              <div class="font-bold text-slate-800 hover:text-indigo-600 cursor-pointer" onclick="openIDCardModal('${emp.id}')">${emp.name}</div>
+              <div class="text-[11px] text-slate-400">${emp.role}</div>
+            </td>
+            <td class="px-4 py-3">
+              <div class="text-[11px]"><i class="fa-solid fa-phone text-slate-400 mr-1"></i>${emp.phone}</div>
+              <div class="text-[11px] text-slate-500"><i class="fa-solid fa-envelope text-slate-400 mr-1"></i>${emp.email}</div>
+            </td>
+            <td class="px-4 py-3">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${natBadge}">
+                ${emp.nationality}
+              </span>
+            </td>
+            <td class="px-4 py-3 text-slate-600">${emp.group || emp.dept}</td>
+            <td class="px-4 py-3">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${statusBadge}">
+                ${emp.status}
+              </span>
+            </td>
+            <td class="px-4 py-3 whitespace-nowrap text-slate-600">${emp.joined}</td>
+            <td class="px-4 py-3 font-mono font-medium">${emp.iqamaNo || "-"}</td>
+            <td class="px-4 py-3 text-[11px] whitespace-nowrap">
+              <div><strong class="text-slate-600">Iss:</strong> ${emp.issueDate || "-"}</div>
+              <div><strong class="text-slate-500">Exp:</strong> ${emp.expiryDate || "-"}</div>
+            </td>
+            <td class="px-4 py-3 font-mono text-[11px]">${emp.dmmId || "-"}</td>
+            <td class="px-4 py-3 text-[11px] whitespace-nowrap">
+              <div><strong class="text-slate-600">Iss:</strong> ${emp.dmmIssueDate || "-"}</div>
+              <div><strong class="text-slate-500">Exp:</strong> ${emp.dmmExpiryDate || "-"}</div>
+            </td>
+            <td class="px-4 py-3 text-[11px] text-slate-500">${emp.note || "-"}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      }
+
+      document.getElementById("paginationInfo").innerText =
+        totalEntries === 0 ? "Showing 0 to 0 of 0 entries" : `Showing ${startIdx + 1} to ${endIdx} of ${totalEntries} entries`;
+
+      renderPaginationControls("paginationControls", totalPages, currentPage, (page) => {
+        currentPage = page;
+        renderEmployeeTable();
+      });
+    }
+
+    // --- TRUNCATED PAGINATION ENGINE ---
+    function renderPaginationControls(containerId, totalPages, activePage, pageClickCallback) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = "";
+
+      if (totalPages <= 1) return;
+
+      const createBtn = (label, page, isActive = false, isDisabled = false) => {
+        const btn = document.createElement("button");
+        btn.className = `px-2.5 py-1 text-xs rounded-md border font-medium transition ${
+          isActive
+            ? "bg-indigo-600 text-white border-indigo-600"
+            : isDisabled
+            ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+            : "bg-white text-slate-600 border-slate-300 hover:bg-slate-50"
+        }`;
+        btn.innerHTML = label;
+        if (!isDisabled && !isActive) {
+          btn.onclick = () => pageClickCallback(page);
+        }
+        return btn;
+      };
+
+      container.appendChild(createBtn('<i class="fa-solid fa-chevron-left"></i>', activePage - 1, false, activePage === 1));
+
+      const delta = 1;
+      const range = [];
+      for (let i = Math.max(2, activePage - delta); i <= Math.min(totalPages - 1, activePage + delta); i++) {
+        range.push(i);
+      }
+
+      container.appendChild(createBtn("1", 1, activePage === 1));
+
+      if (activePage - delta > 2) {
+        const dots = document.createElement("span");
+        dots.className = "px-1 text-slate-400 text-xs self-center";
+        dots.innerText = "...";
+        container.appendChild(dots);
+      }
+
+      range.forEach((p) => {
+        container.appendChild(createBtn(p.toString(), p, activePage === p));
+      });
+
+      if (activePage + delta < totalPages - 1) {
+        const dots = document.createElement("span");
+        dots.className = "px-1 text-slate-400 text-xs self-center";
+        dots.innerText = "...";
+        container.appendChild(dots);
+      }
+
+      if (totalPages > 1) {
+        container.appendChild(createBtn(totalPages.toString(), totalPages, activePage === totalPages));
+      }
+
+      container.appendChild(createBtn('<i class="fa-solid fa-chevron-right"></i>', activePage + 1, false, activePage === totalPages));
+    }
+
+    // --- MANPOWER LIST RENDER ---
+    function renderManpowerTable() {
+      const tbody = document.getElementById("manpowerTableBody");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      employeesData.forEach((emp, index) => {
+        const row = document.createElement("tr");
+        row.className = "hover:bg-slate-50 border-b border-slate-100";
+        row.innerHTML = `
+          <td class="px-3 py-3 text-center text-slate-500">${index + 1}</td>
+          <td class="px-4 py-3 font-mono text-indigo-600 font-bold">${emp.id}</td>
+          <td class="px-4 py-3 font-bold text-slate-800">${emp.name}</td>
+          <td class="px-4 py-3 text-slate-600">${emp.role}</td>
+          <td class="px-4 py-3 text-slate-600">${emp.group || emp.dept}</td>
+          <td class="px-4 py-3 font-mono">${emp.iqamaNo || '-'}</td>
+          <td class="px-4 py-3">
+            <span class="px-2 py-0.5 text-[10px] rounded-full font-bold ${emp.status === 'Active' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+              ${emp.status}
+            </span>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // --- DACO MODULE RENDER ---
+    function renderDacoModule() {
+      const cardsContainer = document.getElementById("dacoCardsContainer");
+      const tbody = document.getElementById("dacoTableBody");
+      if (!cardsContainer || !tbody) return;
+
+      cardsContainer.innerHTML = "";
+      tbody.innerHTML = "";
+
+      const dacoList = employeesData.filter(e => e.dacoId);
+
+      // Render Visual Badges (Cards)
+      dacoList.slice(0, 3).forEach(emp => {
+        const card = document.createElement("div");
+        card.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3 relative overflow-hidden";
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div class="flex items-center space-x-3">
+              <img src="${emp.avatar}" class="w-12 h-12 rounded-lg object-cover border border-indigo-200" />
+              <div>
+                <h4 class="font-bold text-sm text-slate-800">${emp.name}</h4>
+                <p class="text-[11px] text-slate-400">${emp.role}</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-mono bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-bold border border-indigo-200">${emp.dacoId}</span>
+          </div>
+
+          <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-xs space-y-1">
+            <div class="text-slate-500"><strong class="text-slate-700">Access Zone:</strong> ${emp.dacoZone}</div>
+            <div class="text-slate-500"><strong class="text-slate-700">Expires:</strong> ${emp.dacoExpiryDate}</div>
+          </div>
+        `;
+        cardsContainer.appendChild(card);
+      });
+
+      // Render Table View
+      dacoList.forEach((emp, index) => {
+        const daysLeft = calculateDaysRemaining(emp.dacoExpiryDate);
+        const row = document.createElement("tr");
+        row.className = "hover:bg-slate-50 border-b border-slate-100";
+        row.innerHTML = `
+          <td class="px-3 py-3 text-center text-slate-500">${index + 1}</td>
+          <td class="px-4 py-3 font-mono font-bold text-indigo-600">${emp.dacoId}</td>
+          <td class="px-4 py-3 font-bold text-slate-800">${emp.name}</td>
+          <td class="px-4 py-3 text-slate-600">${emp.dacoZone}</td>
+          <td class="px-4 py-3 text-slate-500 text-[11px]">${emp.dacoIssueDate}</td>
+          <td class="px-4 py-3 text-slate-500 text-[11px]">${emp.dacoExpiryDate}</td>
+          <td class="px-4 py-3">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${daysLeft < 30 ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">
+              ${daysLeft < 30 ? 'Expires Soon' : 'Valid Pass'}
+            </span>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // --- IQAMA VIEW ENGINE ---
+    function filterIqamaCard(type) {
+      iqamaCardFilter = type;
+      document.querySelectorAll("#tab-iqama .kpi-card").forEach((c) => c.classList.remove("active-card", "ring-2"));
+
+      const banner = document.getElementById("iqamaFilterBanner");
+      const bannerText = document.getElementById("iqamaBannerText");
+
+      if (type !== "all") {
+        banner.classList.remove("hidden");
+        bannerText.innerText = `Filtered View: ${type.replace("-", " ").toUpperCase()}`;
+        const cardMap = { soon: "iqcard-soon", expired: "iqcard-expired", "dmm-expired": "iqcard-dmm-expired" };
+        if (cardMap[type]) document.getElementById(cardMap[type]).classList.add("active-card", "ring-2");
+      } else {
+        banner.classList.add("hidden");
+        document.getElementById("iqcard-all").classList.add("active-card", "ring-2");
+      }
+
+      applyIqamaFilters();
+    }
+
+    function onIqamaSearchInput() { applyIqamaFilters(); }
+
+    function applyIqamaFilters() {
+      const query = document.getElementById("iqamaSearch").value.toLowerCase().trim();
+
+      filteredIqamaData = employeesData.filter((emp) => {
+        let matchCard = true;
+        const iqDays = calculateDaysRemaining(emp.expiryDate);
+        const dmmDays = calculateDaysRemaining(emp.dmmExpiryDate);
+
+        if (iqamaCardFilter === "soon") matchCard = iqDays !== null && iqDays >= 0 && iqDays <= 30;
+        if (iqamaCardFilter === "expired") matchCard = iqDays !== null && iqDays < 0;
+        if (iqamaCardFilter === "dmm-expired") matchCard = dmmDays !== null && dmmDays < 0;
+
+        let matchQuery =
+          emp.name.toLowerCase().includes(query) ||
+          emp.id.toLowerCase().includes(query) ||
+          (emp.iqamaNo && emp.iqamaNo.includes(query)) ||
+          (emp.dmmId && emp.dmmId.toLowerCase().includes(query));
+
+        return matchCard && matchQuery;
+      });
+
+      iqamaCurrentPage = 1;
+      renderIqamaTable();
+    }
+
+    function onIqamaPageSizeChange() {
+      const val = document.getElementById("iqamaPageSize").value;
+      iqamaPageSize = val === "all" ? filteredIqamaData.length : parseInt(val, 10);
+      iqamaCurrentPage = 1;
+      renderIqamaTable();
+    }
+
+    function renderIqamaTable() {
+      const tbody = document.getElementById("iqamaTableBody");
+      tbody.innerHTML = "";
+
+      const totalEntries = filteredIqamaData.length;
+      const effectivePageSize = iqamaPageSize === 0 ? totalEntries : iqamaPageSize;
+      const totalPages = Math.ceil(totalEntries / effectivePageSize) || 1;
+
+      if (iqamaCurrentPage > totalPages) iqamaCurrentPage = totalPages;
+
+      const startIdx = (iqamaCurrentPage - 1) * effectivePageSize;
+      const endIdx = Math.min(startIdx + effectivePageSize, totalEntries);
+      const pageData = filteredIqamaData.slice(startIdx, endIdx);
+
+      if (pageData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400">No expiring records found</td></tr>`;
+      } else {
+        pageData.forEach((emp, index) => {
+          const iqDays = calculateDaysRemaining(emp.expiryDate);
+          const dmmDays = calculateDaysRemaining(emp.dmmExpiryDate);
+
+          const getStatusBadge = (days) => {
+            if (days === null) return `<span class="text-slate-400">-</span>`;
+            if (days < 0) return `<span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 text-[10px] font-bold">Expired</span>`;
+            if (days <= 30) return `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold">${days} Days Left</span>`;
+            return `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">Valid</span>`;
+          };
+
+          const row = document.createElement("tr");
+          row.className = "hover:bg-slate-50 border-b border-slate-100";
+          row.innerHTML = `
+            <td class="px-3 py-3 text-center text-slate-500">${startIdx + index + 1}</td>
+            <td class="px-4 py-3">
+              <div class="font-bold text-slate-800 hover:text-indigo-600 cursor-pointer" onclick="openIDCardModal('${emp.id}')">${emp.name}</div>
+              <div class="text-[11px] text-slate-400">${emp.id} &bull; ${emp.dept}</div>
+            </td>
+            <td class="px-4 py-3 font-mono">${emp.iqamaNo || "-"}</td>
+            <td class="px-4 py-3 text-[11px]">${emp.expiryDate || "-"}</td>
+            <td class="px-4 py-3">${getStatusBadge(iqDays)}</td>
+            <td class="px-4 py-3 font-mono">${emp.dmmId || "-"}</td>
+            <td class="px-4 py-3 text-[11px]">${emp.dmmExpiryDate || "-"}</td>
+            <td class="px-4 py-3">${getStatusBadge(dmmDays)}</td>
+            <td class="px-4 py-3 text-xs">${emp.status}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      }
+
+      document.getElementById("iqamaPaginationInfo").innerText =
+        totalEntries === 0 ? "Showing 0 to 0 of 0 entries" : `Showing ${startIdx + 1} to ${endIdx} of ${totalEntries} entries`;
+    }
+
+    // --- CARD MODAL DIALOG ENGINE ---
+    function openIDCardModal(empId) {
+      const emp = employeesData.find((e) => e.id === empId);
+      if (!emp) return;
+
+      const modal = document.getElementById("idCardModal");
+      const cardContainer = document.getElementById("idCardContent");
+
+      cardContainer.innerHTML = `
+        <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white p-4 rounded-t-xl flex justify-between items-center border-b border-indigo-500/30">
+          <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-id-card text-indigo-400 text-xl"></i>
+            <span class="font-bold tracking-wider text-sm uppercase">Safari Contracting Co.</span>
+          </div>
+          <span class="text-xs bg-indigo-500/30 text-indigo-200 px-2.5 py-0.5 rounded-full border border-indigo-400/30">${emp.group || 'Employee'}</span>
+        </div>
+
+        <div class="p-6 space-y-5 bg-white text-slate-800">
+          <div class="flex items-center space-x-4">
+            <img src="${emp.avatar}" alt="${emp.name}" class="w-20 h-20 rounded-xl object-cover border-2 border-indigo-500 shadow-md" />
+            <div>
+              <h3 class="text-lg font-bold text-slate-900">${emp.name}</h3>
+              <p class="text-xs text-indigo-600 font-semibold">${emp.role}</p>
+              <p class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-building mr-1"></i>${emp.dept}</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 text-xs bg-slate-50 p-3.5 rounded-lg border border-slate-200">
+            <div>
+              <span class="text-slate-400 block text-[10px] uppercase font-bold">Employee ID</span>
+              <span class="font-mono font-bold text-slate-700">${emp.id}</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[10px] uppercase font-bold">Nationality</span>
+              <span class="font-bold text-slate-700">${emp.nationality}</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[10px] uppercase font-bold">Iqama / National ID</span>
+              <span class="font-mono font-bold text-slate-700">${emp.iqamaNo || 'N/A'}</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[10px] uppercase font-bold">DMM Badge ID</span>
+              <span class="font-mono font-bold text-slate-700">${emp.dmmId || 'N/A'}</span>
+            </div>
+          </div>
+
+          <div class="border-t border-slate-100 pt-3 flex justify-between items-center text-xs">
+            <div>
+              <div class="text-slate-500"><i class="fa-solid fa-phone text-slate-400 mr-1.5"></i>${emp.phone}</div>
+              <div class="text-slate-500 mt-1"><i class="fa-solid fa-envelope text-slate-400 mr-1.5"></i>${emp.email}</div>
+            </div>
+            <div class="p-2 bg-slate-100 rounded-lg border border-slate-200 text-center">
+              <i class="fa-solid fa-qrcode text-3xl text-slate-700"></i>
+            </div>
+          </div>
+        </div>
+      `;
+
+      modal.classList.remove("hidden");
+    }
+
+    function closeIDCardModal() {
+      document.getElementById("idCardModal").classList.add("hidden");
+    }
+
+    // --- ORG CHART ENGINE ---
+    function renderOrgChart() {
+      const container = document.getElementById("tab-orgchart");
+      if (!container) return;
+
+      container.innerHTML = `
+        <h3 class="text-base font-bold text-slate-800 mb-6">Company Hierarchy & Department Structure</h3>
+        <div class="space-y-6">
+          <div class="p-4 bg-indigo-900 text-white rounded-xl max-w-xs mx-auto text-center shadow-md border-b-4 border-indigo-500">
+            <div class="font-bold text-sm">Executive Management</div>
+            <div class="text-xs text-indigo-200 mt-0.5">Safari Contracting Board</div>
+          </div>
+          <div class="w-0.5 h-6 bg-slate-300 mx-auto"></div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+              <div class="font-bold text-xs uppercase text-indigo-600 tracking-wider flex items-center border-b border-slate-200 pb-2">
+                <i class="fa-solid fa-user-shield mr-2"></i> Administration & IT
+              </div>
+              <div class="space-y-2">
+                ${employeesData
+                  .filter((e) => e.group === "Administration")
+                  .slice(0, 4)
+                  .map(
+                    (e) => `
+                  <div class="p-2.5 bg-white rounded-lg border border-slate-200 shadow-sm flex items-center justify-between cursor-pointer hover:border-indigo-400 transition" onclick="openIDCardModal('${e.id}')">
+                    <div>
+                      <div class="text-xs font-bold text-slate-800">${e.name}</div>
+                      <div class="text-[10px] text-slate-400">${e.role}</div>
+                    </div>
+                    <span class="text-[10px] font-mono bg-slate-100 text-slate-600 px-2 py-0.5 rounded">${e.id}</span>
+                  </div>
+                `
+                  )
+                  .join("")}
+              </div>
+            </div>
+
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+              <div class="font-bold text-xs uppercase text-emerald-600 tracking-wider flex items-center border-b border-slate-200 pb-2">
+                <i class="fa-solid fa-helmet-safety mr-2"></i> Ecopower & Engineering
+              </div>
+              <div class="space-y-2">
+                ${employeesData
+                  .filter((e) => e.group === "Ecopower")
+                  .slice(0, 4)
+                  .map(
+                    (e) => `
+                  <div class="p-2.5 bg-white rounded-lg border border-slate-200 shadow-sm flex items-center justify-between cursor-pointer hover:border-indigo-400 transition" onclick="openIDCardModal('${e.id}')">
+                    <div>
+                      <div class="text-xs font-bold text-slate-800">${e.name}</div>
+                      <div class="text-[10px] text-slate-400">${e.role}</div>
+                    </div>
+                    <span class="text-[10px] font-mono bg-slate-100 text-slate-600 px-2 py-0.5 rounded">${e.id}</span>
+                  </div>
+                `
+                  )
+                  .join("")}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- CHARTS ENGINE ---
+    function initCharts() {
+      const deptCtx = document.getElementById("deptChart");
+      const natCtx = document.getElementById("nationalityChart");
+
+      if (deptCtx) {
+        new Chart(deptCtx, {
+          type: "bar",
+          data: {
+            labels: ["IT & Admin", "Engineering", "Operations", "HSE", "Logistics"],
+            datasets: [{ label: "Employees", data: [12, 18, 24, 8, 10], backgroundColor: "#6366f1", borderRadius: 6 }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
+      }
+
+      if (natCtx) {
+        new Chart(natCtx, {
+          type: "doughnut",
+          data: {
+            labels: ["Saudi", "Bangladeshi", "Other"],
+            datasets: [{
+              data: [
+                employeesData.filter((e) => e.nationality === "Saudi").length,
+                employeesData.filter((e) => e.nationality === "Bangladeshi").length,
+                employeesData.filter((e) => e.nationality !== "Saudi" && e.nationality !== "Bangladeshi").length
+              ],
+              backgroundColor: ["#10b981", "#3b82f6", "#f59e0b"]
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom" } } }
+        });
+      }
+    }
+
+    // --- EXPORTS ENGINE ---
+    function exportToExcel(type) {
+      let exportData = filteredData;
+      if (type === "iqama") exportData = filteredIqamaData;
+      if (type === "manpower") exportData = employeesData;
+      if (type === "daco") exportData = employeesData.filter(e => e.dacoId);
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+      XLSX.writeFile(workbook, `ProEMS_${type}_Export_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    }
+
+    function exportToPDF(type) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF("l", "pt", "a4");
+      doc.text(`ProEMS - Record Export (${type.toUpperCase()})`, 40, 40);
+
+      const exportData = type === "iqama" ? filteredIqamaData : filteredData;
+      const headers = [["ID", "Name", "Role", "Nationality", "Group/Dept", "Iqama No", "DMM ID"]];
+      const rows = exportData.map((e) => [e.id, e.name, e.role, e.nationality, e.group || e.dept, e.iqamaNo || "-", e.dmmId || "-"]);
+
+      doc.autoTable({ head: headers, body: rows, startY: 60, styles: { fontSize: 8 } });
+      doc.save(`ProEMS_${type}_Export.pdf`);
+    }
+  </script>
 </body>
 </html>
