@@ -1,461 +1,605 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Manpower &amp; HR Management System - Safari Contracting Company</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ['Inter', 'ui-sans-serif', 'system-ui'],
-          mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
-        },
-        colors: {
-          brand: {
-            50: '#f5f3ff',
-            100: '#ede9fe',
-            500: '#8b5cf6',
-            600: '#7c3aed',
-            700: '#6d28d9',
-            900: '#4c1d95',
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manpower &amp; HR Management System - Safari Company limited</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f5f3ff',
+              100: '#ede9fe',
+              500: '#8b5cf6',
+              600: '#7c3aed',
+              700: '#6d28d9',
+              900: '#4c1d95',
+            }
           }
         }
       }
     }
-  }
-</script>
-<style>
-  html, body { font-family: 'Inter', sans-serif; }
-  .mono-num { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
-  ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
-  .page-panel { display: none; }
-  .page-panel.active { display: block; }
-  .sidebar-collapsed .sidebar-label { display: none; }
-  .sidebar-collapsed { width: 4.5rem !important; }
-  .fade-in { animation: fadeIn .25s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px);} to { opacity: 1; transform: translateY(0);} }
-  input[type="checkbox"] { accent-color: #7c3aed; }
-</style>
+  </script>
+  <style>
+    html,
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .mono-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-variant-numeric: tabular-nums;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 8px;
+    }
+
+    .page-panel {
+      display: none;
+    }
+
+    .page-panel.active {
+      display: block;
+    }
+
+    .sidebar-collapsed .sidebar-label {
+      display: none;
+    }
+
+    .sidebar-collapsed {
+      width: 4.5rem !important;
+    }
+
+    .fade-in {
+      animation: fadeIn .25s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    input[type="checkbox"] {
+      accent-color: #7c3aed;
+    }
+  </style>
 </head>
+
 <body class="bg-slate-50 text-slate-800">
 
-<div class="flex h-screen overflow-hidden">
+  <div class="flex h-screen overflow-hidden">
 
-  <!-- SIDEBAR -->
-  <aside id="sidebar" class="w-64 shrink-0 bg-slate-900 text-slate-300 flex flex-col transition-all duration-200 border-r border-slate-800">
-    <div class="flex items-center gap-3 px-5 h-16 border-b border-slate-800 shrink-0">
-      <div class="w-8 h-8 rounded-md bg-purple-600 flex items-center justify-center shrink-0">
-        <i data-lucide="hard-hat" class="w-4.5 h-4.5 text-white" style="width:18px;height:18px"></i>
-      </div>
-      <div class="sidebar-label overflow-hidden">
-        <p class="text-sm font-bold text-white leading-tight">Safari Contracting</p>
-        <p class="text-[11px] text-slate-400 leading-tight">Workforce Systems</p>
-      </div>
-    </div>
-
-    <nav class="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-      <button data-page="dashboard" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
-        <span class="sidebar-label">Executive Dashboard</span>
-      </button>
-      <button data-page="iqama" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="file-clock" class="w-4 h-4 shrink-0"></i>
-        <span class="sidebar-label">Iqama &amp; Documents</span>
-      </button>
-      <button data-page="org" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="network" class="w-4 h-4 shrink-0"></i>
-        <span class="sidebar-label">Org &amp; Shift Craft</span>
-      </button>
-      <button data-page="manpower" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="users" class="w-4 h-4 shrink-0"></i>
-        <span class="sidebar-label">Total Manpower</span>
-      </button>
-      <button data-page="equipment" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="wrench" class="w-4 h-4 shrink-0"></i>
-        <span class="sidebar-label">Equipment &amp; Assets</span>
-      </button>
-      <button data-page="vacation" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="plane-takeoff" class="w-4 h-4 shrink-0"></i>
-        <span class="sidebar-label">Vacation &amp; Leave</span>
-      </button>
-      <button data-page="documentation" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="image" class="w-4 h-4 shrink-0"></i>
-        <span class="sidebar-label">Documentation Gallery</span>
-      </button>
-    </nav>
-
-    <div class="p-3 border-t border-slate-800">
-      <button id="collapseBtn" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-        <i data-lucide="panel-left-close" class="w-4 h-4 shrink-0"></i>
-        <span class="sidebar-label">Collapse</span>
-      </button>
-      <div class="flex items-center gap-3 px-3 py-2 mt-1">
-        <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-xs font-bold text-white shrink-0">M@</div>
+    <!-- SIDEBAR -->
+    <aside id="sidebar"
+      class="w-64 shrink-0 bg-slate-900 text-slate-300 flex flex-col transition-all duration-200 border-r border-slate-800">
+      <div class="flex items-center gap-3 px-5 h-16 border-b border-slate-800 shrink-0">
+        <div class="w-8 h-8 rounded-md bg-purple-600 flex items-center justify-center shrink-0">
+          <i data-lucide="hard-hat" class="w-4.5 h-4.5 text-white" style="width:18px;height:18px"></i>
+        </div>
         <div class="sidebar-label overflow-hidden">
-          <p class="text-xs font-semibold text-white leading-tight">M@h@bub Alam</p>
-          <p class="text-[11px] text-slate-400 leading-tight">Admin &amp; Full Stack Dev</p>
+          <p class="text-sm font-bold text-white leading-tight">Safari Contracting</p>
+          <p class="text-[11px] text-slate-400 leading-tight">Workforce Systems</p>
         </div>
       </div>
-    </div>
-  </aside>
 
-  <!-- MAIN -->
-  <div class="flex-1 flex flex-col min-w-0">
-    <!-- TOPBAR -->
-    <header class="h-16 shrink-0 border-b border-slate-200 bg-white flex items-center justify-between px-6">
-      <div>
-        <h1 id="pageTitle" class="text-lg font-bold text-slate-900">Executive Dashboard</h1>
-        <p id="pageSubtitle" class="text-xs text-slate-500">Safari Contracting Company — Dammam, Saudi Arabia</p>
+      <nav class="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+        <button data-page="dashboard"
+          class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+          <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
+          <span class="sidebar-label">Executive Dashboard</span>
+        </button>
+        <button data-page="iqama"
+          class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+          <i data-lucide="file-clock" class="w-4 h-4 shrink-0"></i>
+          <span class="sidebar-label">Iqama &amp; Documents</span>
+        </button>
+        <button data-page="daco"
+          class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+          <i data-lucide="badge-check" class="w-4 h-4 shrink-0"></i>
+          <span class="sidebar-label">DACO ID Expiry</span>
+        </button>
+        <button data-page="org"
+          class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+          <i data-lucide="network" class="w-4 h-4 shrink-0"></i>
+          <span class="sidebar-label">Org &amp; Shift Craft</span>
+        </button>
+        <button data-page="manpower"
+          class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+          <i data-lucide="users" class="w-4 h-4 shrink-0"></i>
+          <span class="sidebar-label">Total Manpower</span>
+        </button>
+        <button data-page="equipment"
+          class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+          <i data-lucide="wrench" class="w-4 h-4 shrink-0"></i>
+          <span class="sidebar-label">Equipment &amp; Assets</span>
+        </button>
+        <button data-page="vacation"
+          class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+          <i data-lucide="plane-takeoff" class="w-4 h-4 shrink-0"></i>
+          <span class="sidebar-label">Vacation &amp; Leave</span>
+        </button>
+        <button data-page="documentation"
+          class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+          <i data-lucide="image" class="w-4 h-4 shrink-0"></i>
+          <span class="sidebar-label">Documentation Gallery</span>
+        </button>
+      </nav>
+
+      <div class="p-3 border-t border-slate-800">
+        <button id="collapseBtn"
+          class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+          <i data-lucide="panel-left-close" class="w-4 h-4 shrink-0"></i>
+          <span class="sidebar-label">Collapse</span>
+        </button>
+        <div class="flex items-center gap-3 px-3 py-2 mt-1">
+          <div
+            class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-xs font-bold text-white shrink-0">
+            M@</div>
+          <div class="sidebar-label overflow-hidden">
+            <p class="text-xs font-semibold text-white leading-tight">M@h@bub Alam</p>
+            <p class="text-[11px] text-slate-400 leading-tight">Admin &amp; Full Stack Dev</p>
+          </div>
+        </div>
       </div>
-      <div class="flex items-center gap-3">
-        <div class="flex items-center gap-2 pr-1">
-          <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold">M@</div>
-          <span class="text-sm font-medium text-slate-700">M@h@bub Alam</span>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <!-- TOPBAR -->
+      <header class="h-16 shrink-0 border-b border-slate-200 bg-white flex items-center justify-between px-6">
+        <div>
+          <h1 id="pageTitle" class="text-lg font-bold text-slate-900">Executive Dashboard</h1>
+          <p id="pageSubtitle" class="text-xs text-slate-500">Safari Contracting Company — Dammam, Saudi Arabia</p>
         </div>
-      </div>
-    </header>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2 pr-1">
+            <div
+              class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold">
+              M@</div>
+            <span class="text-sm font-medium text-slate-700">M@h@bub Alam</span>
+          </div>
+        </div>
+      </header>
 
-    <main class="flex-1 overflow-y-auto p-6 space-y-6">
+      <main class="flex-1 overflow-y-auto p-6 space-y-6">
 
-      <!-- ================= PAGE 1: DASHBOARD ================= -->
-      <section id="page-dashboard" class="page-panel active fade-in space-y-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" id="kpiCards"></div>
+        <!-- ================= PAGE 1: DASHBOARD ================= -->
+        <section id="page-dashboard" class="page-panel active fade-in space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" id="kpiCards"></div>
 
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
-          <!-- Expanded Nationality Distribution Chart Height -->
-          <div class="xl:col-span-1 bg-white border border-slate-200 rounded-xl p-5 flex flex-col items-center">
-            <div class="flex items-center justify-between w-full mb-3">
-              <h3 class="font-semibold text-sm text-slate-900">Nationality Distribution</h3>
-              <i data-lucide="globe-2" class="w-4 h-4 text-slate-400"></i>
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+            <!-- Nationality Distribution -->
+            <div class="xl:col-span-1 bg-white border border-slate-200 rounded-xl p-5 flex flex-col items-center">
+              <div class="flex items-center justify-between w-full mb-3">
+                <h3 class="font-semibold text-sm text-slate-900">Nationality Distribution</h3>
+                <i data-lucide="globe-2" class="w-4 h-4 text-slate-400"></i>
+              </div>
+              <div class="w-full max-w-[280px]">
+                <canvas id="nationalityChart" height="240"></canvas>
+              </div>
             </div>
-            <div class="w-full max-w-[280px]">
-              <canvas id="nationalityChart" height="240"></canvas>
+
+            <!-- Policy & Compliance Chart (NEW) -->
+            <div class="xl:col-span-1 bg-white border border-slate-200 rounded-xl p-5 flex flex-col items-center">
+              <div class="flex items-center justify-between w-full mb-3">
+                <h3 class="font-semibold text-sm text-slate-900">Policy &amp; Compliance</h3>
+                <i data-lucide="shield-check" class="w-4 h-4 text-slate-400"></i>
+              </div>
+              <div class="w-full max-w-[280px]">
+                <canvas id="policyChart" height="240"></canvas>
+              </div>
+            </div>
+
+            <!-- Monthly Trends -->
+            <div class="xl:col-span-1 bg-white border border-slate-200 rounded-xl p-5 flex flex-col">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold text-sm text-slate-900">Monthly Vacation &amp; Departure Trends</h3>
+                <i data-lucide="bar-chart-3" class="w-4 h-4 text-slate-400"></i>
+              </div>
+              <div class="flex-1 flex items-center">
+                <canvas id="trendChart" height="150"></canvas>
+              </div>
             </div>
           </div>
-          <!-- Expanded Trend Chart Height -->
-          <div class="xl:col-span-2 bg-white border border-slate-200 rounded-xl p-5 flex flex-col">
-            <div class="flex items-center justify-between mb-3">
-              <h3 class="font-semibold text-sm text-slate-900">Monthly Vacation &amp; Departure Trends</h3>
-              <i data-lucide="bar-chart-3" class="w-4 h-4 text-slate-400"></i>
+
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-semibold text-sm text-slate-900 flex items-center gap-2">
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
+                Quick Alert Panel — Urgent Iqama Renewals (&le;14 Days)
+              </h3>
+              <button data-page="iqama" class="nav-link-btn text-xs font-medium text-purple-600 hover:underline">View
+                all &rarr;</button>
             </div>
-            <div class="flex-1 flex items-center">
-              <canvas id="trendChart" height="150"></canvas>
-            </div>
+            <div id="alertPanel" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3"></div>
           </div>
-        </div>
+        </section>
 
-        <div class="bg-white border border-slate-200 rounded-xl p-5">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="font-semibold text-sm text-slate-900 flex items-center gap-2">
-              <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
-              Quick Alert Panel — Urgent Iqama Renewals (&le;14 Days)
-            </h3>
-            <button data-page="iqama" class="nav-link-btn text-xs font-medium text-purple-600 hover:underline">View all &rarr;</button>
-          </div>
-          <div id="alertPanel" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3"></div>
-        </div>
-      </section>
+        <!-- ================= PAGE 2: IQAMA TRACKER ================= -->
+        <section id="page-iqama" class="page-panel fade-in space-y-6">
+          <div id="iqamaAlertCards" class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-3"></div>
 
-      <!-- ================= PAGE 2: IQAMA TRACKER ================= -->
-      <section id="page-iqama" class="page-panel fade-in space-y-6">
-        <div id="iqamaAlertCards" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3"></div>
-
-        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div class="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
-            <div class="flex flex-wrap gap-2" id="iqamaFilterPills"></div>
-            <div class="relative">
-              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-              <input id="iqamaSearch" type="text" placeholder="Search name, ID, iqama no..." class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-500 w-64" />
-            </div>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide">
-                <tr>
-                  <th class="text-left font-semibold px-4 py-3">Employee</th>
-                  <th class="text-left font-semibold px-4 py-3">Iqama No.</th>
-                  <th class="text-left font-semibold px-4 py-3">Issue Date</th>
-                  <th class="text-left font-semibold px-4 py-3">Expiry Date</th>
-                  <th class="text-left font-semibold px-4 py-3">Remaining</th>
-                  <th class="text-left font-semibold px-4 py-3">Status</th>
-                  <th class="text-left font-semibold px-4 py-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="iqamaTableBody" class="divide-y divide-slate-100"></tbody>
-            </table>
-          </div>
-          <div id="iqamaPagination" class="flex items-center justify-between px-4 py-3 border-t border-slate-200 text-sm"></div>
-        </div>
-      </section>
-
-      <!-- ================= PAGE 3: ORG & SHIFT CRAFT ================= -->
-      <section id="page-org" class="page-panel fade-in space-y-6">
-        <div class="bg-white border border-slate-200 rounded-xl p-5">
-          <h3 class="font-semibold text-sm text-slate-900 mb-5 flex items-center gap-2">
-            <i data-lucide="network" class="w-4 h-4 text-purple-600"></i> Organization Chart
-          </h3>
-          <div id="orgChart" class="overflow-x-auto pb-2"></div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4" id="shiftCards"></div>
-
-        <div class="bg-white border border-slate-200 rounded-xl p-5">
-          <h3 class="font-semibold text-sm text-slate-900 mb-4">Craft Distribution</h3>
-          <div id="craftGrid" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3"></div>
-        </div>
-
-        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div class="p-4 border-b border-slate-200">
-            <h3 class="font-semibold text-sm text-slate-900">Crew Assignment — Job Site Mapping</h3>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide">
-                <tr>
-                  <th class="text-left font-semibold px-4 py-3">Employee</th>
-                  <th class="text-left font-semibold px-4 py-3">Craft</th>
-                  <th class="text-left font-semibold px-4 py-3">Shift Team</th>
-                  <th class="text-left font-semibold px-4 py-3">Job Site</th>
-                </tr>
-              </thead>
-              <tbody id="crewTableBody" class="divide-y divide-slate-100"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= PAGE 4: TOTAL MANPOWER LIST ================= -->
-      <section id="page-manpower" class="page-panel fade-in space-y-6">
-        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div class="p-4 border-b border-slate-200 flex flex-wrap items-center gap-3 justify-between">
-            <div class="flex flex-wrap items-center gap-2">
+          <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+            <div class="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex flex-wrap gap-2" id="iqamaFilterPills"></div>
               <div class="relative">
                 <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                <input id="mpSearch" type="text" placeholder="Search name, ID, craft, iqama..." class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-500 w-64" />
-              </div>
-              <select id="mpDeptFilter" class="text-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 focus:outline-none"></select>
-              <select id="mpCraftFilter" class="text-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 focus:outline-none"></select>
-              <select id="mpStatusFilter" class="text-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 focus:outline-none">
-                <option value="all">All Statuses</option>
-                <option value="On Duty">On Duty</option>
-                <option value="On Leave">On Leave</option>
-                <option value="Site Transfer">Site Transfer</option>
-              </select>
-              <div class="relative">
-                <button id="colToggleBtn" class="flex items-center gap-1.5 text-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 hover:bg-slate-100">
-                  <i data-lucide="columns-3" class="w-3.5 h-3.5"></i> Columns
-                </button>
-                <div id="colToggleMenu" class="hidden absolute z-20 mt-1 right-0 bg-white border border-slate-200 rounded-lg shadow-lg p-2 w-44 text-sm space-y-1"></div>
-              </div>
-              <div class="flex items-center rounded-lg border border-slate-200 overflow-hidden">
-                <button id="mpViewTableBtn" class="flex items-center gap-1.5 text-sm font-medium px-3 py-2 bg-slate-900 text-white">
-                  <i data-lucide="table" class="w-3.5 h-3.5"></i> Table
-                </button>
-                <button id="mpViewCardBtn" class="flex items-center gap-1.5 text-sm font-medium px-3 py-2 bg-slate-50 text-slate-500">
-                  <i data-lucide="credit-card" class="w-3.5 h-3.5"></i> Cards
-                </button>
+                <input id="iqamaSearch" type="text" placeholder="Search name, ID, iqama no..."
+                  class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-500 w-64" />
               </div>
             </div>
-            <div class="flex items-center gap-2">
-              <button id="exportExcelBtn" class="flex items-center gap-1.5 text-sm font-medium rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 transition-colors">
-                <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Excel
-              </button>
-              <button id="exportPdfBtn" class="flex items-center gap-1.5 text-sm font-medium rounded-lg bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 transition-colors">
-                <i data-lucide="file-text" class="w-3.5 h-3.5"></i> PDF
-              </button>
-            </div>
-          </div>
-          <div id="mpTableView" class="overflow-x-auto">
-            <table class="w-full text-sm" id="mpTable">
-              <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide">
-                <tr id="mpTableHead"></tr>
-              </thead>
-              <tbody id="mpTableBody" class="divide-y divide-slate-100"></tbody>
-            </table>
-          </div>
-          <div id="mpCardView" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4"></div>
-          <div id="mpPagination" class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-slate-200 text-sm"></div>
-        </div>
-      </section>
-
-      <!-- ================= PAGE 5: EQUIPMENT & ASSETS ================= -->
-      <section id="page-equipment" class="page-panel fade-in space-y-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" id="equipKpis"></div>
-        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div class="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
-            <div class="flex flex-wrap gap-2" id="equipFilterPills"></div>
-            <div class="relative">
-              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-              <input id="equipSearch" type="text" placeholder="Search equipment, ID, assignee..." class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-500 w-64" />
-            </div>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide">
-                <tr>
-                  <th class="text-left font-semibold px-4 py-3">Equipment / Vehicle ID</th>
-                  <th class="text-left font-semibold px-4 py-3">Name</th>
-                  <th class="text-left font-semibold px-4 py-3">Category</th>
-                  <th class="text-left font-semibold px-4 py-3">Assigned To / Driver</th>
-                  <th class="text-left font-semibold px-4 py-3">Status</th>
-                  <th class="text-left font-semibold px-4 py-3">Assigned Date</th>
-                  <th class="text-left font-semibold px-4 py-3">Next Service / Inspection</th>
-                </tr>
-              </thead>
-              <tbody id="equipTableBody" class="divide-y divide-slate-100"></tbody>
-            </table>
-          </div>
-          <div id="equipPagination" class="flex items-center justify-between px-4 py-3 border-t border-slate-200 text-sm"></div>
-        </div>
-      </section>
-
-      <!-- ================= PAGE 6: VACATION & LEAVE ================= -->
-      <section id="page-vacation" class="page-panel fade-in space-y-6">
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="leaveKpis"></div>
-
-        <div class="bg-white border border-slate-200 rounded-xl p-5">
-          <h3 class="font-semibold text-sm text-slate-900 mb-4 flex items-center gap-2">
-            <i data-lucide="calendar-range" class="w-4 h-4 text-sky-500"></i> Upcoming Vacation Timeline
-          </h3>
-          <div id="ganttChart" class="space-y-2 overflow-x-auto"></div>
-        </div>
-
-        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div class="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
-            <h3 class="font-semibold text-sm text-slate-900">Vacation Requests</h3>
-            <div class="relative">
-              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-              <input id="vacSearch" type="text" placeholder="Search employee..." class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-500 w-56" />
-            </div>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide">
-                <tr>
-                  <th class="text-left font-semibold px-4 py-3">Employee</th>
-                  <th class="text-left font-semibold px-4 py-3">Leave Type</th>
-                  <th class="text-left font-semibold px-4 py-3">Start</th>
-                  <th class="text-left font-semibold px-4 py-3">End</th>
-                  <th class="text-left font-semibold px-4 py-3">Exit/Re-entry Visa</th>
-                  <th class="text-left font-semibold px-4 py-3">Flight</th>
-                  <th class="text-left font-semibold px-4 py-3">Approval</th>
-                </tr>
-              </thead>
-              <tbody id="vacTableBody" class="divide-y divide-slate-100"></tbody>
-            </table>
-          </div>
-          <div id="vacPagination" class="flex items-center justify-between px-4 py-3 border-t border-slate-200 text-sm"></div>
-        </div>
-      </section>
-
-      <!-- ================= PAGE 7: DOCUMENTATION GALLERY ================= -->
-      <section id="page-documentation" class="page-panel fade-in space-y-6">
-        <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-6">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h3 class="font-bold text-base text-slate-900">Company &amp; Workforce Documentation Gallery</h3>
-              <p class="text-xs text-slate-500">Official Safari Contracting Company compliance certificates, HR guidelines, and safety manuals.</p>
-            </div>
-            <div class="relative w-full sm:w-80">
-              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-              <input id="docSearch" type="text" placeholder="Search documents or categories..." class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 w-full" />
-            </div>
-          </div>
-
-          <!-- Documentation Table Container -->
-          <div class="rounded-lg border border-slate-200 overflow-hidden bg-white">
             <div class="overflow-x-auto">
               <table class="w-full text-sm">
-                <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide border-b border-slate-200">
+                <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide">
                   <tr>
-                    <th class="text-left font-semibold px-4 py-3">Document Name</th>
-                    <th class="text-left font-semibold px-4 py-3">Category</th>
-                    <th class="text-left font-semibold px-4 py-3">Date Added</th>
-                    <th class="text-left font-semibold px-4 py-3">Size</th>
-                    <th class="text-right font-semibold px-4 py-3">Action</th>
+                    <th class="text-left font-semibold px-4 py-3">Employee</th>
+                    <th class="text-left font-semibold px-4 py-3">Iqama No.</th>
+                    <th class="text-left font-semibold px-4 py-3">Issue Date</th>
+                    <th class="text-left font-semibold px-4 py-3">Expiry Date</th>
+                    <th class="text-left font-semibold px-4 py-3">Remaining</th>
+                    <th class="text-left font-semibold px-4 py-3">Status</th>
+                    <th class="text-left font-semibold px-4 py-3">Actions</th>
                   </tr>
                 </thead>
-                <tbody id="docTableBody" class="divide-y divide-slate-100"></tbody>
+                <tbody id="iqamaTableBody" class="divide-y divide-slate-100"></tbody>
               </table>
             </div>
+            <div id="iqamaPagination"
+              class="flex items-center justify-between px-4 py-3 border-t border-slate-200 text-sm"></div>
+          </div>
+        </section>
 
-            <!-- Table Pagination and Rows Per Page -->
-            <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-slate-200 text-sm bg-slate-50/50">
-              <div class="flex items-center gap-2 text-slate-600">
-                <span>Rows per page:</span>
-                <select id="docRowsPerPage" class="text-sm rounded-md border border-slate-200 bg-white px-2 py-1 focus:outline-none focus:ring-1 focus:ring-purple-500">
-                  <option value="3">3</option>
-                  <option value="5" selected>5</option>
-                  <option value="10">10</option>
-                  <option value="all">All</option>
-                </select>
+        <!-- ================= PAGE 3: DACO ID EXPIRY TRACKER ================= -->
+        <section id="page-daco" class="page-panel fade-in space-y-6">
+          <div id="dacoAlertCards" class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-3"></div>
+          <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+            <div class="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex flex-wrap gap-2" id="dacoFilterPills"></div>
+              <div class="relative">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input id="dacoSearch" type="text" placeholder="Search name, ID, DACO ID..."
+                  class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-500 w-64" />
               </div>
-              <div id="docPaginationInfo" class="text-slate-600"></div>
-              <div id="docPaginationButtons" class="flex items-center gap-1"></div>
             </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide">
+                  <tr>
+                    <th class="text-left font-semibold px-4 py-3">Employee</th>
+                    <th class="text-left font-semibold px-4 py-3">DACO ID</th>
+                    <th class="text-left font-semibold px-4 py-3">Issue Date</th>
+                    <th class="text-left font-semibold px-4 py-3">Expiry Date</th>
+                    <th class="text-left font-semibold px-4 py-3">Remaining</th>
+                    <th class="text-left font-semibold px-4 py-3">Status</th>
+                    <th class="text-left font-semibold px-4 py-3">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="dacoTableBody" class="divide-y divide-slate-100"></tbody>
+              </table>
+            </div>
+            <div id="dacoPagination"
+              class="flex items-center justify-between px-4 py-3 border-t border-slate-200 text-sm"></div>
+          </div>
+        </section>
+
+        <!-- ================= PAGE 3: ORG & SHIFT CRAFT ================= -->
+        <section id="page-org" class="page-panel fade-in space-y-6">
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <h3 class="font-semibold text-sm text-slate-900 mb-5 flex items-center gap-2">
+              <i data-lucide="network" class="w-4 h-4 text-purple-600"></i> Organization Chart
+            </h3>
+            <div id="orgChart" class="overflow-x-auto pb-2"></div>
           </div>
 
-          <!-- Larger Chart Container -->
-          <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-              <h4 class="font-bold text-sm text-slate-900">Document Activity &amp; Category Overview</h4>
-              <i data-lucide="bar-chart-2" class="w-4 h-4 text-purple-600"></i>
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4" id="shiftCards"></div>
+
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <h3 class="font-semibold text-sm text-slate-900 mb-4">Craft Distribution</h3>
+            <div id="craftGrid" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3"></div>
+          </div>
+
+          <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+            <div class="p-4 border-b border-slate-200">
+              <h3 class="font-semibold text-sm text-slate-900">Crew Assignment — Job Site Mapping</h3>
             </div>
-            <div class="w-full h-96">
-              <canvas id="docBarChart"></canvas>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide">
+                  <tr>
+                    <th class="text-left font-semibold px-4 py-3">Employee</th>
+                    <th class="text-left font-semibold px-4 py-3">Craft</th>
+                    <th class="text-left font-semibold px-4 py-3">Shift Team</th>
+                    <th class="text-left font-semibold px-4 py-3">Job Site</th>
+                  </tr>
+                </thead>
+                <tbody id="crewTableBody" class="divide-y divide-slate-100"></tbody>
+              </table>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-    </main>
+        <!-- ================= PAGE 4: TOTAL MANPOWER LIST ================= -->
+        <section id="page-manpower" class="page-panel fade-in space-y-6">
+          <div class="bg-white border border-slate-200 rounded-xl overflow-hidden overflow-auto">
+            <div class="p-4 border-b border-slate-200 flex flex-wrap items-center gap-3 justify-between">
+              <div class="flex flex-wrap items-center gap-2">
+                <div class="relative">
+                  <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                  <input id="mpSearch" type="text" placeholder="Search name, ID, craft, iqama..."
+                    class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-500 w-64" />
+                </div>
+                <select id="mpDeptFilter"
+                  class="text-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 focus:outline-none"></select>
+                <select id="mpCraftFilter"
+                  class="text-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 focus:outline-none"></select>
+                <select id="mpStatusFilter"
+                  class="text-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 focus:outline-none">
+                  <option value="all">All Statuses</option>
+                  <option value="On Duty">On Duty</option>
+                  <option value="On Leave">On Leave</option>
+                  <option value="Site Transfer">Site Transfer</option>
+                </select>
+                <div class="relative">
+                  <button id="colToggleBtn"
+                    class="flex items-center gap-1.5 text-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 hover:bg-slate-100">
+                    <i data-lucide="columns-3" class="w-3.5 h-3.5"></i> Columns
+                  </button>
+                  <div id="colToggleMenu"
+                    class="hidden absolute z-20 mt-1 right-0 bg-white border border-slate-200 rounded-lg shadow-lg p-2 w-44 text-sm space-y-1">
+                  </div>
+                </div>
+                <div class="flex items-center rounded-lg border border-slate-200 overflow-hidden">
+                  <button id="mpViewTableBtn"
+                    class="flex items-center gap-1.5 text-sm font-medium px-3 py-2 bg-slate-900 text-white">
+                    <i data-lucide="table" class="w-3.5 h-3.5"></i> Table
+                  </button>
+                  <button id="mpViewCardBtn"
+                    class="flex items-center gap-1.5 text-sm font-medium px-3 py-2 bg-slate-50 text-slate-500">
+                    <i data-lucide="credit-card" class="w-3.5 h-3.5"></i> Cards
+                  </button>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button id="exportExcelBtn"
+                  class="flex items-center gap-1.5 text-sm font-medium rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 transition-colors">
+                  <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Excel
+                </button>
+                <button id="exportPdfBtn"
+                  class="flex items-center gap-1.5 text-sm font-medium rounded-lg bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 transition-colors">
+                  <i data-lucide="file-text" class="w-3.5 h-3.5"></i> PDF
+                </button>
+              </div>
+            </div>
+            <div id="mpTableView" class="overflow-x-auto">
+              <table class="w-full text-sm" id="mpTable">
+                <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide">
+                  <tr id="mpTableHead"></tr>
+                </thead>
+                <tbody id="mpTableBody" class="divide-y divide-slate-100"></tbody>
+              </table>
+            </div>
+            <div id="mpCardView" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
+            </div>
+            <div id="mpPagination"
+              class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-slate-200 text-sm">
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= PAGE 5: EQUIPMENT & ASSETS ================= -->
+        <section id="page-equipment" class="page-panel fade-in space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" id="equipKpis"></div>
+          <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+            <div class="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex flex-wrap gap-2" id="equipFilterPills"></div>
+              <div class="relative">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input id="equipSearch" type="text" placeholder="Search equipment, ID, assignee..."
+                  class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-500 w-64" />
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide">
+                  <tr>
+                    <th class="text-left font-semibold px-4 py-3">Equipment / Vehicle ID</th>
+                    <th class="text-left font-semibold px-4 py-3">Name</th>
+                    <th class="text-left font-semibold px-4 py-3">Category</th>
+                    <th class="text-left font-semibold px-4 py-3">Assigned To / Driver</th>
+                    <th class="text-left font-semibold px-4 py-3">Status</th>
+                    <th class="text-left font-semibold px-4 py-3">Assigned Date</th>
+                    <th class="text-left font-semibold px-4 py-3">Next Service / Inspection</th>
+                  </tr>
+                </thead>
+                <tbody id="equipTableBody" class="divide-y divide-slate-100"></tbody>
+              </table>
+            </div>
+            <div id="equipPagination"
+              class="flex items-center justify-between px-4 py-3 border-t border-slate-200 text-sm"></div>
+          </div>
+        </section>
+
+        <!-- ================= PAGE 6: VACATION & LEAVE ================= -->
+        <section id="page-vacation" class="page-panel fade-in space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="leaveKpis"></div>
+
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <h3 class="font-semibold text-sm text-slate-900 mb-4 flex items-center gap-2">
+              <i data-lucide="calendar-range" class="w-4 h-4 text-sky-500"></i> Upcoming Vacation Timeline
+            </h3>
+            <div id="ganttChart" class="space-y-2 overflow-x-auto"></div>
+          </div>
+
+          <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+            <div class="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+              <h3 class="font-semibold text-sm text-slate-900">Vacation Requests</h3>
+              <div class="relative">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input id="vacSearch" type="text" placeholder="Search employee..."
+                  class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-500 w-56" />
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide">
+                  <tr>
+                    <th class="text-left font-semibold px-4 py-3">Employee</th>
+                    <th class="text-left font-semibold px-4 py-3">Leave Type</th>
+                    <th class="text-left font-semibold px-4 py-3">Start</th>
+                    <th class="text-left font-semibold px-4 py-3">End</th>
+                    <th class="text-left font-semibold px-4 py-3">Exit/Re-entry Visa</th>
+                    <th class="text-left font-semibold px-4 py-3">Flight</th>
+                    <th class="text-left font-semibold px-4 py-3">Approval</th>
+                  </tr>
+                </thead>
+                <tbody id="vacTableBody" class="divide-y divide-slate-100"></tbody>
+              </table>
+            </div>
+            <div id="vacPagination"
+              class="flex items-center justify-between px-4 py-3 border-t border-slate-200 text-sm"></div>
+          </div>
+        </section>
+
+        <!-- ================= PAGE 7: DOCUMENTATION GALLERY ================= -->
+        <section id="page-documentation" class="page-panel fade-in space-y-6">
+          <div class="bg-white border border-slate-200 rounded-xl p-5 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 class="font-bold text-base text-slate-900">Company &amp; Workforce Documentation Gallery</h3>
+                <p class="text-xs text-slate-500">Official Safari Contracting Company compliance certificates, HR
+                  guidelines, and safety manuals.</p>
+              </div>
+              <div class="relative w-full sm:w-80">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input id="docSearch" type="text" placeholder="Search documents or categories..."
+                  class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 w-full" />
+              </div>
+            </div>
+
+            <div class="rounded-lg border border-slate-200 overflow-hidden bg-white">
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide border-b border-slate-200">
+                    <tr>
+                      <th class="text-left font-semibold px-4 py-3">Document Name</th>
+                      <th class="text-left font-semibold px-4 py-3">Category</th>
+                      <th class="text-left font-semibold px-4 py-3">Date Added</th>
+                      <th class="text-left font-semibold px-4 py-3">Size</th>
+                      <th class="text-right font-semibold px-4 py-3">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="docTableBody" class="divide-y divide-slate-100"></tbody>
+                </table>
+              </div>
+
+              <div
+                class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-slate-200 text-sm bg-slate-50/50">
+                <div class="flex items-center gap-2 text-slate-600">
+                  <span>Rows per page:</span>
+                  <select id="docRowsPerPage"
+                    class="text-sm rounded-md border border-slate-200 bg-white px-2 py-1 focus:outline-none focus:ring-1 focus:ring-purple-500">
+                    <option value="3">3</option>
+                    <option value="5" selected>5</option>
+                    <option value="10">10</option>
+                    <option value="all">All</option>
+                  </select>
+                </div>
+                <div id="docPaginationInfo" class="text-slate-600"></div>
+                <div id="docPaginationButtons" class="flex items-center gap-1"></div>
+              </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="font-bold text-sm text-slate-900">Document Activity &amp; Category Overview</h4>
+                <i data-lucide="bar-chart-2" class="w-4 h-4 text-purple-600"></i>
+              </div>
+              <div class="w-full h-96">
+                <canvas id="docBarChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
   </div>
-</div>
 
-<!-- ID CARD MODAL -->
-<div id="idCardModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden relative">
-    <button id="idCardCloseBtn" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 z-10">
-      <i data-lucide="x" class="w-4 h-4"></i>
-    </button>
-    <div id="idCardContent"></div>
-  </div>
-</div>
-
-<!-- DOCUMENT PREVIEW MODAL -->
-<div id="docModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden relative p-6 space-y-4">
-    <div class="flex items-center justify-between">
-      <h3 id="docModalTitle" class="font-bold text-lg text-slate-900">Document Preview</h3>
-      <button id="docCloseBtn" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700">
+  <!-- ID CARD MODAL -->
+  <div id="idCardModal"
+    class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden relative">
+      <button id="idCardCloseBtn"
+        class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 z-10">
         <i data-lucide="x" class="w-4 h-4"></i>
       </button>
-    </div>
-    <div class="bg-slate-100 rounded-xl p-4 flex items-center justify-center min-h-[220px]">
-      <img id="docModalImg" src="" alt="Document Preview" class="max-h-[260px] rounded-lg shadow object-cover" />
-    </div>
-    <p id="docModalDesc" class="text-sm text-slate-600"></p>
-    <div class="flex justify-end gap-2 pt-2">
-      <button id="docDownloadBtn" class="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium flex items-center gap-2">
-        <i data-lucide="download" class="w-4 h-4"></i> Download File
-      </button>
+      <div id="idCardContent"></div>
     </div>
   </div>
-</div>
 
-<script src="index.js"></script>
-<footer class="text-center bg-purple-500 text-white py-2"> &copy; Ground &amp; Landscaping. All rights reserved.</footer>
+  <!-- DOCUMENT PREVIEW MODAL -->
+  <div id="docModal"
+    class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden relative p-6 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 id="docModalTitle" class="font-bold text-lg text-slate-900">Document Preview</h3>
+        <button id="docCloseBtn"
+          class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="bg-slate-100 rounded-xl p-4 flex items-center justify-center min-h-[220px]">
+        <img id="docModalImg" src="" alt="Document Preview" class="max-h-[260px] rounded-lg shadow object-cover" />
+      </div>
+      <p id="docModalDesc" class="text-sm text-slate-600"></p>
+      <div class="flex justify-end gap-2 pt-2">
+        <button id="docDownloadBtn"
+          class="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium flex items-center gap-2">
+          <i data-lucide="download" class="w-4 h-4"></i> Download File
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="index.js"></script>
+  <footer class="text-center bg-purple-600 text-white py-2 text-sm">
+    &copy; 2026 Safari Contracting Company — Dammam. All rights reserved.
+  </footer>
 </body>
+
 </html>

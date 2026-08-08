@@ -1,1259 +1,435 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Manpower &amp; HR Management System - Safari Contracting Company</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ['Inter', 'ui-sans-serif', 'system-ui'],
-          mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
-        },
-        colors: {
-          brand: {
-            50: '#f5f3ff',
-            100: '#ede9fe',
-            500: '#8b5cf6',
-            600: '#7c3aed',
-            700: '#6d28d9',
-            900: '#4c1d95',
-          }
-        }
-      }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Safari Group Limited | Dammam - KFIA</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .hero-bg {
+      background-image: linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.65)),
+                        url('https://mahabub2030.github.io/KFIAPROJICET/img/Nabatat_BG.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
     }
-  }
-</script>
-<style>
-  html, body { font-family: 'Inter', sans-serif; }
-  .mono-num { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
-  ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
-  .page-panel { display: none; }
-  .page-panel.active { display: block; }
-  .sidebar-collapsed .sidebar-label { display: none; }
-  .sidebar-collapsed { width: 4.5rem !important; }
-  .fade-in { animation: fadeIn .25s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px);} to { opacity: 1; transform: translateY(0);} }
-  input[type="checkbox"] { accent-color: #7c3aed; }
-</style>
+  </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
 
-<div class="flex h-screen overflow-hidden">
+  <!-- HEADER -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="#home" class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-emerald-600 flex items-center justify-center">
+            <i data-lucide="hard-hat" class="w-5 h-5 text-white"></i>
+          </div>
+          <div>
+            <p class="text-sm font-bold text-slate-900 leading-tight">Safari Group Limited</p>
+            <p class="text-[11px] text-slate-500 leading-tight">Dammam • KFIA Project</p>
+          </div>
+        </a>
 
-  <!-- SIDEBAR -->
-  <aside id="sidebar" class="w-64 shrink-0 bg-slate-900 text-slate-300 flex flex-col transition-all duration-200 border-r border-slate-800">
-    <div class="flex items-center gap-3 px-5 h-16 border-b border-slate-800 shrink-0">
-      <div class="w-8 h-8 rounded-md bg-purple-600 flex items-center justify-center shrink-0">
-        <i data-lucide="hard-hat" class="w-4.5 h-4.5 text-white" style="width:18px;height:18px"></i>
-      </div>
-      <div class="sidebar-label overflow-hidden">
-        <p class="text-sm font-bold text-white leading-tight">Safari Contracting</p>
-        <p class="text-[11px] text-slate-400 leading-tight">Workforce Systems</p>
-      </div>
-    </div>
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+          <a href="#home" class="text-slate-700 hover:text-emerald-600 transition">Home</a>
+          <a href="#about" class="text-slate-700 hover:text-emerald-600 transition">About</a>
+          <a href="#employees" class="text-slate-700 hover:text-emerald-600 transition">Employees</a>
+          <a href="#services" class="text-slate-700 hover:text-emerald-600 transition">Services</a>
+          <a href="#projects" class="text-slate-700 hover:text-emerald-600 transition">Projects</a>
+          <a href="dashboard.html" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition">Dashboard</a>
+        </div>
 
-    <nav class="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-      <button data-page="dashboard" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i>
-        <span class="sidebar-label">Executive Dashboard</span>
-      </button>
-      <button data-page="iqama" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="file-clock" class="w-4 h-4 shrink-0"></i>
-        <span class="sidebar-label">Iqama &amp; Documents</span>
-      </button>
-      <button data-page="org" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="network" class="w-4 h-4 shrink-0"></i>
-        <span class="sidebar-label">Org &amp; Shift Craft</span>
-      </button>
-      <button data-page="manpower" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="users" class="w-4 h-4 shrink-0"></i>
-        <span class="sidebar-label">Total Manpower</span>
-      </button>
-      <button data-page="equipment" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="wrench" class="w-4 h-4 shrink-0"></i>
-        <span class="sidebar-label">Equipment &amp; Assets</span>
-      </button>
-      <button data-page="vacation" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="plane-takeoff" class="w-4 h-4 shrink-0"></i>
-        <span class="sidebar-label">Vacation &amp; Leave</span>
-      </button>
-      <button data-page="documentation" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
-        <i data-lucide="image" class="w-4 h-4 shrink-0"></i>
-        <span class="sidebar-label">Documentation Gallery</span>
-      </button>
+        <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg hover:bg-slate-100">
+          <i data-lucide="menu" class="w-6 h-6 text-slate-700"></i>
+        </button>
+      </div>
+
+      <div id="mobileMenu" class="hidden md:hidden pb-4 space-y-2 border-t border-slate-100 mt-2 pt-3">
+        <a href="#home" class="block px-3 py-2 rounded-lg hover:bg-slate-100">Home</a>
+        <a href="#about" class="block px-3 py-2 rounded-lg hover:bg-slate-100">About</a>
+        <a href="#employees" class="block px-3 py-2 rounded-lg hover:bg-slate-100">Employees</a>
+        <a href="#services" class="block px-3 py-2 rounded-lg hover:bg-slate-100">Services</a>
+        <a href="#projects" class="block px-3 py-2 rounded-lg hover:bg-slate-100">Projects</a>
+        <a href="dashboard.html" class="block px-3 py-2 bg-emerald-600 text-white rounded-lg text-center font-medium">Dashboard</a>
+      </div>
     </nav>
+  </header>
 
-    <div class="p-3 border-t border-slate-800">
-      <button id="collapseBtn" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-        <i data-lucide="panel-left-close" class="w-4 h-4 shrink-0"></i>
-        <span class="sidebar-label">Collapse</span>
-      </button>
-      <div class="flex items-center gap-3 px-3 py-2 mt-1">
-        <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-xs font-bold text-white shrink-0">MA</div>
-        <div class="sidebar-label overflow-hidden">
-          <p class="text-xs font-semibold text-white leading-tight">Mahabub Alam</p>
-          <p class="text-[11px] text-slate-400 leading-tight">Admin &amp; Full Stack Dev</p>
+  <!-- HERO -->
+  <section id="home" class="hero-bg text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36">
+      <div class="max-w-3xl">
+        <p class="text-emerald-400 font-semibold text-sm uppercase tracking-wider mb-3">King Fahd International Airport Project</p>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">Safari Group Limited</h1>
+        <p class="text-lg md:text-xl text-slate-200 mb-8 leading-relaxed">
+          Professional landscaping, irrigation, fence, roads & waste management contractor for DACO at King Fahd International Airport, Dammam, Saudi Arabia.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a href="#about" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 rounded-lg font-semibold transition">About Us</a>
+          <a href="dashboard.html" class="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/30 rounded-lg font-semibold transition">Open Dashboard</a>
         </div>
       </div>
     </div>
-  </aside>
+  </section>
 
-  <!-- MAIN -->
-  <div class="flex-1 flex flex-col min-w-0">
-    <!-- TOPBAR -->
-    <header class="h-16 shrink-0 border-b border-slate-200 bg-white flex items-center justify-between px-6">
-      <div>
-        <h1 id="pageTitle" class="text-lg font-bold text-slate-900">Executive Dashboard</h1>
-        <p id="pageSubtitle" class="text-xs text-slate-500">Safari Contracting Company — Dammam, Saudi Arabia</p>
+  <main>
+    <!-- ABOUT -->
+    <section id="about" class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 class="text-3xl font-bold text-slate-900 mb-4">About Safari Group Limited</h2>
+            <p class="text-slate-600 leading-relaxed mb-4">
+              Safari Group Limited is a specialized contracting company based in Dammam, Saudi Arabia. We deliver high-quality landscaping, irrigation systems, fencing, roads, drainage and waste management services for major projects including King Fahd International Airport (KFIA).
+            </p>
+            <p class="text-slate-600 leading-relaxed mb-6">
+              Our experienced team of engineers, supervisors, gardeners and skilled workers ensures excellent execution while maintaining full compliance with Saudi labor and safety regulations.
+            </p>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-emerald-50 rounded-xl p-4 text-center">
+                <p class="text-2xl font-bold text-emerald-700">200+</p>
+                <p class="text-sm text-slate-600">Workforce</p>
+              </div>
+              <div class="bg-emerald-50 rounded-xl p-4 text-center">
+                <p class="text-2xl font-bold text-emerald-700">KFIA</p>
+                <p class="text-sm text-slate-600">Main Project</p>
+              </div>
+            </div>
+          </div>
+          <div>
+            <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80" alt="Construction Site" class="rounded-2xl shadow-xl w-full object-cover h-80">
+          </div>
+        </div>
       </div>
-      <div class="flex items-center gap-3">
-        <div class="flex items-center gap-2 pr-1">
-          <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold">MA</div>
-          <span class="text-sm font-medium text-slate-700">Mahabub Alam</span>
+    </section>
+
+    <!-- EMPLOYEES -->
+    <section id="employees" class="py-20 bg-slate-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold text-slate-900 mb-3">Our Workforce</h2>
+          <p class="text-slate-600 max-w-2xl mx-auto">Dedicated team working across Nursery, Terminal, Control Tower, Royal Terminal, Parking Garage and more.</p>
         </div>
-      </div>
-    </header>
 
-    <main class="flex-1 overflow-y-auto p-6 space-y-6">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-14">
+          <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 text-center">
+            <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4"><i data-lucide="users" class="w-6 h-6"></i></div>
+            <h3 class="font-bold text-slate-900 mb-1">Management</h3>
+            <p class="text-sm text-slate-500">Project Managers, Engineers & Coordinators</p>
+          </div>
+          <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 text-center">
+            <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-4"><i data-lucide="flower-2" class="w-6 h-6"></i></div>
+            <h3 class="font-bold text-slate-900 mb-1">Nursery & Landscaping</h3>
+            <p class="text-sm text-slate-500">Gardeners, Foremen & Horticulturists</p>
+          </div>
+          <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 text-center">
+            <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-4"><i data-lucide="wrench" class="w-6 h-6"></i></div>
+            <h3 class="font-bold text-slate-900 mb-1">Technical Teams</h3>
+            <p class="text-sm text-slate-500">Irrigation, Mechanics & Electricians</p>
+          </div>
+          <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 text-center">
+            <div class="w-12 h-12 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mx-auto mb-4"><i data-lucide="shield" class="w-6 h-6"></i></div>
+            <h3 class="font-bold text-slate-900 mb-1">Support Staff</h3>
+            <p class="text-sm text-slate-500">Security, Drivers & Workshop Crew</p>
+          </div>
+        </div>
 
-      <!-- ================= PAGE 1: DASHBOARD ================= -->
-      <section id="page-dashboard" class="page-panel active fade-in space-y-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" id="kpiCards"></div>
-
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
-          <div class="xl:col-span-1 bg-white border border-slate-200 rounded-xl p-5 flex flex-col items-center">
-            <div class="flex items-center justify-between w-full mb-3">
-              <h3 class="font-semibold text-sm text-slate-900">Nationality Distribution</h3>
-              <i data-lucide="globe-2" class="w-4 h-4 text-slate-400"></i>
+        <!-- Employees Table -->
+        <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          <div class="p-5 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+              <h3 class="font-bold text-slate-900">Employees Directory</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Search, filter and export employee data</p>
             </div>
-            <div class="w-full max-w-[220px]">
-              <canvas id="nationalityChart" height="160"></canvas>
-            </div>
-          </div>
-          <div class="xl:col-span-2 bg-white border border-slate-200 rounded-xl p-5 flex flex-col">
-            <div class="flex items-center justify-between mb-3">
-              <h3 class="font-semibold text-sm text-slate-900">Monthly Vacation &amp; Departure Trends</h3>
-              <i data-lucide="bar-chart-3" class="w-4 h-4 text-slate-400"></i>
-            </div>
-            <div class="flex-1 flex items-center">
-              <canvas id="trendChart" height="100"></canvas>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white border border-slate-200 rounded-xl p-5">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="font-semibold text-sm text-slate-900 flex items-center gap-2">
-              <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
-              Quick Alert Panel — Urgent Iqama Renewals (≤14 Days)
-            </h3>
-            <button data-page="iqama" class="nav-link-btn text-xs font-medium text-purple-600 hover:underline">View all →</button>
-          </div>
-          <div id="alertPanel" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3"></div>
-        </div>
-      </section>
-
-      <!-- ================= PAGE 2: IQAMA TRACKER ================= -->
-      <section id="page-iqama" class="page-panel fade-in space-y-6">
-        <div id="iqamaAlertCards" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3"></div>
-
-        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div class="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
-            <div class="flex flex-wrap gap-2" id="iqamaFilterPills"></div>
-            <div class="relative">
-              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-              <input id="iqamaSearch" type="text" placeholder="Search name, ID, iqama no..." class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-500 w-64" />
-            </div>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide">
-                <tr>
-                  <th class="text-left font-semibold px-4 py-3">Employee</th>
-                  <th class="text-left font-semibold px-4 py-3">Iqama No.</th>
-                  <th class="text-left font-semibold px-4 py-3">Issue Date</th>
-                  <th class="text-left font-semibold px-4 py-3">Expiry Date</th>
-                  <th class="text-left font-semibold px-4 py-3">Remaining</th>
-                  <th class="text-left font-semibold px-4 py-3">Status</th>
-                  <th class="text-left font-semibold px-4 py-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="iqamaTableBody" class="divide-y divide-slate-100"></tbody>
-            </table>
-          </div>
-          <div id="iqamaPagination" class="flex items-center justify-between px-4 py-3 border-t border-slate-200 text-sm"></div>
-        </div>
-      </section>
-
-      <!-- ================= PAGE 3: ORG & SHIFT CRAFT ================= -->
-      <section id="page-org" class="page-panel fade-in space-y-6">
-        <div class="bg-white border border-slate-200 rounded-xl p-5">
-          <h3 class="font-semibold text-sm text-slate-900 mb-5 flex items-center gap-2">
-            <i data-lucide="network" class="w-4 h-4 text-purple-600"></i> Organization Chart
-          </h3>
-          <div id="orgChart" class="overflow-x-auto pb-2"></div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4" id="shiftCards"></div>
-
-        <div class="bg-white border border-slate-200 rounded-xl p-5">
-          <h3 class="font-semibold text-sm text-slate-900 mb-4">Craft Distribution</h3>
-          <div id="craftGrid" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3"></div>
-        </div>
-
-        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div class="p-4 border-b border-slate-200">
-            <h3 class="font-semibold text-sm text-slate-900">Crew Assignment — Job Site Mapping</h3>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide">
-                <tr>
-                  <th class="text-left font-semibold px-4 py-3">Employee</th>
-                  <th class="text-left font-semibold px-4 py-3">Craft</th>
-                  <th class="text-left font-semibold px-4 py-3">Shift Team</th>
-                  <th class="text-left font-semibold px-4 py-3">Job Site</th>
-                </tr>
-              </thead>
-              <tbody id="crewTableBody" class="divide-y divide-slate-100"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= PAGE 4: TOTAL MANPOWER LIST ================= -->
-      <section id="page-manpower" class="page-panel fade-in space-y-6">
-        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div class="p-4 border-b border-slate-200 flex flex-wrap items-center gap-3 justify-between">
-            <div class="flex flex-wrap items-center gap-2">
+            <div class="flex flex-wrap items-center gap-3">
               <div class="relative">
                 <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                <input id="mpSearch" type="text" placeholder="Search name, ID, craft, iqama..." class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-500 w-64" />
+                <input id="empSearch" type="text" placeholder="Search name, position..." class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 w-56">
               </div>
-              <select id="mpDeptFilter" class="text-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 focus:outline-none"></select>
-              <select id="mpCraftFilter" class="text-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 focus:outline-none"></select>
-              <select id="mpStatusFilter" class="text-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 focus:outline-none">
-                <option value="all">All Statuses</option>
-                <option value="On Duty">On Duty</option>
-                <option value="On Leave">On Leave</option>
-                <option value="Site Transfer">Site Transfer</option>
+              <select id="empRows" class="text-sm rounded-lg border border-slate-200 px-3 py-2">
+                <option value="10">10</option>
+                <option value="20" selected>20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="all">All</option>
               </select>
-              <div class="relative">
-                <button id="colToggleBtn" class="flex items-center gap-1.5 text-sm rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 hover:bg-slate-100">
-                  <i data-lucide="columns-3" class="w-3.5 h-3.5"></i> Columns
-                </button>
-                <div id="colToggleMenu" class="hidden absolute z-20 mt-1 right-0 bg-white border border-slate-200 rounded-lg shadow-lg p-2 w-44 text-sm space-y-1"></div>
-              </div>
-              <div class="flex items-center rounded-lg border border-slate-200 overflow-hidden">
-                <button id="mpViewTableBtn" class="flex items-center gap-1.5 text-sm font-medium px-3 py-2 bg-slate-900 text-white">
-                  <i data-lucide="table" class="w-3.5 h-3.5"></i> Table
-                </button>
-                <button id="mpViewCardBtn" class="flex items-center gap-1.5 text-sm font-medium px-3 py-2 bg-slate-50 text-slate-500">
-                  <i data-lucide="credit-card" class="w-3.5 h-3.5"></i> Cards
-                </button>
-              </div>
-            </div>
-            <div class="flex items-center gap-2">
-              <button id="exportExcelBtn" class="flex items-center gap-1.5 text-sm font-medium rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 transition-colors">
-                <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Excel
-              </button>
-              <button id="exportPdfBtn" class="flex items-center gap-1.5 text-sm font-medium rounded-lg bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 transition-colors">
-                <i data-lucide="file-text" class="w-3.5 h-3.5"></i> PDF
-              </button>
+              <button id="empExcel" class="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Excel</button>
+              <button id="empPdf" class="inline-flex items-center gap-1.5 px-3 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium rounded-lg"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
             </div>
           </div>
-          <div id="mpTableView" class="overflow-x-auto">
-            <table class="w-full text-sm" id="mpTable">
-              <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide">
-                <tr id="mpTableHead"></tr>
-              </thead>
-              <tbody id="mpTableBody" class="divide-y divide-slate-100"></tbody>
-            </table>
-          </div>
-          <div id="mpCardView" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4"></div>
-          <div id="mpPagination" class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-slate-200 text-sm"></div>
-        </div>
-      </section>
 
-      <!-- ================= PAGE 5: EQUIPMENT & ASSETS ================= -->
-      <section id="page-equipment" class="page-panel fade-in space-y-6">
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" id="equipKpis"></div>
-        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div class="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
-            <div class="flex flex-wrap gap-2" id="equipFilterPills"></div>
-            <div class="relative">
-              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-              <input id="equipSearch" type="text" placeholder="Search equipment, ID, assignee..." class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-500 w-64" />
-            </div>
-          </div>
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
-              <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide">
+              <thead class="bg-slate-50 text-slate-500 text-xs uppercase">
                 <tr>
-                  <th class="text-left font-semibold px-4 py-3">Equipment ID</th>
-                  <th class="text-left font-semibold px-4 py-3">Name</th>
-                  <th class="text-left font-semibold px-4 py-3">Category</th>
-                  <th class="text-left font-semibold px-4 py-3">Assigned To</th>
-                  <th class="text-left font-semibold px-4 py-3">Status</th>
-                  <th class="text-left font-semibold px-4 py-3">Assigned Date</th>
-                  <th class="text-left font-semibold px-4 py-3">Next Inspection</th>
+                  <th class="text-left font-semibold px-5 py-3">#</th>
+                  <th class="text-left font-semibold px-5 py-3">Name</th>
+                  <th class="text-left font-semibold px-5 py-3">Position</th>
+                  <th class="text-left font-semibold px-5 py-3">Department</th>
+                  <th class="text-left font-semibold px-5 py-3">Contact</th>
                 </tr>
               </thead>
-              <tbody id="equipTableBody" class="divide-y divide-slate-100"></tbody>
+              <tbody id="empTableBody" class="divide-y divide-slate-100"></tbody>
             </table>
           </div>
-          <div id="equipPagination" class="flex items-center justify-between px-4 py-3 border-t border-slate-200 text-sm"></div>
-        </div>
-      </section>
 
-      <!-- ================= PAGE 6: VACATION & LEAVE ================= -->
-      <section id="page-vacation" class="page-panel fade-in space-y-6">
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="leaveKpis"></div>
-
-        <div class="bg-white border border-slate-200 rounded-xl p-5">
-          <h3 class="font-semibold text-sm text-slate-900 mb-4 flex items-center gap-2">
-            <i data-lucide="calendar-range" class="w-4 h-4 text-sky-500"></i> Upcoming Vacation Timeline
-          </h3>
-          <div id="ganttChart" class="space-y-2 overflow-x-auto"></div>
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-4 border-t border-slate-200 text-sm">
+            <div id="empInfo" class="text-slate-600"></div>
+            <div id="empPagination" class="flex items-center gap-1"></div>
+          </div>
         </div>
 
-        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div class="p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
-            <h3 class="font-semibold text-sm text-slate-900">Vacation Requests</h3>
-            <div class="relative">
-              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-              <input id="vacSearch" type="text" placeholder="Search employee..." class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-500 w-56" />
+        <div class="text-center mt-10">
+          <a href="dashboard.html" class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold transition">
+            <i data-lucide="layout-dashboard" class="w-5 h-5"></i> View Full Manpower Dashboard
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services" class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold text-slate-900 mb-3">Our Services</h2>
+          <p class="text-slate-600">Complete solutions for airport and large-scale projects</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="border border-slate-200 rounded-xl p-6 hover:shadow-md transition">
+            <i data-lucide="trees" class="w-8 h-8 text-emerald-600 mb-4"></i>
+            <h3 class="font-bold text-lg mb-2">Landscaping & Nursery</h3>
+            <p class="text-slate-600 text-sm">Indoor & outdoor plants, irrigation systems, and maintenance for terminals and VIP areas.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-6 hover:shadow-md transition">
+            <i data-lucide="road" class="w-8 h-8 text-emerald-600 mb-4"></i>
+            <h3 class="font-bold text-lg mb-2">Fence, Roads & Drains</h3>
+            <p class="text-slate-600 text-sm">Construction and maintenance of perimeter fencing, access roads and drainage systems.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-6 hover:shadow-md transition">
+            <i data-lucide="truck" class="w-8 h-8 text-emerald-600 mb-4"></i>
+            <h3 class="font-bold text-lg mb-2">Waste Management</h3>
+            <p class="text-slate-600 text-sm">Collection, transport and disposal services supporting airport operations.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="py-20 bg-slate-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold text-slate-900 mb-3">Our Projects</h2>
+          <p class="text-slate-600 max-w-2xl mx-auto">Key projects delivered at King Fahd International Airport (KFIA) under DACO contract.</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition">
+            <div class="h-44 bg-emerald-100 flex items-center justify-center"><i data-lucide="trees" class="w-14 h-14 text-emerald-600"></i></div>
+            <div class="p-6">
+              <h3 class="font-bold text-lg text-slate-900 mb-2">Landscaping & Nursery</h3>
+              <p class="text-sm text-slate-600 mb-4">Complete landscaping and nursery management across terminals and VIP areas.</p>
+              <span class="text-xs font-semibold px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full">Ongoing</span>
             </div>
           </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wide">
-                <tr>
-                  <th class="text-left font-semibold px-4 py-3">Employee</th>
-                  <th class="text-left font-semibold px-4 py-3">Leave Type</th>
-                  <th class="text-left font-semibold px-4 py-3">Start</th>
-                  <th class="text-left font-semibold px-4 py-3">End</th>
-                  <th class="text-left font-semibold px-4 py-3">Exit/Re-entry Visa</th>
-                  <th class="text-left font-semibold px-4 py-3">Flight</th>
-                  <th class="text-left font-semibold px-4 py-3">Approval</th>
-                </tr>
-              </thead>
-              <tbody id="vacTableBody" class="divide-y divide-slate-100"></tbody>
-            </table>
-          </div>
-          <div id="vacPagination" class="flex items-center justify-between px-4 py-3 border-t border-slate-200 text-sm"></div>
-        </div>
-      </section>
-
-      <!-- ================= PAGE 7: DOCUMENTATION GALLERY ================= -->
-      <section id="page-documentation" class="page-panel fade-in space-y-6">
-        <div class="bg-white border border-slate-200 rounded-xl p-5">
-          <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-            <div>
-              <h3 class="font-bold text-base text-slate-900">Company &amp; Workforce Documentation</h3>
-              <p class="text-xs text-slate-500">Official Safari Contracting Company compliance certificates, HR guidelines, and safety manuals.</p>
-            </div>
-            <div class="relative">
-              <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-              <input id="docSearch" type="text" placeholder="Search documents..." class="pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-500 w-60" />
+          <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition">
+            <div class="h-44 bg-blue-100 flex items-center justify-center"><i data-lucide="droplets" class="w-14 h-14 text-blue-600"></i></div>
+            <div class="p-6">
+              <h3 class="font-bold text-lg text-slate-900 mb-2">Irrigation Systems</h3>
+              <p class="text-sm text-slate-600 mb-4">Design, installation and maintenance of irrigation networks.</p>
+              <span class="text-xs font-semibold px-3 py-1 bg-blue-50 text-blue-700 rounded-full">Active</span>
             </div>
           </div>
-          <div id="docCardGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
-        </div>
-      </section>
-
-    </main>
-  </div>
-</div>
-
-<!-- ID CARD MODAL -->
-<div id="idCardModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden relative">
-    <button id="idCardCloseBtn" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 z-10">
-      <i data-lucide="x" class="w-4 h-4"></i>
-    </button>
-    <div id="idCardContent"></div>
-  </div>
-</div>
-
-<!-- DOCUMENT PREVIEW MODAL -->
-<div id="docModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden relative p-6 space-y-4">
-    <div class="flex items-center justify-between">
-      <h3 id="docModalTitle" class="font-bold text-lg text-slate-900">Document Preview</h3>
-      <button id="docCloseBtn" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700">
-        <i data-lucide="x" class="w-4 h-4"></i>
-      </button>
-    </div>
-    <div class="bg-slate-100 rounded-xl p-4 flex items-center justify-center min-h-[220px]">
-      <img id="docModalImg" src="" alt="Document Preview" class="max-h-[260px] rounded-lg shadow object-cover" />
-    </div>
-    <p id="docModalDesc" class="text-sm text-slate-600"></p>
-    <div class="flex justify-end gap-2 pt-2">
-      <button id="docDownloadBtn" class="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium flex items-center gap-2">
-        <i data-lucide="download" class="w-4 h-4"></i> Download File
-      </button>
-    </div>
-  </div>
-</div>
-
-<script>
-/* ============================================================
-   DATA GENERATION
-   ============================================================ */
-const saudiFirst = ["Abdullah","Mohammed","Ahmed","Khalid","Faisal","Turki","Saad","Nasser","Fahad","Sultan","Omar","Yousef","Bandar","Talal","Majed","Rakan"];
-const saudiLast = ["Al-Qahtani","Al-Ghamdi","Al-Otaibi","Al-Harbi","Al-Zahrani","Al-Shehri","Al-Dosari","Al-Malki","Al-Anazi","Al-Mutairi"];
-
-const expatPools = {
-  "India": { flag:"🇮🇳", first:["Rajesh","Suresh","Anil","Vijay","Ramesh","Manoj","Sanjay","Deepak","Arun","Prakash"], last:["Kumar","Patel","Sharma","Singh","Nair","Reddy","Gupta","Menon","Iyer","Yadav"] },
-  "Pakistan": { flag:"🇵🇰", first:["Imran","Tariq","Asif","Waqar","Shahid","Zulfiqar","Naveed","Rashid","Farhan","Adeel"], last:["Khan","Mahmood","Ali","Hussain","Iqbal","Chaudhry","Butt","Malik","Sheikh","Raza"] },
-  "Philippines": { flag:"🇵🇭", first:["Jose","Ramon","Mark","Angelo","Ricardo","Ernesto","Danilo","Rodel","Ferdinand","Noel"], last:["Santos","Cruz","Reyes","Bautista","Garcia","Mendoza","Torres","Flores","Ramos","Aquino"] },
-  "Egypt": { flag:"🇪🇬", first:["Mahmoud","Ahmed","Karim","Youssef","Mostafa","Hassan","Tarek","Sherif","Amr","Waleed"], last:["Hassan","Fathy","Said","Ibrahim","Mansour","El-Sayed","Kamal","Farouk","Abdelrahman","Nour"] },
-  "Bangladesh": { flag:"🇧🇩", first:["Rafiq","Shahid","Kamal","Jahangir","Habibur","Mizanur","Rashedul","Nasir","Shakil","Anisur"], last:["Islam","Hossain","Ahmed","Rahman","Chowdhury","Karim","Uddin","Alam","Miah","Khan"] },
-  "Jordan": { flag:"🇯🇴", first:["Ziad","Hussein","Firas","Ala'a","Basil","Nabil","Rami","Samer","Loai","Anas"], last:["Nasser","Khalil","Odeh","Haddad","Qasem","Freij","Zoubi","Hijazi","Barakat","Salameh"] },
-  "Nepal": { flag:"🇳🇵", first:["Bikash","Suman","Prakash","Dipesh","Rajan","Bijay","Santosh","Nabin","Deepak","Sagar"], last:["Thapa","Shrestha","Gurung","Rai","Tamang","Karki","Adhikari","Basnet","Magar","Bista"] },
-  "Sudan": { flag:"🇸🇩", first:["Osman","Ibrahim","Mustafa","Salah","Adam","Bakri","Hisham","Amin","Tariq","Sami"], last:["Idris","Suleiman","Awad","Hamid","Ahmed","Elzein","Ballal","Mekki","Fadl","Abbas"] }
-};
-const nationalities = ["Saudi Arabia", ...Object.keys(expatPools)];
-const nationalityFlags = { "Saudi Arabia":"🇸🇦", ...Object.fromEntries(Object.entries(expatPools).map(([k,v])=>[k,v.flag])) };
-
-const departments = ["Operations","Maintenance","Safety (HSE)","Electrical","Mechanical","Civil","Administration","Logistics"];
-const crafts = ["Electrician","Welder","Pipefitter","Safety Officer","Mechanic","Civil Laborer","Scaffolder","Rigger","Crane Operator","Foreman","HR Coordinator","Supervisor"];
-const shifts = ["Day Shift","Night Shift","Off Duty","Standby"];
-const dutyStatuses = ["On Duty","On Leave","Site Transfer"];
-const jobSites = ["Dammam Yard 3", "King Fahad Int. Airport (KFIA)", "Jubail Site A", "Yanbu Refinery", "Ras Tanura Plant", "Riyadh HQ Depot"];
-
-function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
-function pad(n,len){ return String(n).padStart(len,"0"); }
-function fmtDate(d){ return d.toISOString().slice(0,10); }
-
-function safeCreateIcons(){
-  if (typeof lucide !== "undefined" && lucide.createIcons){
-    try { lucide.createIcons(); } catch(err){ console.warn("Icon render skipped:", err); }
-  }
-}
-
-function genIqamaNumber(){
-  return (rand(["1","2"])) + Array.from({length:9},()=>randInt(0,9)).join("");
-}
-
-const today = new Date();
-const EMP_COUNT = 90;
-let employees = [];
-
-for (let i=1; i<=EMP_COUNT; i++){
-  const isSaudi = Math.random() < 0.22;
-  let nationality, first, last;
-  if (isSaudi){
-    nationality = "Saudi Arabia"; first = rand(saudiFirst); last = rand(saudiLast);
-  } else {
-    const natKey = rand(Object.keys(expatPools));
-    nationality = natKey;
-    first = rand(expatPools[natKey].first);
-    last = rand(expatPools[natKey].last);
-  }
-  const issueDate = new Date(today.getTime() - randInt(30, 700)*86400000);
-  const bucket = Math.random();
-  let expiryOffsetDays;
-  if (bucket < 0.08) expiryOffsetDays = randInt(-40,-1);
-  else if (bucket < 0.20) expiryOffsetDays = randInt(0,14);
-  else if (bucket < 0.34) expiryOffsetDays = randInt(15,30);
-  else expiryOffsetDays = randInt(31,540);
-  const expiryDate = new Date(today.getTime() + expiryOffsetDays*86400000);
-  const daysRemaining = Math.ceil((expiryDate - today)/86400000);
-
-  let status;
-  if (daysRemaining < 0) status = "Expired";
-  else if (daysRemaining <= 14) status = "Critical";
-  else if (daysRemaining <= 30) status = "Expiring Soon";
-  else status = "Valid";
-
-  const dutyStatus = Math.random() < 0.12 ? "On Leave" : (Math.random() < 0.1 ? "Site Transfer" : "On Duty");
-
-  employees.push({
-    id: "EMP-" + pad(1000+i,5),
-    name: first + " " + last,
-    nationality, isSaudi,
-    craft: rand(crafts),
-    department: rand(departments),
-    shift: dutyStatus === "On Leave" ? "Off Duty" : rand(shifts),
-    iqama: genIqamaNumber(),
-    issueDate, expiryDate, daysRemaining, status,
-    dutyStatus,
-    jobSite: rand(jobSites)
-  });
-}
-
-const leaveTypes = ["Annual","Emergency","Medical"];
-const approvalStatuses = ["Approved","Pending","Rejected"];
-let vacationRequests = [];
-const vacPool = employees.filter(e => Math.random() < 0.4).slice(0,26);
-vacPool.forEach((e,idx) => {
-  const start = new Date(today.getTime() + randInt(-10,45)*86400000);
-  const end = new Date(start.getTime() + randInt(7,30)*86400000);
-  vacationRequests.push({
-    name: e.name, id: e.id,
-    leaveType: rand(leaveTypes),
-    start, end,
-    visaStatus: rand(["Issued","Pending","Not Required"]),
-    flight: rand(["SV 1042 - DMM","SV 2207 - RUH","EK 815 - DXB","QR 1102 - DOH","Not Booked"]),
-    approval: idx < 4 ? "Pending" : rand(approvalStatuses)
-  });
-});
-
-const equipmentCatalog = [
-  { name:"Safety Helmet", category:"PPE" },
-  { name:"Full PPE Kit", category:"PPE" },
-  { name:"Safety Harness", category:"PPE" },
-  { name:"Welding Machine", category:"Tools & Machinery" },
-  { name:"Power Drill", category:"Tools & Machinery" },
-  { name:"Portable Generator", category:"Tools & Machinery" },
-  { name:"Two-Way Radio", category:"Communication" },
-  { name:"Pickup Truck", category:"Vehicles" },
-  { name:"Crew Bus", category:"Vehicles" },
-  { name:"Mobile Crane", category:"Heavy Equipment" },
-  { name:"Forklift", category:"Heavy Equipment" },
-  { name:"Scaffold Tower", category:"Heavy Equipment" },
-  { name:"Fire Extinguisher", category:"Safety" },
-  { name:"Gas Detector", category:"Safety" },
-];
-const equipmentStatuses = ["In Use","Available","Under Maintenance","Retired"];
-let equipmentList = [];
-const EQUIP_COUNT = 48;
-for (let i=1; i<=EQUIP_COUNT; i++){
-  const item = rand(equipmentCatalog);
-  const status = rand(equipmentStatuses);
-  const assignedEmp = status === "In Use" ? rand(employees) : null;
-  const assignedDate = new Date(today.getTime() - randInt(15,600)*86400000);
-  const nextInspection = new Date(today.getTime() + randInt(-15,180)*86400000);
-  equipmentList.push({
-    id: "EQ-" + pad(3000+i,5),
-    name: item.name,
-    category: item.category,
-    status,
-    assignedTo: assignedEmp ? assignedEmp.name : "—",
-    assignedDate, nextInspection
-  });
-}
-
-const documentsList = [
-  { title: "Safari Commercial Registration (CR)", category: "Legal & Corporate", date: "2025-01-15", size: "2.4 MB", img: "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80", desc: "Official corporate commercial registration certificate issued by MOCI Saudi Arabia." },
-  { title: "Aramco Vendor Safety Compliance", category: "Compliance", date: "2026-03-10", size: "4.1 MB", img: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=600&q=80", desc: "Certified Aramco contractor safety assessment and clearance document." },
-  { title: "GOSI Insurance Policy Certificate", category: "Insurance", date: "2026-01-01", size: "1.8 MB", img: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80", desc: "General Organization for Social Insurance coverage certificate for all company workers." },
-  { title: "Dammam Yard 3 Master Layout", category: "Operations", date: "2025-11-20", size: "8.5 MB", img: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=600&q=80", desc: "Blueprint and structural layout of Dammam contracting yard and warehouse." },
-  { title: "HSE Emergency Evacuation Plan", category: "Safety", date: "2026-02-18", size: "3.2 MB", img: "https://images.unsplash.com/photo-1541888946425-d0fbb18f773c?auto=format&fit=crop&w=600&q=80", desc: "Step-by-step emergency response protocols and assembly point maps." },
-  { title: "ISO 9001:2015 Quality Certificate", category: "Certifications", date: "2024-08-12", size: "5.0 MB", img: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80", desc: "International quality management system certification for engineering and contracting." }
-];
-
-/* ============================================================
-   HELPERS & UI RENDERING
-   ============================================================ */
-function statusBadge(status){
-  const map = {
-    "Valid": "bg-emerald-100 text-emerald-700",
-    "Expiring Soon": "bg-amber-100 text-amber-700",
-    "Critical": "bg-rose-100 text-rose-700",
-    "Expired": "bg-slate-200 text-slate-600",
-    "On Duty": "bg-emerald-100 text-emerald-700",
-    "On Leave": "bg-sky-100 text-sky-700",
-    "Site Transfer": "bg-indigo-100 text-indigo-700",
-    "Approved": "bg-emerald-100 text-emerald-700",
-    "Pending": "bg-amber-100 text-amber-700",
-    "Rejected": "bg-rose-100 text-rose-700",
-    "In Use": "bg-indigo-100 text-indigo-700",
-    "Available": "bg-emerald-100 text-emerald-700",
-    "Under Maintenance": "bg-amber-100 text-amber-700",
-    "Retired": "bg-slate-200 text-slate-600",
-  };
-  return `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${map[status]||'bg-slate-100 text-slate-600'}">${status}</span>`;
-}
-function remainingLabel(days){
-  if (days < 0) return `<span class="text-rose-600 font-semibold mono-num">Expired (${Math.abs(days)}d ago)</span>`;
-  if (days <= 14) return `<span class="text-rose-600 font-bold mono-num">${days} days (Critical)</span>`;
-  if (days <= 30) return `<span class="text-amber-600 font-semibold mono-num">${days} days</span>`;
-  return `<span class="text-slate-600 mono-num">${days} days</span>`;
-}
-
-/* RENDER DASHBOARD */
-function renderDashboard(){
-  const total = employees.length;
-  const critical = employees.filter(e => e.status === "Critical" || e.status === "Expired").length;
-  const onLeave = employees.filter(e => e.dutyStatus === "On Leave").length;
-  const activeEq = equipmentList.filter(e => e.status === "In Use").length;
-
-  document.getElementById("kpiCards").innerHTML = `
-    <div class="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-between">
-      <div>
-        <p class="text-xs font-medium text-slate-500">Total Workforce</p>
-        <h4 class="text-2xl font-bold text-slate-900 mt-1 mono-num">${total}</h4>
-        <p class="text-xs text-emerald-600 mt-1">Active in Dammam & Sites</p>
-      </div>
-      <div class="w-10 h-10 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center"><i data-lucide="users" class="w-5 h-5"></i></div>
-    </div>
-    <div class="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-between">
-      <div>
-        <p class="text-xs font-medium text-slate-500">Critical Iqama / Renewals</p>
-        <h4 class="text-2xl font-bold text-rose-600 mt-1 mono-num">${critical}</h4>
-        <p class="text-xs text-rose-500 mt-1">Action required immediately</p>
-      </div>
-      <div class="w-10 h-10 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
-    </div>
-    <div class="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-between">
-      <div>
-        <p class="text-xs font-medium text-slate-500">Workers on Leave</p>
-        <h4 class="text-2xl font-bold text-slate-900 mt-1 mono-num">${onLeave}</h4>
-        <p class="text-xs text-sky-600 mt-1">Scheduled or vacation</p>
-      </div>
-      <div class="w-10 h-10 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center"><i data-lucide="plane-takeoff" class="w-5 h-5"></i></div>
-    </div>
-    <div class="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-between">
-      <div>
-        <p class="text-xs font-medium text-slate-500">Active Equipment</p>
-        <h4 class="text-2xl font-bold text-slate-900 mt-1 mono-num">${activeEq} / ${equipmentList.length}</h4>
-        <p class="text-xs text-indigo-600 mt-1">Assigned to projects</p>
-      </div>
-      <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><i data-lucide="wrench" class="w-5 h-5"></i></div>
-    </div>
-  `;
-
-  // Alert Panel
-  const urgent = employees.filter(e => e.daysRemaining <= 14).slice(0, 4);
-  document.getElementById("alertPanel").innerHTML = urgent.map(e => `
-    <div class="border border-rose-200 bg-rose-50/50 rounded-lg p-3 flex items-center justify-between">
-      <div>
-        <p class="text-xs font-bold text-slate-900">${e.name}</p>
-        <p class="text-[11px] text-slate-500">Iqama: ${e.iqama} • ${e.nationality}</p>
-        <p class="text-[11px] text-rose-600 font-semibold mt-1">Expires in ${e.daysRemaining} days</p>
-      </div>
-      <button onclick="openIdCard('${e.id}')" class="px-2.5 py-1 bg-white border border-slate-200 rounded text-xs font-medium hover:bg-slate-50">View ID</button>
-    </div>
-  `).join("") || '<p class="text-xs text-slate-500 col-span-4 text-center py-2">No urgent Iqama renewals within 14 days.</p>';
-
-  renderCharts();
-  safeCreateIcons();
-}
-
-let natChartInst = null;
-let trendChartInst = null;
-
-function renderCharts(){
-  const natCounts = {};
-  nationalities.slice(0,6).forEach(n => natCounts[n] = 0);
-  employees.forEach(e => {
-    if (natCounts[e.nationality] !== undefined) natCounts[e.nationality]++;
-    else {
-      if (!natCounts["Others"]) natCounts["Others"] = 0;
-      natCounts["Others"]++;
-    }
-  });
-
-  const natLabels = Object.keys(natCounts);
-  const natData = Object.values(natCounts);
-
-  const ctxNat = document.getElementById("nationalityChart").getContext("2d");
-  if (natChartInst) natChartInst.destroy();
-  natChartInst = new Chart(ctxNat, {
-    type: 'doughnut',
-    data: {
-      labels: natLabels,
-      datasets: [{
-        data: natData,
-        backgroundColor: ['#7c3aed', '#059669', '#0284c7', '#d97706', '#db2777', '#475569', '#94a3b8'],
-        borderWidth: 0
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } }
-      }
-    }
-  });
-
-  const ctxTrend = document.getElementById("trendChart").getContext("2d");
-  if (trendChartInst) trendChartInst.destroy();
-  trendChartInst = new Chart(ctxTrend, {
-    type: 'bar',
-    data: {
-      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-      datasets: [
-        { label: 'Departures', data: [4, 6, 3, 8, 12, 10, 7, 5, 6, 9, 4, 3], backgroundColor: '#7c3aed', borderRadius: 4 },
-        { label: 'Returns', data: [5, 5, 4, 9, 10, 11, 8, 6, 7, 8, 5, 4], backgroundColor: '#059669', borderRadius: 4 }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 11 } } } },
-      scales: {
-        x: { grid: { display: false } },
-        y: { grid: { color: '#f1f5f9' }, ticks: { precision: 0 } }
-      }
-    }
-  });
-}
-
-/* RENDER IQAMA TRACKER */
-let iqamaFilter = "all";
-let iqamaPage = 1;
-const pageSize = 10;
-
-function renderIqamaTracker(){
-  const search = (document.getElementById("iqamaSearch").value || "").toLowerCase();
-  let filtered = employees.filter(e => {
-    const matchSearch = e.name.toLowerCase().includes(search) || e.id.toLowerCase().includes(search) || e.iqama.includes(search);
-    if (!matchSearch) return false;
-    if (iqamaFilter === "all") return true;
-    return e.status.toLowerCase() === iqamaFilter.toLowerCase();
-  });
-
-  const totalPages = Math.ceil(filtered.length / pageSize) || 1;
-  if (iqamaPage > totalPages) iqamaPage = totalPages;
-  const paginated = filtered.slice((iqamaPage - 1) * pageSize, iqamaPage * pageSize);
-
-  const counts = {
-    all: employees.length,
-    critical: employees.filter(e => e.status === "Critical").length,
-    "expiring soon": employees.filter(e => e.status === "Expiring Soon").length,
-    expired: employees.filter(e => e.status === "Expired").length,
-    valid: employees.filter(e => e.status === "Valid").length
-  };
-
-  document.getElementById("iqamaFilterPills").innerHTML = [
-    { key: "all", label: "All" },
-    { key: "critical", label: `Critical (${counts.critical})` },
-    { key: "expiring soon", label: `Expiring Soon (${counts["expiring soon"]})` },
-    { key: "expired", label: `Expired (${counts.expired})` },
-    { key: "valid", label: `Valid (${counts.valid})` },
-  ].map(p => `
-    <button onclick="setIqamaFilter('${p.key}')" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${iqamaFilter === p.key ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">${p.label}</button>
-  `).join("");
-
-  document.getElementById("iqamaTableBody").innerHTML = paginated.map(e => `
-    <tr class="hover:bg-slate-50">
-      <td class="px-4 py-3">
-        <div class="font-medium text-slate-900">${e.name}</div>
-        <div class="text-xs text-slate-500">${e.id} • ${e.nationality}</div>
-      </td>
-      <td class="px-4 py-3 mono-num">${e.iqama}</td>
-      <td class="px-4 py-3 text-slate-600 mono-num">${fmtDate(e.issueDate)}</td>
-      <td class="px-4 py-3 text-slate-600 mono-num">${fmtDate(e.expiryDate)}</td>
-      <td class="px-4 py-3">${remainingLabel(e.daysRemaining)}</td>
-      <td class="px-4 py-3">${statusBadge(e.status)}</td>
-      <td class="px-4 py-3">
-        <button onclick="openIdCard('${e.id}')" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-xs font-medium text-slate-700">View Card</button>
-      </td>
-    </tr>
-  `).join("") || `<tr><td colspan="7" class="text-center py-6 text-slate-400">No records found.</td></tr>`;
-
-  document.getElementById("iqamaPagination").innerHTML = `
-    <span>Showing ${(iqamaPage-1)*pageSize + (filtered.length ? 1 : 0)} to ${Math.min(iqamaPage*pageSize, filtered.length)} of ${filtered.length} entries</span>
-    <div class="flex gap-2">
-      <button onclick="changeIqamaPage(${iqamaPage-1})" ${iqamaPage<=1?'disabled':''} class="px-3 py-1 rounded border border-slate-200 text-xs disabled:opacity-40">Prev</button>
-      <button onclick="changeIqamaPage(${iqamaPage+1})" ${iqamaPage>=totalPages?'disabled':''} class="px-3 py-1 rounded border border-slate-200 text-xs disabled:opacity-40">Next</button>
-    </div>
-  `;
-  safeCreateIcons();
-}
-function setIqamaFilter(f){ iqamaFilter = f; iqamaPage = 1; renderIqamaTracker(); }
-function changeIqamaPage(p){ iqamaPage = p; renderIqamaTracker(); }
-
-/* RENDER ORG & SHIFT */
-function renderOrgShift(){
-  // Org hierarchy tree preview
-  document.getElementById("orgChart").innerHTML = `
-    <div class="flex items-center gap-6 min-w-[700px] py-3 px-2">
-      <div class="bg-purple-900 text-white rounded-xl p-3 shadow text-center w-48 shrink-0">
-        <p class="text-[10px] uppercase tracking-wider text-purple-300">Managing Director</p>
-        <p class="font-bold text-xs mt-0.5">Eng. Tariq Al-Safari</p>
-      </div>
-      <div class="text-slate-300 font-mono">──</div>
-      <div class="bg-slate-900 text-white rounded-xl p-3 shadow text-center w-48 shrink-0">
-        <p class="text-[10px] uppercase tracking-wider text-slate-400">HR & Admin Manager</p>
-        <p class="font-bold text-xs mt-0.5">Mahabub Alam</p>
-      </div>
-      <div class="text-slate-300 font-mono">──</div>
-      <div class="flex flex-col gap-2">
-        <div class="bg-slate-100 border border-slate-200 rounded-lg p-2 text-center w-44 text-xs font-semibold text-slate-800">Operations Head</div>
-        <div class="bg-slate-100 border border-slate-200 rounded-lg p-2 text-center w-44 text-xs font-semibold text-slate-800">Safety & HSE Head</div>
-        <div class="bg-slate-100 border border-slate-200 rounded-lg p-2 text-center w-44 text-xs font-semibold text-slate-800">Maintenance Lead</div>
-      </div>
-    </div>
-  `;
-
-  const shiftCounts = { "Day Shift":0, "Night Shift":0, "Off Duty":0, "Standby":0 };
-  employees.forEach(e => { if (shiftCounts[e.shift] !== undefined) shiftCounts[e.shift]++; });
-
-  document.getElementById("shiftCards").innerHTML = Object.entries(shiftCounts).map(([sh, count]) => `
-    <div class="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-between">
-      <div>
-        <p class="text-xs font-medium text-slate-500">${sh}</p>
-        <h4 class="text-xl font-bold text-slate-900 mt-1 mono-num">${count}</h4>
-      </div>
-      <div class="w-9 h-9 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center"><i data-lucide="clock" class="w-4 h-4"></i></div>
-    </div>
-  `).join("");
-
-  const craftCounts = {};
-  crafts.forEach(c => craftCounts[c] = 0);
-  employees.forEach(e => { if (craftCounts[e.craft] !== undefined) craftCounts[e.craft]++; });
-
-  document.getElementById("craftGrid").innerHTML = Object.entries(craftCounts).map(([cr, count]) => `
-    <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-center">
-      <p class="text-xs font-medium text-slate-500 truncate">${cr}</p>
-      <p class="text-lg font-bold text-slate-900 mt-1 mono-num">${count}</p>
-    </div>
-  `).join("");
-
-  document.getElementById("crewTableBody").innerHTML = employees.slice(0, 10).map(e => `
-    <tr class="hover:bg-slate-50">
-      <td class="px-4 py-3 font-medium text-slate-900">${e.name} <span class="text-xs text-slate-400">(${e.id})</span></td>
-      <td class="px-4 py-3 text-slate-600">${e.craft}</td>
-      <td class="px-4 py-3"><span class="px-2 py-0.5 rounded text-xs bg-slate-100 text-slate-700">${e.shift}</span></td>
-      <td class="px-4 py-3 text-slate-600 font-medium">${e.jobSite}</td>
-    </tr>
-  `).join("");
-}
-
-/* RENDER TOTAL MANPOWER */
-let mpColumns = { id:true, name:true, nationality:true, craft:true, department:true, jobSite:true, dutyStatus:true, iqama:true };
-let mpViewMode = "table";
-let mpPage = 1;
-
-function renderManpower(){
-  const search = (document.getElementById("mpSearch").value || "").toLowerCase();
-  const dept = document.getElementById("mpDeptFilter").value;
-  const craft = document.getElementById("mpCraftFilter").value;
-  const status = document.getElementById("mpStatusFilter").value;
-
-  let filtered = employees.filter(e => {
-    const matchSearch = e.name.toLowerCase().includes(search) || e.id.toLowerCase().includes(search) || e.craft.toLowerCase().includes(search) || e.iqama.includes(search);
-    if (!matchSearch) return false;
-    if (dept && dept !== "all" && e.department !== dept) return false;
-    if (craft && craft !== "all" && e.craft !== craft) return false;
-    if (status && status !== "all" && e.dutyStatus !== status) return false;
-    return true;
-  });
-
-  const totalPages = Math.ceil(filtered.length / pageSize) || 1;
-  if (mpPage > totalPages) mpPage = totalPages;
-  const paginated = filtered.slice((mpPage - 1) * pageSize, mpPage * pageSize);
-
-  // Table head
-  let headHtml = "";
-  if (mpColumns.id) headHtml += `<th class="text-left font-semibold px-4 py-3">ID</th>`;
-  if (mpColumns.name) headHtml += `<th class="text-left font-semibold px-4 py-3">Employee</th>`;
-  if (mpColumns.nationality) headHtml += `<th class="text-left font-semibold px-4 py-3">Nationality</th>`;
-  if (mpColumns.craft) headHtml += `<th class="text-left font-semibold px-4 py-3">Craft</th>`;
-  if (mpColumns.department) headHtml += `<th class="text-left font-semibold px-4 py-3">Department</th>`;
-  if (mpColumns.jobSite) headHtml += `<th class="text-left font-semibold px-4 py-3">Job Site</th>`;
-  if (mpColumns.dutyStatus) headHtml += `<th class="text-left font-semibold px-4 py-3">Duty Status</th>`;
-  if (mpColumns.iqama) headHtml += `<th class="text-left font-semibold px-4 py-3">Iqama No.</th>`;
-  document.getElementById("mpTableHead").innerHTML = headHtml;
-
-  document.getElementById("mpTableBody").innerHTML = paginated.map(e => {
-    let row = `<tr class="hover:bg-slate-50">`;
-    if (mpColumns.id) row += `<td class="px-4 py-3 mono-num text-slate-600">${e.id}</td>`;
-    if (mpColumns.name) row += `<td class="px-4 py-3 font-medium text-slate-900"><button onclick="openIdCard('${e.id}')" class="hover:text-purple-600 hover:underline text-left">${e.name}</button></td>`;
-    if (mpColumns.nationality) row += `<td class="px-4 py-3 text-slate-600">${nationalityFlags[e.nationality]||''} ${e.nationality}</td>`;
-    if (mpColumns.craft) row += `<td class="px-4 py-3 text-slate-600">${e.craft}</td>`;
-    if (mpColumns.department) row += `<td class="px-4 py-3 text-slate-600">${e.department}</td>`;
-    if (mpColumns.jobSite) row += `<td class="px-4 py-3 text-slate-600">${e.jobSite}</td>`;
-    if (mpColumns.dutyStatus) row += `<td class="px-4 py-3">${statusBadge(e.dutyStatus)}</td>`;
-    if (mpColumns.iqama) row += `<td class="px-4 py-3 mono-num text-slate-600">${e.iqama}</td>`;
-    row += `</tr>`;
-    return row;
-  }).join("") || `<tr><td colspan="8" class="text-center py-6 text-slate-400">No employees found.</td></tr>`;
-
-  document.getElementById("mpCardView").innerHTML = paginated.map(e => `
-    <div class="bg-white border border-slate-200 rounded-xl p-4 flex flex-col justify-between shadow-sm">
-      <div>
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-mono text-slate-500">${e.id}</span>
-          ${statusBadge(e.dutyStatus)}
-        </div>
-        <h4 class="font-bold text-slate-900 text-sm cursor-pointer hover:text-purple-600" onclick="openIdCard('${e.id}')">${e.name}</h4>
-        <p class="text-xs text-slate-500 mt-0.5">${e.craft} • ${e.department}</p>
-      </div>
-      <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-        <span>📍 ${e.jobSite}</span>
-        <button onclick="openIdCard('${e.id}')" class="text-purple-600 font-semibold hover:underline">ID Card →</button>
-      </div>
-    </div>
-  `).join("") || '<p class="text-center py-6 text-slate-400 col-span-4">No records found.</p>';
-
-  document.getElementById("mpPagination").innerHTML = `
-    <span>Showing ${(mpPage-1)*pageSize + (filtered.length ? 1 : 0)} to ${Math.min(mpPage*pageSize, filtered.length)} of ${filtered.length} entries</span>
-    <div class="flex gap-2">
-      <button onclick="changeMpPage(${mpPage-1})" ${mpPage<=1?'disabled':''} class="px-3 py-1 rounded border border-slate-200 text-xs disabled:opacity-40">Prev</button>
-      <button onclick="changeMpPage(${mpPage+1})" ${mpPage>=totalPages?'disabled':''} class="px-3 py-1 rounded border border-slate-200 text-xs disabled:opacity-40">Next</button>
-    </div>
-  `;
-}
-function changeMpPage(p){ mpPage = p; renderManpower(); }
-
-/* RENDER EQUIPMENT */
-let equipFilter = "all";
-let equipPage = 1;
-
-function renderEquipment(){
-  const search = (document.getElementById("equipSearch").value || "").toLowerCase();
-  let filtered = equipmentList.filter(eq => {
-    const match = eq.name.toLowerCase().includes(search) || eq.id.toLowerCase().includes(search) || eq.assignedTo.toLowerCase().includes(search);
-    if (!match) return false;
-    if (equipFilter === "all") return true;
-    return eq.status.toLowerCase() === equipFilter.toLowerCase();
-  });
-
-  const totalPages = Math.ceil(filtered.length / pageSize) || 1;
-  if (equipPage > totalPages) equipPage = totalPages;
-  const paginated = filtered.slice((equipPage - 1) * pageSize, equipPage * pageSize);
-
-  const counts = {
-    all: equipmentList.length,
-    "in use": equipmentList.filter(e => e.status === "In Use").length,
-    available: equipmentList.filter(e => e.status === "Available").length,
-    "under maintenance": equipmentList.filter(e => e.status === "Under Maintenance").length
-  };
-
-  document.getElementById("equipFilterPills").innerHTML = [
-    { key: "all", label: "All" },
-    { key: "in use", label: `In Use (${counts["in use"]})` },
-    { key: "available", label: `Available (${counts.available})` },
-    { key: "under maintenance", label: `Under Maintenance (${counts["under maintenance"]})` }
-  ].map(p => `
-    <button onclick="setEquipFilter('${p.key}')" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${equipFilter === p.key ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">${p.label}</button>
-  `).join("");
-
-  document.getElementById("equipTableBody").innerHTML = paginated.map(eq => `
-    <tr class="hover:bg-slate-50">
-      <td class="px-4 py-3 mono-num font-medium text-slate-900">${eq.id}</td>
-      <td class="px-4 py-3 text-slate-800">${eq.name}</td>
-      <td class="px-4 py-3 text-slate-600">${eq.category}</td>
-      <td class="px-4 py-3 text-slate-600">${eq.assignedTo}</td>
-      <td class="px-4 py-3">${statusBadge(eq.status)}</td>
-      <td class="px-4 py-3 mono-num text-slate-600">${fmtDate(eq.assignedDate)}</td>
-      <td class="px-4 py-3 mono-num text-slate-600">${fmtDate(eq.nextInspection)}</td>
-    </tr>
-  `).join("") || `<tr><td colspan="7" class="text-center py-6 text-slate-400">No equipment found.</td></tr>`;
-
-  document.getElementById("equipPagination").innerHTML = `
-    <span>Showing ${(equipPage-1)*pageSize + (filtered.length ? 1 : 0)} to ${Math.min(equipPage*pageSize, filtered.length)} of ${filtered.length} entries</span>
-    <div class="flex gap-2">
-      <button onclick="changeEquipPage(${equipPage-1})" ${equipPage<=1?'disabled':''} class="px-3 py-1 rounded border border-slate-200 text-xs disabled:opacity-40">Prev</button>
-      <button onclick="changeEquipPage(${equipPage+1})" ${equipPage>=totalPages?'disabled':''} class="px-3 py-1 rounded border border-slate-200 text-xs disabled:opacity-40">Next</button>
-    </div>
-  `;
-
-  document.getElementById("equipKpis").innerHTML = `
-    <div class="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-between">
-      <div><p class="text-xs font-medium text-slate-500">Total Assets</p><h4 class="text-2xl font-bold text-slate-900 mt-1 mono-num">${equipmentList.length}</h4></div>
-      <div class="w-10 h-10 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center"><i data-lucide="wrench" class="w-5 h-5"></i></div>
-    </div>
-    <div class="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-between">
-      <div><p class="text-xs font-medium text-slate-500">In Active Use</p><h4 class="text-2xl font-bold text-indigo-600 mt-1 mono-num">${counts["in use"]}</h4></div>
-      <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><i data-lucide="check-circle-2" class="w-5 h-5"></i></div>
-    </div>
-    <div class="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-between">
-      <div><p class="text-xs font-medium text-slate-500">Available Stock</p><h4 class="text-2xl font-bold text-emerald-600 mt-1 mono-num">${counts.available}</h4></div>
-      <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"><i data-lucide="box" class="w-5 h-5"></i></div>
-    </div>
-    <div class="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-between">
-      <div><p class="text-xs font-medium text-slate-500">Under Maintenance</p><h4 class="text-2xl font-bold text-amber-600 mt-1 mono-num">${counts["under maintenance"]}</h4></div>
-      <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center"><i data-lucide="alert-circle" class="w-5 h-5"></i></div>
-    </div>
-  `;
-  safeCreateIcons();
-}
-function setEquipFilter(f){ equipFilter = f; equipPage = 1; renderEquipment(); }
-function changeEquipPage(p){ equipPage = p; renderEquipment(); }
-
-/* RENDER VACATION */
-let vacPage = 1;
-function renderVacation(){
-  const search = (document.getElementById("vacSearch")?.value || "").toLowerCase();
-  let filtered = vacationRequests.filter(v => v.name.toLowerCase().includes(search) || v.id.toLowerCase().includes(search));
-
-  const totalPages = Math.ceil(filtered.length / pageSize) || 1;
-  if (vacPage > totalPages) vacPage = totalPages;
-  const paginated = filtered.slice((vacPage - 1) * pageSize, vacPage * pageSize);
-
-  document.getElementById("leaveKpis").innerHTML = `
-    <div class="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-between">
-      <div><p class="text-xs font-medium text-slate-500">Total Requests</p><h4 class="text-2xl font-bold text-slate-900 mt-1 mono-num">${vacationRequests.length}</h4></div>
-      <div class="w-10 h-10 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center"><i data-lucide="calendar" class="w-5 h-5"></i></div>
-    </div>
-    <div class="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-between">
-      <div><p class="text-xs font-medium text-slate-500">Pending Approvals</p><h4 class="text-2xl font-bold text-amber-600 mt-1 mono-num">${vacationRequests.filter(v=>v.approval==='Pending').length}</h4></div>
-      <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center"><i data-lucide="clock" class="w-5 h-5"></i></div>
-    </div>
-    <div class="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-between">
-      <div><p class="text-xs font-medium text-slate-500">Approved Leave</p><h4 class="text-2xl font-bold text-emerald-600 mt-1 mono-num">${vacationRequests.filter(v=>v.approval==='Approved').length}</h4></div>
-      <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"><i data-lucide="check-circle" class="w-5 h-5"></i></div>
-    </div>
-  `;
-
-  document.getElementById("ganttChart").innerHTML = vacationRequests.slice(0, 5).map(v => `
-    <div class="flex items-center gap-3 text-xs">
-      <div class="w-36 font-medium text-slate-800 truncate">${v.name}</div>
-      <div class="flex-1 bg-slate-100 h-6 rounded-md relative overflow-hidden flex items-center px-3">
-        <div class="absolute left-0 top-0 bottom-0 bg-purple-500/20 border-l-2 border-purple-600 w-2/3"></div>
-        <span class="relative z-10 text-slate-700 font-medium">${fmtDate(v.start)} to ${fmtDate(v.end)} (${v.leaveType})</span>
-      </div>
-    </div>
-  `).join("");
-
-  document.getElementById("vacTableBody").innerHTML = paginated.map(v => `
-    <tr class="hover:bg-slate-50">
-      <td class="px-4 py-3 font-medium text-slate-900">${v.name} <span class="text-xs text-slate-400">(${v.id})</span></td>
-      <td class="px-4 py-3 text-slate-600">${v.leaveType}</td>
-      <td class="px-4 py-3 mono-num text-slate-600">${fmtDate(v.start)}</td>
-      <td class="px-4 py-3 mono-num text-slate-600">${fmtDate(v.end)}</td>
-      <td class="px-4 py-3"><span class="px-2 py-0.5 rounded text-xs font-medium ${v.visaStatus==='Issued'?'bg-emerald-100 text-emerald-700':'bg-amber-100 text-amber-700'}">${v.visaStatus}</span></td>
-      <td class="px-4 py-3 text-slate-600">${v.flight}</td>
-      <td class="px-4 py-3">${statusBadge(v.approval)}</td>
-    </tr>
-  `).join("") || `<tr><td colspan="7" class="text-center py-6 text-slate-400">No vacation requests found.</td></tr>`;
-
-  document.getElementById("vacPagination").innerHTML = `
-    <span>Showing ${(vacPage-1)*pageSize + (filtered.length ? 1 : 0)} to ${Math.min(vacPage*pageSize, filtered.length)} of ${filtered.length} entries</span>
-    <div class="flex gap-2">
-      <button onclick="changeVacPage(${vacPage-1})" ${vacPage<=1?'disabled':''} class="px-3 py-1 rounded border border-slate-200 text-xs disabled:opacity-40">Prev</button>
-      <button onclick="changeVacPage(${vacPage+1})" ${vacPage>=totalPages?'disabled':''} class="px-3 py-1 rounded border border-slate-200 text-xs disabled:opacity-40">Next</button>
-    </div>
-  `;
-}
-function changeVacPage(p){ vacPage = p; renderVacation(); }
-
-/* RENDER DOCUMENTATION GALLERY */
-function renderDocumentation(){
-  const search = (document.getElementById("docSearch")?.value || "").toLowerCase();
-  const filtered = documentsList.filter(d => d.title.toLowerCase().includes(search) || d.category.toLowerCase().includes(search));
-
-  document.getElementById("docCardGrid").innerHTML = filtered.map(doc => `
-    <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
-      <div>
-        <div class="h-36 overflow-hidden bg-slate-100 relative">
-          <img src="${doc.img}" alt="${doc.title}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
-          <span class="absolute top-2 right-2 px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-900/70 text-white backdrop-blur">${doc.category}</span>
-        </div>
-        <div class="p-4">
-          <h4 class="font-bold text-slate-900 text-sm leading-snug">${doc.title}</h4>
-          <p class="text-xs text-slate-500 mt-1 line-clamp-2">${doc.desc}</p>
+          <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition">
+            <div class="h-44 bg-amber-100 flex items-center justify-center"><i data-lucide="fence" class="w-14 h-14 text-amber-600"></i></div>
+            <div class="p-6">
+              <h3 class="font-bold text-lg text-slate-900 mb-2">Fence, Roads & Drains</h3>
+              <p class="text-sm text-slate-600 mb-4">Perimeter fencing, internal roads and drainage systems.</p>
+              <span class="text-xs font-semibold px-3 py-1 bg-amber-50 text-amber-700 rounded-full">Ongoing</span>
+            </div>
+          </div>
+          <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition">
+            <div class="h-44 bg-purple-100 flex items-center justify-center"><i data-lucide="truck" class="w-14 h-14 text-purple-600"></i></div>
+            <div class="p-6">
+              <h3 class="font-bold text-lg text-slate-900 mb-2">Waste Management</h3>
+              <p class="text-sm text-slate-600 mb-4">Daily collection and disposal services for airport operations.</p>
+              <span class="text-xs font-semibold px-3 py-1 bg-purple-50 text-purple-700 rounded-full">Active</span>
+            </div>
+          </div>
+          <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition">
+            <div class="h-44 bg-rose-100 flex items-center justify-center"><i data-lucide="building-2" class="w-14 h-14 text-rose-600"></i></div>
+            <div class="p-6">
+              <h3 class="font-bold text-lg text-slate-900 mb-2">Royal Terminal & GVIP</h3>
+              <p class="text-sm text-slate-600 mb-4">Specialized services for Royal Terminal and GVIP areas.</p>
+              <span class="text-xs font-semibold px-3 py-1 bg-rose-50 text-rose-700 rounded-full">Priority</span>
+            </div>
+          </div>
+          <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition">
+            <div class="h-44 bg-slate-100 flex items-center justify-center"><i data-lucide="parking-circle" class="w-14 h-14 text-slate-600"></i></div>
+            <div class="p-6">
+              <h3 class="font-bold text-lg text-slate-900 mb-2">Parking Garage & Control Tower</h3>
+              <p class="text-sm text-slate-600 mb-4">Landscaping and support for Parking Garage and Control Tower.</p>
+              <span class="text-xs font-semibold px-3 py-1 bg-slate-100 text-slate-700 rounded-full">Active</span>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="p-4 pt-0 flex items-center justify-between text-xs text-slate-400 border-t border-slate-100 mt-3 pt-3">
-        <span class="mono-num">${doc.size} • ${doc.date}</span>
-        <button onclick="openDocModal('${doc.title}', '${doc.img}', '${doc.desc}')" class="px-3 py-1.5 bg-purple-50 text-purple-600 font-semibold rounded-lg hover:bg-purple-100 transition-colors">View Card</button>
-      </div>
-    </div>
-  `).join("") || '<p class="col-span-4 text-center py-8 text-slate-400">No documents found.</p>';
-  safeCreateIcons();
-}
+    </section>
+  </main>
 
-function openDocModal(title, img, desc){
-  document.getElementById("docModalTitle").innerText = title;
-  document.getElementById("docModalImg").src = img;
-  document.getElementById("docModalDesc").innerText = desc;
-  document.getElementById("docModal").classList.remove("hidden");
-}
-
-/* ID CARD MODAL */
-function openIdCard(empId){
-  const e = employees.find(x => x.id === empId);
-  if (!e) return;
-  document.getElementById("idCardContent").innerHTML = `
-    <div class="bg-gradient-to-br from-purple-900 to-purple-950 p-5 text-white relative overflow-hidden">
-      <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-purple-800/40 rounded-full blur-xl"></div>
-      <div class="flex items-center justify-between relative z-10">
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-slate-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid md:grid-cols-3 gap-8">
         <div>
-          <p class="text-[10px] uppercase tracking-widest text-purple-300">Safari Contracting Company</p>
-          <h3 class="font-extrabold text-sm mt-0.5">OFFICIAL WORKFORCE ID</h3>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-9 h-9 rounded-lg bg-emerald-600 flex items-center justify-center"><i data-lucide="hard-hat" class="w-4 h-4 text-white"></i></div>
+            <span class="font-bold text-white">Safari Group Limited</span>
+          </div>
+          <p class="text-sm text-slate-400">Professional contracting services for King Fahd International Airport (KFIA), Dammam.</p>
         </div>
-        <div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center font-bold text-xs">SC</div>
+        <div>
+          <h4 class="font-semibold text-white mb-3">Quick Links</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#home" class="hover:text-emerald-400">Home</a></li>
+            <li><a href="#about" class="hover:text-emerald-400">About</a></li>
+            <li><a href="#employees" class="hover:text-emerald-400">Employees</a></li>
+            <li><a href="#projects" class="hover:text-emerald-400">Projects</a></li>
+            <li><a href="dashboard.html" class="hover:text-emerald-400">Dashboard</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-white mb-3">Contact</h4>
+          <p class="text-sm text-slate-400">Dammam, Saudi Arabia</p>
+          <p class="text-sm text-slate-400 mt-1">KFIA / DACO Project Site</p>
+        </div>
+      </div>
+      <div class="border-t border-slate-800 mt-10 pt-6 text-center text-sm text-slate-500">
+        © 2026 Safari Group Limited — All rights reserved. | Developed by Mahabub Alam
       </div>
     </div>
-    <div class="p-5 space-y-4 text-center">
-      <div class="w-20 h-20 rounded-full bg-purple-100 text-purple-700 font-bold text-2xl flex items-center justify-center mx-auto shadow-inner border-2 border-white">
-        ${e.name.split(' ').map(n=>n[0]).slice(0,2).join('')}
-      </div>
-      <div>
-        <h4 class="font-bold text-base text-slate-900">${e.name}</h4>
-        <p class="text-xs text-purple-600 font-semibold mt-0.5">${e.craft}</p>
-        <p class="text-xs text-slate-500">${e.department} • ${e.jobSite}</p>
-      </div>
-      <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-left space-y-1.5 text-xs">
-        <div class="flex justify-between"><span class="text-slate-500">Employee ID:</span><span class="font-mono font-semibold">${e.id}</span></div>
-        <div class="flex justify-between"><span class="text-slate-500">Iqama No:</span><span class="font-mono font-semibold">${e.iqama}</span></div>
-        <div class="flex justify-between"><span class="text-slate-500">Nationality:</span><span class="font-semibold">${nationalityFlags[e.nationality]||''} ${e.nationality}</span></div>
-        <div class="flex justify-between"><span class="text-slate-500">Status:</span><span>${statusBadge(e.dutyStatus)}</span></div>
-      </div>
-    </div>
-  `;
-  document.getElementById("idCardModal").classList.remove("hidden");
-  safeCreateIcons();
-}
+  </footer>
 
-/* NAVIGATION & SETUP */
-document.addEventListener("DOMContentLoaded", () => {
-  // Populate Department & Craft filters
-  const deptSelect = document.getElementById("mpDeptFilter");
-  deptSelect.innerHTML = `<option value="all">All Departments</option>` + departments.map(d => `<option value="${d}">${d}</option>`).join("");
-  const craftSelect = document.getElementById("mpCraftFilter");
-  craftSelect.innerHTML = `<option value="all">All Crafts</option>` + crafts.map(c => `<option value="${c}">${c}</option>`).join("");
+  <script>
+    const employeesData = [
+      { name: "ABDULHAKIM AMMAR A ALKHALDI", position: "Project Manager", department: "Management", contact: "1111825723" },
+      { name: "Shoeib Abou Zeid Mahmoud Awad", position: "Operation Manager", department: "Management", contact: "2254394725" },
+      { name: "Ashraf Ahmed Abdulhadi", position: "Project Coordinator", department: "Management", contact: "2420562395" },
+      { name: "Moneer Abdulhadi M Al Nasser", position: "Supervisor", department: "Management", contact: "1010625711" },
+      { name: "Alex Garcia Garcia", position: "Electrical Engineer", department: "Management", contact: "2489688859" },
+      { name: "Afrazier Nassal", position: "Civil Engineer", department: "Management", contact: "2483842916" },
+      { name: "Mahabub Alam", position: "Data Process (IT)", department: "Management", contact: "2515496525" },
+      { name: "Sher Shah", position: "Safety Officer", department: "Management", contact: "2443400342" },
+      { name: "Javed Fateh", position: "Material Expeditor", department: "Management", contact: "2334029580" },
+      { name: "Ahmed Al-Dossary", position: "Project Administrator", department: "Management", contact: "1087109466" },
+      { name: "Antonio Enario", position: "Nursery Supervisor", department: "Nursery", contact: "2393912742" },
+      { name: "Mohd Amin Jinat", position: "Floriculturist", department: "Nursery", contact: "2182413589" },
+      { name: "ROBERT MORALES", position: "Supervisor-Electro Mechanical", department: "Nursery", contact: "2259560106" },
+      { name: "ARNULFO LAURON", position: "Electrical Foreman", department: "Nursery", contact: "2268207699" },
+      { name: "Shukur Mohd Ali", position: "Foreman", department: "Nursery", contact: "2237074196" },
+      { name: "Mofiz Nayeb Ali", position: "Foreman", department: "Nursery", contact: "2237076050" },
+      { name: "Shadat Hossan", position: "Driver HD", department: "Nursery", contact: "2234812275" },
+      { name: "SALAH UDDIN CHOWDRY", position: "Pest Control Foreman", department: "Nursery", contact: "2495724003" },
+      { name: "FIROZ ALAM MOFIZ", position: "Gardener", department: "Nursery", contact: "2495870822" },
+      { name: "MOHAMMAD ROCKY HOSSAIN", position: "Gardener", department: "Nursery", contact: "2495729028" },
+      { name: "Shafiqui Houssin", position: "Horticulturist", department: "Indoor Plant", contact: "2184317804" },
+      { name: "SADIK SAIDUR MAHADI", position: "Supervisor", department: "Indoor Plant", contact: "1009306679" },
+      { name: "Delower Hossain", position: "Foreman", department: "Indoor Plant", contact: "2195631219" },
+      { name: "MD JUWEL ISLAM", position: "Labor", department: "Indoor Plant", contact: "2428049825" },
+      { name: "BAKIR RIFAEY MOUSA", position: "Supervisor", department: "Control Tower", contact: "2253768424" },
+      { name: "Ahsan Ulla", position: "Foreman Landscaping", department: "Control Tower", contact: "2182562435" },
+      { name: "SALMAN BIN ALI", position: "Foreman", department: "Control Tower", contact: "1060806096" },
+      { name: "ADNAN ALAWI", position: "Foreman", department: "GVIP", contact: "1014293904" },
+      { name: "YASSER ABDULHADI", position: "Supervisor", department: "Royal Terminal", contact: "1050007960" },
+      { name: "Sonam Pashang", position: "Foreman - Landscaping", department: "Parking Garage", contact: "2363702099" },
+      { name: "Assauduzamman", position: "Irrigation Specialist", department: "Irrigation", contact: "2237075912" },
+      { name: "YAZAN ABU OBAYD", position: "Supervisor", department: "Waste Management", contact: "2117833687" },
+      { name: "Hassan Nawaz", position: "Camp-boss A/S", department: "Camp - Security", contact: "2362623007" },
+      { name: "Saud Abdulaziz albagwi", position: "Fleet Manager", department: "Workshop", contact: "1002929196" },
+      { name: "Danilo Revila", position: "Supervisor", department: "Workshop", contact: "2270349554" }
+    ];
 
-  // Column toggle menu
-  const colMenu = document.getElementById("colToggleMenu");
-  colMenu.innerHTML = Object.keys(mpColumns).map(k => `
-    <label class="flex items-center gap-2 px-2 py-1 hover:bg-slate-100 rounded cursor-pointer">
-      <input type="checkbox" checked onchange="toggleColumn('${k}', this.checked)" />
-      <span class="capitalize">${k}</span>
-    </label>
-  `).join("");
+    let empSearch = "", empRows = 20, empPage = 1;
 
-  // Event Listeners for Nav
-  document.querySelectorAll(".nav-btn, .nav-link-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const page = btn.getAttribute("data-page");
-      if (!page) return;
-      document.querySelectorAll(".page-panel").forEach(p => p.classList.remove("active"));
-      document.getElementById("page-" + page)?.classList.add("active");
+    function getFiltered() {
+      if (!empSearch) return employeesData;
+      const q = empSearch.toLowerCase();
+      return employeesData.filter(e => e.name.toLowerCase().includes(q) || e.position.toLowerCase().includes(q) || e.department.toLowerCase().includes(q) || e.contact.includes(q));
+    }
 
-      document.querySelectorAll(".nav-btn").forEach(nb => {
-        if (nb.getAttribute("data-page") === page) {
-          nb.classList.add("bg-purple-600", "text-white");
-          nb.classList.remove("text-slate-300", "hover:bg-slate-800");
-        } else {
-          nb.classList.remove("bg-purple-600", "text-white");
-          nb.classList.add("text-slate-300", "hover:bg-slate-800");
-        }
+    function renderEmpTable() {
+      const filtered = getFiltered();
+      const pageSize = empRows === "all" ? filtered.length : parseInt(empRows);
+      const totalPages = Math.ceil(filtered.length / pageSize) || 1;
+      if (empPage > totalPages) empPage = Math.max(1, totalPages);
+      const start = (empPage - 1) * pageSize;
+      const data = empRows === "all" ? filtered : filtered.slice(start, start + pageSize);
+
+      const tbody = document.getElementById("empTableBody");
+      tbody.innerHTML = data.length === 0
+        ? `<tr><td colspan="5" class="px-5 py-10 text-center text-slate-400">No employees found.</td></tr>`
+        : data.map((e, i) => `
+          <tr class="hover:bg-slate-50">
+            <td class="px-5 py-3 text-slate-500">${start + i + 1}</td>
+            <td class="px-5 py-3 font-medium text-slate-900">${e.name}</td>
+            <td class="px-5 py-3 text-slate-700">${e.position}</td>
+            <td class="px-5 py-3"><span class="px-2.5 py-1 text-xs font-semibold bg-emerald-50 text-emerald-700 rounded-full">${e.department}</span></td>
+            <td class="px-5 py-3 font-mono text-slate-600">${e.contact}</td>
+          </tr>`).join("");
+
+      const startNum = filtered.length ? start + 1 : 0;
+      const endNum = empRows === "all" ? filtered.length : Math.min(start + pageSize, filtered.length);
+      document.getElementById("empInfo").textContent = `Showing ${startNum} to ${endNum} of ${filtered.length} entries`;
+
+      document.getElementById("empPagination").innerHTML = `
+        <button onclick="changeEmpPage(${empPage-1})" ${empPage<=1?'disabled class="opacity-40 px-3 py-1.5 rounded border"':'class="px-3 py-1.5 rounded border hover:bg-slate-50"'}>Prev</button>
+        <span class="px-3 py-1.5 font-medium">${empPage} / ${totalPages}</span>
+        <button onclick="changeEmpPage(${empPage+1})" ${empPage>=totalPages?'disabled class="opacity-40 px-3 py-1.5 rounded border"':'class="px-3 py-1.5 rounded border hover:bg-slate-50"'}>Next</button>`;
+    }
+
+    function changeEmpPage(p) { empPage = p; renderEmpTable(); }
+
+    document.getElementById("empSearch").addEventListener("input", e => { empSearch = e.target.value; empPage = 1; renderEmpTable(); });
+    document.getElementById("empRows").addEventListener("change", e => { empRows = e.target.value; empPage = 1; renderEmpTable(); });
+
+    document.getElementById("empExcel").addEventListener("click", () => {
+      const data = getFiltered().map((e, i) => ({ "#": i+1, Name: e.name, Position: e.position, Department: e.department, Contact: e.contact }));
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Employees");
+      XLSX.writeFile(wb, "Safari_Employees.xlsx");
+    });
+
+    document.getElementById("empPdf").addEventListener("click", () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF("l", "mm", "a4");
+      doc.setFontSize(16); doc.setTextColor(5, 150, 105);
+      doc.text("Safari Group Limited - Employees Directory", 14, 18);
+      doc.setFontSize(10); doc.setTextColor(100);
+      doc.text(`Generated: ${new Date().toLocaleDateString()} | KFIA Project`, 14, 25);
+      doc.autoTable({
+        startY: 30,
+        head: [["#", "Name", "Position", "Department", "Contact"]],
+        body: getFiltered().map((e, i) => [i+1, e.name, e.position, e.department, e.contact]),
+        theme: "striped", headStyles: { fillColor: [5, 150, 105] }, styles: { fontSize: 8 }
       });
-
-      const titles = {
-        dashboard: ["Executive Dashboard", "Safari Contracting Company — Dammam, Saudi Arabia"],
-        iqama: ["Iqama & Document Tracker", "Monitor legal documents and expiration alerts"],
-        org: ["Organization & Shift Craft", "Company hierarchy and shift team distribution"],
-        manpower: ["Total Manpower List", "Complete workforce database and filters"],
-        equipment: ["Equipment & Assets", "Tool tracking, PPE, and heavy machinery inventory"],
-        vacation: ["Vacation & Leave Analytics", "Leave schedules, visa status, and flight bookings"],
-        documentation: ["Documentation Gallery", "Compliance records, manuals, and corporate certificates"]
-      };
-      if (titles[page]) {
-        document.getElementById("pageTitle").innerText = titles[page][0];
-        document.getElementById("pageSubtitle").innerText = titles[page][1];
-      }
-
-      if (page === "dashboard") renderDashboard();
-      if (page === "iqama") renderIqamaTracker();
-      if (page === "org") renderOrgShift();
-      if (page === "manpower") renderManpower();
-      if (page === "equipment") renderEquipment();
-      if (page === "vacation") renderVacation();
-      if (page === "documentation") renderDocumentation();
+      doc.save("Safari_Employees.pdf");
     });
-  });
 
-  // Default active nav style
-  const dashBtn = document.querySelector('[data-page="dashboard"]');
-  if (dashBtn) {
-    dashBtn.classList.add("bg-purple-600", "text-white");
-  }
+    const btn = document.getElementById('mobileMenuBtn');
+    const menu = document.getElementById('mobileMenu');
+    btn.addEventListener('click', () => menu.classList.toggle('hidden'));
+    menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => menu.classList.add('hidden')));
 
-  // Sidebar collapse
-  let collapsed = false;
-  document.getElementById("collapseBtn").addEventListener("click", () => {
-    collapsed = !collapsed;
-    document.getElementById("sidebar").classList.toggle("sidebar-collapsed", collapsed);
-  });
-
-  // Search & Filter listeners
-  document.getElementById("iqamaSearch")?.addEventListener("input", renderIqamaTracker);
-  document.getElementById("mpSearch")?.addEventListener("input", renderManpower);
-  document.getElementById("mpDeptFilter")?.addEventListener("change", renderManpower);
-  document.getElementById("mpCraftFilter")?.addEventListener("change", renderManpower);
-  document.getElementById("mpStatusFilter")?.addEventListener("change", renderManpower);
-  document.getElementById("equipSearch")?.addEventListener("input", renderEquipment);
-  document.getElementById("vacSearch")?.addEventListener("input", renderVacation);
-  document.getElementById("docSearch")?.addEventListener("input", renderDocumentation);
-
-  // Column toggle button dropdown
-  document.getElementById("colToggleBtn")?.addEventListener("click", () => {
-    colMenu.classList.toggle("hidden");
-  });
-
-  // Table vs Card view toggle
-  document.getElementById("mpViewTableBtn")?.addEventListener("click", () => {
-    mpViewMode = "table";
-    document.getElementById("mpTableView").classList.remove("hidden");
-    document.getElementById("mpCardView").classList.add("hidden");
-    document.getElementById("mpViewTableBtn").className = "flex items-center gap-1.5 text-sm font-medium px-3 py-2 bg-slate-900 text-white";
-    document.getElementById("mpViewCardBtn").className = "flex items-center gap-1.5 text-sm font-medium px-3 py-2 bg-slate-50 text-slate-500";
-  });
-  document.getElementById("mpViewCardBtn")?.addEventListener("click", () => {
-    mpViewMode = "cards";
-    document.getElementById("mpTableView").classList.add("hidden");
-    document.getElementById("mpCardView").classList.remove("hidden");
-    document.getElementById("mpViewCardBtn").className = "flex items-center gap-1.5 text-sm font-medium px-3 py-2 bg-slate-900 text-white";
-    document.getElementById("mpViewTableBtn").className = "flex items-center gap-1.5 text-sm font-medium px-3 py-2 bg-slate-50 text-slate-500";
-  });
-
-  // Modal close buttons
-  document.getElementById("idCardCloseBtn")?.addEventListener("click", () => {
-    document.getElementById("idCardModal").classList.add("hidden");
-  });
-  document.getElementById("docCloseBtn")?.addEventListener("click", () => {
-    document.getElementById("docModal").classList.add("hidden");
-  });
-  document.getElementById("docDownloadBtn")?.addEventListener("click", () => {
-    alert("Document download started successfully.");
-    document.getElementById("docModal").classList.add("hidden");
-  });
-
-  // Export Excel
-  document.getElementById("exportExcelBtn")?.addEventListener("click", () => {
-    const ws = XLSX.utils.json_to_sheet(employees);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Manpower");
-    XLSX.writeFile(wb, "safari_manpower_report.xlsx");
-  });
-
-  // Export PDF
-  document.getElementById("exportPdfBtn")?.addEventListener("click", () => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.text("Safari Contracting Company - Manpower Report", 14, 15);
-    doc.autoTable({
-      startY: 20,
-      head: [['ID', 'Name', 'Craft', 'Department', 'Iqama No']],
-      body: employees.slice(0, 25).map(e => [e.id, e.name, e.craft, e.department, e.iqama])
-    });
-    doc.save("safari_manpower_report.pdf");
-  });
-
-  // Initial render
-  renderDashboard();
-  safeCreateIcons();
-});
-
-function toggleColumn(col, checked){
-  mpColumns[col] = checked;
-  renderManpower();
-}
-</script>
+    renderEmpTable();
+    if (typeof lucide !== "undefined") lucide.createIcons();
+  </script>
 </body>
 </html>

@@ -2,140 +2,108 @@
 /* ============================================================
    DATA GENERATION
    ============================================================ */
-const saudiFirst = ["Abdullah","Mohammed","Ahmed","Khalid","Faisal","Turki","Saad","Nasser","Fahad","Sultan","Omar","Yousef","Bandar","Talal","Majed","Rakan"];
-const saudiLast = ["Al-Qahtani","Al-Ghamdi","Al-Otaibi","Al-Harbi","Al-Zahrani","Al-Shehri","Al-Dosari","Al-Malki","Al-Anazi","Al-Mutairi"];
+const saudiFirst = ["Abdullah", "Mohammed", "Ahmed", "Khalid", "Faisal", "Turki", "Saad", "Nasser", "Fahad", "Sultan", "Omar", "Yousef", "Bandar", "Talal", "Majed", "Rakan"];
+const saudiLast = ["Al-Qahtani", "Al-Ghamdi", "Al-Otaibi", "Al-Harbi", "Al-Zahrani", "Al-Shehri", "Al-Dosari", "Al-Malki", "Al-Anazi", "Al-Mutairi"];
 
 const expatPools = {
-  "India": { flag:"🇮🇳", first:["Rajesh","Suresh","Anil","Vijay","Ramesh","Manoj","Sanjay","Deepak","Arun","Prakash"], last:["Kumar","Patel","Sharma","Singh","Nair","Reddy","Gupta","Menon","Iyer","Yadav"] },
-  "Pakistan": { flag:"🇵🇰", first:["Imran","Tariq","Asif","Waqar","Shahid","Zulfiqar","Naveed","Rashid","Farhan","Adeel"], last:["Khan","Mahmood","Ali","Hussain","Iqbal","Chaudhry","Butt","Malik","Sheikh","Raza"] },
-  "Philippines": { flag:"🇵🇭", first:["Jose","Ramon","Mark","Angelo","Ricardo","Ernesto","Danilo","Rodel","Ferdinand","Noel"], last:["Santos","Cruz","Reyes","Bautista","Garcia","Mendoza","Torres","Flores","Ramos","Aquino"] },
-  "Egypt": { flag:"🇪🇬", first:["Mahmoud","Ahmed","Karim","Youssef","Mostafa","Hassan","Tarek","Sherif","Amr","Waleed"], last:["Hassan","Fathy","Said","Ibrahim","Mansour","El-Sayed","Kamal","Farouk","Abdelrahman","Nour"] },
-  "Bangladesh": { flag:"🇧🇩", first:["Rafiq","Shahid","Kamal","Jahangir","Habibur","Mizanur","Rashedul","Nasir","Shakil","Anisur"], last:["Islam","Hossain","Ahmed","Rahman","Chowdhury","Karim","Uddin","Alam","Miah","Khan"] },
-  "Jordan": { flag:"🇯🇴", first:["Ziad","Hussein","Firas","Ala'a","Basil","Nabil","Rami","Samer","Loai","Anas"], last:["Nasser","Khalil","Odeh","Haddad","Qasem","Freij","Zoubi","Hijazi","Barakat","Salameh"] },
-  "Nepal": { flag:"🇳🇵", first:["Bikash","Suman","Prakash","Dipesh","Rajan","Bijay","Santosh","Nabin","Deepak","Sagar"], last:["Thapa","Shrestha","Gurung","Rai","Tamang","Karki","Adhikari","Basnet","Magar","Bista"] },
-  "Sudan": { flag:"🇸🇩", first:["Osman","Ibrahim","Mustafa","Salah","Adam","Bakri","Hisham","Amin","Tariq","Sami"], last:["Idris","Suleiman","Awad","Hamid","Ahmed","Elzein","Ballal","Mekki","Fadl","Abbas"] }
+  "India": { flag: "🇮🇳", first: ["Rajesh", "Suresh", "Anil", "Vijay", "Ramesh", "Manoj", "Sanjay", "Deepak", "Arun", "Prakash"], last: ["Kumar", "Patel", "Sharma", "Singh", "Nair", "Reddy", "Gupta", "Menon", "Iyer", "Yadav"] },
+  "Pakistan": { flag: "🇵🇰", first: ["Imran", "Tariq", "Asif", "Waqar", "Shahid", "Zulfiqar", "Naveed", "Rashid", "Farhan", "Adeel"], last: ["Khan", "Mahmood", "Ali", "Hussain", "Iqbal", "Chaudhry", "Butt", "Malik", "Sheikh", "Raza"] },
+  "Philippines": { flag: "🇵🇭", first: ["Jose", "Ramon", "Mark", "Angelo", "Ricardo", "Ernesto", "Danilo", "Rodel", "Ferdinand", "Noel"], last: ["Santos", "Cruz", "Reyes", "Bautista", "Garcia", "Mendoza", "Torres", "Flores", "Ramos", "Aquino"] },
+  "Egypt": { flag: "🇪🇬", first: ["Mahmoud", "Ahmed", "Karim", "Youssef", "Mostafa", "Hassan", "Tarek", "Sherif", "Amr", "Waleed"], last: ["Hassan", "Fathy", "Said", "Ibrahim", "Mansour", "El-Sayed", "Kamal", "Farouk", "Abdelrahman", "Nour"] },
+  "Bangladesh": { flag: "🇧🇩", first: ["Rafiq", "Shahid", "Kamal", "Jahangir", "Habibur", "Mizanur", "Rashedul", "Nasir", "Shakil", "Anisur"], last: ["Islam", "Hossain", "Ahmed", "Rahman", "Chowdhury", "Karim", "Uddin", "Alam", "Miah", "Khan"] },
+  "Jordan": { flag: "🇯🇴", first: ["Ziad", "Hussein", "Firas", "Ala'a", "Basil", "Nabil", "Rami", "Samer", "Loai", "Anas"], last: ["Nasser", "Khalil", "Odeh", "Haddad", "Qasem", "Freij", "Zoubi", "Hijazi", "Barakat", "Salameh"] },
+  "Nepal": { flag: "🇳🇵", first: ["Bikash", "Suman", "Prakash", "Dipesh", "Rajan", "Bijay", "Santosh", "Nabin", "Deepak", "Sagar"], last: ["Thapa", "Shrestha", "Gurung", "Rai", "Tamang", "Karki", "Adhikari", "Basnet", "Magar", "Bista"] },
+  "Sudan": { flag: "🇸🇩", first: ["Osman", "Ibrahim", "Mustafa", "Salah", "Adam", "Bakri", "Hisham", "Amin", "Tariq", "Sami"], last: ["Idris", "Suleiman", "Awad", "Hamid", "Ahmed", "Elzein", "Ballal", "Mekki", "Fadl", "Abbas"] }
 };
 const nationalities = ["Saudi Arabia", ...Object.keys(expatPools)];
-const nationalityFlags = { "Saudi Arabia":"🇸🇦", ...Object.fromEntries(Object.entries(expatPools).map(([k,v])=>[k,v.flag])) };
+const nationalityFlags = { "Saudi Arabia": "🇸🇦", ...Object.fromEntries(Object.entries(expatPools).map(([k, v]) => [k, v.flag])) };
 
-const departments = ["Operations","Maintenance","Safety (HSE)","Electrical","Mechanical","Civil","Administration","Logistics"];
-const crafts = ["Electrician","Welder","Pipefitter","Safety Officer","Mechanic","Civil Laborer","Scaffolder","Rigger","Crane Operator","Foreman","HR Coordinator","Supervisor"];
-const shifts = ["Day Shift","Night Shift","Off Duty","Standby"];
-const dutyStatuses = ["On Duty","On Leave","Site Transfer"];
+const departments = ["Operations", "Maintenance", "Safety (HSE)", "Electrical", "Mechanical", "Civil", "Administration", "Logistics"];
+const crafts = ["Electrician", "Welder", "Pipefitter", "Safety Officer", "Mechanic", "Civil Laborer", "Scaffolder", "Rigger", "Crane Operator", "Foreman", "HR Coordinator", "Supervisor"];
+const shifts = ["Day Shift", "Night Shift", "Off Duty", "Standby"];
+const dutyStatuses = ["On Duty", "On Leave", "Site Transfer"];
 const jobSites = ["Dammam Yard 3", "King Fahad Int. Airport (KFIA)", "Jubail Site A", "Yanbu Refinery", "Ras Tanura Plant", "Riyadh HQ Depot"];
 
-function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
-function pad(n,len){ return String(n).padStart(len,"0"); }
-function fmtDate(d){ return d.toISOString().slice(0,10); }
+function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function pad(n, len) { return String(n).padStart(len, "0"); }
+function fmtDate(d) { return d.toISOString().slice(0, 10); }
 
-function safeCreateIcons(){
-  if (typeof lucide !== "undefined" && lucide.createIcons){
-    try { lucide.createIcons(); } catch(err){ console.warn("Icon render skipped:", err); }
+function safeCreateIcons() {
+  if (typeof lucide !== "undefined" && lucide.createIcons) {
+    try { lucide.createIcons(); } catch (err) { console.warn("Icon render skipped:", err); }
   }
 }
 
-function genIqamaNumber(){
-  return (rand(["1","2"])) + Array.from({length:9},()=>randInt(0,9)).join("");
+function genIqamaNumber() {
+  return (rand(["1", "2"])) + Array.from({ length: 9 }, () => randInt(0, 9)).join("");
 }
 
 const today = new Date();
-const EMP_COUNT = 90;
 let employees = [];
+let vacationRequests = [];
+let equipmentList = [];
 
-for (let i=1; i<=EMP_COUNT; i++){
-  const isSaudi = Math.random() < 0.22;
-  let nationality, first, last;
-  if (isSaudi){
-    nationality = "Saudi Arabia"; first = rand(saudiFirst); last = rand(saudiLast);
-  } else {
-    const natKey = rand(Object.keys(expatPools));
-    nationality = natKey;
-    first = rand(expatPools[natKey].first);
-    last = rand(expatPools[natKey].last);
-  }
-  const issueDate = new Date(today.getTime() - randInt(30, 700)*86400000);
-  const bucket = Math.random();
-  let expiryOffsetDays;
-  if (bucket < 0.08) expiryOffsetDays = randInt(-40,-1);
-  else if (bucket < 0.20) expiryOffsetDays = randInt(0,14);
-  else if (bucket < 0.34) expiryOffsetDays = randInt(15,30);
-  else expiryOffsetDays = randInt(31,540);
-  const expiryDate = new Date(today.getTime() + expiryOffsetDays*86400000);
-  const daysRemaining = Math.ceil((expiryDate - today)/86400000);
-
+function calculateDocumentStatus(expiryDate) {
+  const daysRemaining = Math.ceil((expiryDate - today) / 86400000);
   let status;
   if (daysRemaining < 0) status = "Expired";
   else if (daysRemaining <= 14) status = "Critical";
   else if (daysRemaining <= 30) status = "Expiring Soon";
   else status = "Valid";
+  return { daysRemaining, status };
+}
 
-  const dutyStatus = Math.random() < 0.12 ? "On Leave" : (Math.random() < 0.1 ? "Site Transfer" : "On Duty");
-
-  employees.push({
-    id: "EMP-" + pad(1000+i,5),
-    name: first + " " + last,
-    nationality, isSaudi,
-    craft: rand(crafts),
-    department: rand(departments),
-    shift: dutyStatus === "On Leave" ? "Off Duty" : rand(shifts),
-    iqama: genIqamaNumber(),
-    issueDate, expiryDate, daysRemaining, status,
-    dutyStatus,
-    jobSite: rand(jobSites)
+function normalizeEmployeeData(data) {
+  return data.map(e => {
+    const issueDate = new Date(e.issueDate);
+    const expiryDate = new Date(e.expiryDate);
+    const dacoIssueDate = new Date(e.dacoIssueDate);
+    const dacoExpiryDate = new Date(e.dacoExpiryDate);
+    const iqama = calculateDocumentStatus(expiryDate);
+    const daco = calculateDocumentStatus(dacoExpiryDate);
+    return { ...e, issueDate, expiryDate, dacoIssueDate, dacoExpiryDate, daysRemaining: iqama.daysRemaining, status: iqama.status, dacoDaysRemaining: daco.daysRemaining, dacoStatus: daco.status };
   });
 }
 
-const leaveTypes = ["Annual","Emergency","Medical"];
-const approvalStatuses = ["Approved","Pending","Rejected"];
-let vacationRequests = [];
-const vacPool = employees.filter(e => Math.random() < 0.4).slice(0,26);
-vacPool.forEach((e,idx) => {
-  const start = new Date(today.getTime() + randInt(-10,45)*86400000);
-  const end = new Date(start.getTime() + randInt(7,30)*86400000);
-  vacationRequests.push({
-    name: e.name, id: e.id,
-    leaveType: rand(leaveTypes),
-    start, end,
-    visaStatus: rand(["Issued","Pending","Not Required"]),
-    flight: rand(["SV 1042 - DMM","SV 2207 - RUH","EK 815 - DXB","QR 1102 - DOH","Not Booked"]),
-    approval: idx < 4 ? "Pending" : rand(approvalStatuses)
+function buildVacationRequests() {
+  const leaveTypes = ["Annual", "Emergency", "Medical"];
+  const approvalStatuses = ["Approved", "Pending", "Rejected"];
+  vacationRequests = [];
+  employees.filter(e => Math.random() < 0.4).slice(0, 26).forEach((e, idx) => {
+    const start = new Date(today.getTime() + randInt(-10, 45) * 86400000);
+    const end = new Date(start.getTime() + randInt(7, 30) * 86400000);
+    vacationRequests.push({ name: e.name, id: e.id, leaveType: rand(leaveTypes), start, end, visaStatus: rand(["Issued", "Pending", "Not Required"]), flight: rand(["SV 1042 - DMM", "SV 2207 - RUH", "EK 815 - DXB", "QR 1102 - DOH", "Not Booked"]), approval: idx < 4 ? "Pending" : rand(approvalStatuses) });
   });
-});
+}
 
 const equipmentCatalog = [
-  { name:"Safety Helmet", category:"PPE" },
-  { name:"Full PPE Kit", category:"PPE" },
-  { name:"Safety Harness", category:"PPE" },
-  { name:"Welding Machine", category:"Tools & Machinery" },
-  { name:"Power Drill", category:"Tools & Machinery" },
-  { name:"Portable Generator", category:"Tools & Machinery" },
-  { name:"Two-Way Radio", category:"Communication" },
-  { name:"Pickup Truck", category:"Vehicles" },
-  { name:"Crew Bus", category:"Vehicles" },
-  { name:"Mobile Crane", category:"Heavy Equipment" },
-  { name:"Forklift", category:"Heavy Equipment" },
-  { name:"Scaffold Tower", category:"Heavy Equipment" },
-  { name:"Fire Extinguisher", category:"Safety" },
-  { name:"Gas Detector", category:"Safety" },
+  { name: "Safety Helmet", category: "PPE" }, { name: "Full PPE Kit", category: "PPE" }, { name: "Safety Harness", category: "PPE" },
+  { name: "Welding Machine", category: "Tools & Machinery" }, { name: "Power Drill", category: "Tools & Machinery" }, { name: "Portable Generator", category: "Tools & Machinery" },
+  { name: "Two-Way Radio", category: "Communication" }, { name: "Pickup Truck", category: "Vehicles" }, { name: "Crew Bus", category: "Vehicles" },
+  { name: "Mobile Crane", category: "Heavy Equipment" }, { name: "Forklift", category: "Heavy Equipment" }, { name: "Scaffold Tower", category: "Heavy Equipment" },
+  { name: "Fire Extinguisher", category: "Safety" }, { name: "Gas Detector", category: "Safety" }
 ];
-const equipmentStatuses = ["In Use","Available","Under Maintenance","Retired"];
-let equipmentList = [];
-const EQUIP_COUNT = 48;
-for (let i=1; i<=EQUIP_COUNT; i++){
-  const item = rand(equipmentCatalog);
-  const status = rand(equipmentStatuses);
-  const assignedEmp = status === "In Use" ? rand(employees) : null;
-  const assignedDate = new Date(today.getTime() - randInt(15,600)*86400000);
-  const nextInspection = new Date(today.getTime() + randInt(-15,180)*86400000);
-  equipmentList.push({
-    id: "EQ-" + pad(3000+i,5),
-    name: item.name,
-    category: item.category,
-    status,
-    assignedTo: assignedEmp ? assignedEmp.name : "—",
-    assignedDate, nextInspection
-  });
+const equipmentStatuses = ["In Use", "Available", "Under Maintenance", "Retired"];
+
+function buildEquipmentList() {
+  equipmentList = [];
+  for (let i = 1; i <= 48; i++) {
+    const item = rand(equipmentCatalog); const status = rand(equipmentStatuses);
+    const assignedEmp = status === "In Use" ? rand(employees) : null;
+    const assignedDate = new Date(today.getTime() - randInt(15, 600) * 86400000);
+    const nextInspection = new Date(today.getTime() + randInt(-15, 180) * 86400000);
+    equipmentList.push({ id: "EQ-" + pad(3000 + i, 5), name: item.name, category: item.category, status, assignedTo: assignedEmp ? assignedEmp.name : "—", assignedDate, nextInspection });
+  }
+}
+
+async function loadEmployeeData() {
+  const response = await fetch("./employees.json", { cache: "no-store" });
+  if (!response.ok) throw new Error(`Unable to load employees.json (${response.status})`);
+  const data = await response.json();
+  employees = normalizeEmployeeData(data);
+  buildVacationRequests();
+  buildEquipmentList();
 }
 
 const documentsList = [
@@ -163,6 +131,12 @@ let iqamaTab = "all";
 let iqamaSearchVal = "";
 let iqamaPage = 1;
 const iqamaPageSize = 10;
+
+// DACO ID State
+let dacoTab = "all";
+let dacoSearchVal = "";
+let dacoPage = 1;
+const dacoPageSize = 10;
 
 // Manpower State
 let mpSearchVal = "";
@@ -195,20 +169,27 @@ let docSearchVal = "";
 let docRowsPerPage = "5";
 let docCurrentPage = 1;
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   safeCreateIcons();
   setupNavigation();
-  renderDashboard();
-  renderIqamaPage();
-  renderOrgPage();
-  renderManpowerPage();
-  renderEquipmentPage();
-  renderVacationPage();
-  renderDocumentationPage();
   setupEventListeners();
+  try {
+    await loadEmployeeData();
+    renderDashboard();
+    renderIqamaPage();
+    renderDacoPage();
+    renderOrgPage();
+    renderManpowerPage();
+    renderEquipmentPage();
+    renderVacationPage();
+    renderDocumentationPage();
+  } catch (error) {
+    console.error(error);
+    document.querySelector("main").innerHTML = `<div class="bg-white border border-rose-200 rounded-xl p-6 text-rose-700"><h2 class="font-bold text-lg">Employee data could not be loaded</h2><p class="text-sm mt-1">Please run this project through a local web server so <code>employees.json</code> can be fetched.</p></div>`;
+  }
 });
 
-function setupNavigation(){
+function setupNavigation() {
   const buttons = document.querySelectorAll("[data-page]");
   buttons.forEach(btn => {
     btn.addEventListener("click", (e) => {
@@ -229,14 +210,14 @@ function setupNavigation(){
   });
 }
 
-function switchPage(pageId){
+function switchPage(pageId) {
   currentSection = pageId;
   document.querySelectorAll(".page-panel").forEach(p => p.classList.remove("active"));
   const target = document.getElementById("page-" + pageId);
   if (target) target.classList.add("active");
 
   document.querySelectorAll(".nav-btn").forEach(b => {
-    if (b.getAttribute("data-page") === pageId){
+    if (b.getAttribute("data-page") === pageId) {
       b.classList.add("bg-purple-600", "text-white");
       b.classList.remove("text-slate-300", "hover:bg-slate-800", "hover:text-white");
     } else {
@@ -248,6 +229,7 @@ function switchPage(pageId){
   const titles = {
     dashboard: ["Executive Dashboard", "Safari Contracting Company — Dammam, Saudi Arabia"],
     iqama: ["Iqama & Document Tracker", "Residency validity and statutory document compliance"],
+    daco: ["DACO ID Expiry Tracker", "DACO identification validity and expiry compliance"],
     org: ["Organization & Shift Craft", "Company structure, shift rosters, and craft deployment"],
     manpower: ["Total Manpower Directory", "Comprehensive workforce records and advanced filtering"],
     equipment: ["Equipment & Asset Management", "Machinery, PPE, vehicles, and tools tracking"],
@@ -255,14 +237,14 @@ function switchPage(pageId){
     documentation: ["Documentation Gallery", "Official compliance certificates, manuals, and files"]
   };
 
-  if (titles[pageId]){
+  if (titles[pageId]) {
     document.getElementById("pageTitle").textContent = titles[pageId][0];
     document.getElementById("pageSubtitle").textContent = titles[pageId][1];
   }
 
-  if (pageId === "dashboard"){
+  if (pageId === "dashboard") {
     setTimeout(renderCharts, 50);
-  } else if (pageId === "documentation"){
+  } else if (pageId === "documentation") {
     setTimeout(renderDocBarChart, 50);
   }
 }
@@ -270,7 +252,7 @@ function switchPage(pageId){
 /* ============================================================
    RENDER DASHBOARD
    ============================================================ */
-function renderDashboard(){
+function renderDashboard() {
   const total = employees.length;
   const critical = employees.filter(e => e.status === "Critical" || e.status === "Expired").length;
   const onLeave = employees.filter(e => e.dutyStatus === "On Leave").length;
@@ -297,12 +279,12 @@ function renderDashboard(){
   `).join("");
 
   // Alert Panel
-  const urgent = employees.filter(e => e.daysRemaining <= 14).sort((a,b)=>a.daysRemaining - b.daysRemaining);
+  const urgent = employees.filter(e => e.daysRemaining <= 14).sort((a, b) => a.daysRemaining - b.daysRemaining);
   const alertContainer = document.getElementById("alertPanel");
-  if (urgent.length === 0){
+  if (urgent.length === 0) {
     alertContainer.innerHTML = `<p class="text-sm text-slate-500 col-span-4 py-3">No urgent Iqama renewals requiring immediate action (&le;14 days).</p>`;
   } else {
-    alertContainer.innerHTML = urgent.slice(0,4).map(e => `
+    alertContainer.innerHTML = urgent.slice(0, 4).map(e => `
       <div class="border border-rose-200 bg-rose-50/50 rounded-xl p-4 flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between">
@@ -310,7 +292,7 @@ function renderDashboard(){
             <span class="text-xs text-slate-500 font-mono">${e.id}</span>
           </div>
           <p class="font-bold text-sm text-slate-900 mt-2">${e.name}</p>
-          <p class="text-xs text-slate-600">${e.craft} • ${e.nationality} ${nationalityFlags[e.nationality]||""}</p>
+          <p class="text-xs text-slate-600">${e.craft} • ${e.nationality} ${nationalityFlags[e.nationality] || ""}</p>
           <p class="text-xs font-mono text-slate-500 mt-1">Iqama: ${e.iqama}</p>
         </div>
         <div class="mt-4 pt-2 border-t border-rose-100 flex items-center justify-between">
@@ -323,7 +305,7 @@ function renderDashboard(){
   safeCreateIcons();
 }
 
-function renderCharts(){
+function renderCharts() {
   if (natChartInstance) natChartInstance.destroy();
   if (trendChartInstance) trendChartInstance.destroy();
 
@@ -331,10 +313,10 @@ function renderCharts(){
   nationalities.forEach(n => natCounts[n] = 0);
   employees.forEach(e => { if (natCounts[e.nationality] !== undefined) natCounts[e.nationality]++; });
 
-  const topNats = Object.entries(natCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const otherCount = Object.entries(natCounts).slice(5).reduce((acc,curr)=>acc+curr[1],0);
-  const labels = [...topNats.map(x=>x[0]), "Other Expat"];
-  const dataVals = [...topNats.map(x=>x[1]), otherCount];
+  const topNats = Object.entries(natCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const otherCount = Object.entries(natCounts).slice(5).reduce((acc, curr) => acc + curr[1], 0);
+  const labels = [...topNats.map(x => x[0]), "Other Expat"];
+  const dataVals = [...topNats.map(x => x[1]), otherCount];
 
   const natCtx = document.getElementById("nationalityChart").getContext("2d");
   natChartInstance = new Chart(natCtx, {
@@ -343,7 +325,7 @@ function renderCharts(){
       labels,
       datasets: [{
         data: dataVals,
-        backgroundColor: ["#7c3aed","#3b82f6","#10b981","#f59e0b","#ef4444","#94a3b8"],
+        backgroundColor: ["#7c3aed", "#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#94a3b8"],
         borderWidth: 2,
         borderColor: "#ffffff"
       }]
@@ -383,7 +365,7 @@ function renderCharts(){
 /* ============================================================
    RENDER IQAMA TRACKER
    ============================================================ */
-function renderIqamaPage(){
+function renderIqamaPage() {
   const expired = employees.filter(e => e.status === "Expired").length;
   const critical = employees.filter(e => e.status === "Critical").length;
   const expiringSoon = employees.filter(e => e.status === "Expiring Soon").length;
@@ -419,7 +401,7 @@ function renderIqamaPage(){
 
   let filtered = employees.filter(e => {
     if (iqamaTab !== "all" && e.status !== iqamaTab) return false;
-    if (iqamaSearchVal){
+    if (iqamaSearchVal) {
       const q = iqamaSearchVal.toLowerCase();
       return e.name.toLowerCase().includes(q) || e.id.toLowerCase().includes(q) || e.iqama.includes(q) || e.craft.toLowerCase().includes(q);
     }
@@ -432,7 +414,7 @@ function renderIqamaPage(){
   const paginated = filtered.slice(start, start + iqamaPageSize);
 
   const tbody = document.getElementById("iqamaTableBody");
-  if (paginated.length === 0){
+  if (paginated.length === 0) {
     tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">No matching employee records found.</td></tr>`;
   } else {
     tbody.innerHTML = paginated.map(e => {
@@ -476,12 +458,12 @@ function renderIqamaPage(){
   safeCreateIcons();
 }
 
-function setIqamaTab(tab){
+function setIqamaTab(tab) {
   iqamaTab = tab;
   iqamaPage = 1;
   renderIqamaPage();
 }
-function changeIqamaPage(p){
+function changeIqamaPage(p) {
   iqamaPage = p;
   renderIqamaPage();
 }
@@ -493,9 +475,57 @@ document.getElementById("iqamaSearch").addEventListener("input", (e) => {
 });
 
 /* ============================================================
+   RENDER DACO ID EXPIRY TRACKER
+   ============================================================ */
+function renderDacoPage() {
+  const expired = employees.filter(e => e.dacoStatus === "Expired").length;
+  const critical = employees.filter(e => e.dacoStatus === "Critical").length;
+  const expiringSoon = employees.filter(e => e.dacoStatus === "Expiring Soon").length;
+  const valid = employees.filter(e => e.dacoStatus === "Valid").length;
+
+  const cards = [
+    { label: "All Employees", count: employees.length, filter: "all", color: "border-slate-200 bg-white text-slate-900" },
+    { label: "Valid (>30 Days)", count: valid, filter: "Valid", color: "border-emerald-200 bg-emerald-50/50 text-emerald-900" },
+    { label: "Expiring Soon (15-30 Days)", count: expiringSoon, filter: "Expiring Soon", color: "border-amber-200 bg-amber-50/50 text-amber-900" },
+    { label: "Critical (≤14 Days)", count: critical, filter: "Critical", color: "border-rose-200 bg-rose-50/50 text-rose-900" },
+    { label: "Already Expired", count: expired, filter: "Expired", color: "border-purple-200 bg-purple-50/50 text-purple-900" }
+  ];
+  document.getElementById("dacoAlertCards").innerHTML = cards.map(c => `<div onclick="setDacoTab('${c.filter}')" class="border ${c.color} rounded-xl p-4 cursor-pointer transition-all hover:shadow-md"><p class="text-xs font-semibold uppercase tracking-wider opacity-75">${c.label}</p><p class="text-2xl font-bold mt-1 mono-num">${c.count}</p></div>`).join("");
+
+  const pills = [
+    { id: "all", label: "All" }, { id: "Valid", label: "Valid" }, { id: "Expiring Soon", label: "Expiring Soon" }, { id: "Critical", label: "Critical (≤14 Days)" }, { id: "Expired", label: "Expired" }
+  ];
+  document.getElementById("dacoFilterPills").innerHTML = pills.map(p => `<button onclick="setDacoTab('${p.id}')" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${dacoTab === p.id ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">${p.label}</button>`).join("");
+
+  const filtered = employees.filter(e => {
+    if (dacoTab !== "all" && e.dacoStatus !== dacoTab) return false;
+    if (dacoSearchVal) {
+      const q = dacoSearchVal.toLowerCase();
+      return e.name.toLowerCase().includes(q) || e.id.toLowerCase().includes(q) || e.dacoId.toLowerCase().includes(q) || e.craft.toLowerCase().includes(q);
+    }
+    return true;
+  });
+  const totalPages = Math.ceil(filtered.length / dacoPageSize) || 1;
+  if (dacoPage > totalPages) dacoPage = totalPages;
+  const start = (dacoPage - 1) * dacoPageSize;
+  const paginated = filtered.slice(start, start + dacoPageSize);
+  const tbody = document.getElementById("dacoTableBody");
+  tbody.innerHTML = paginated.length ? paginated.map(e => {
+    const badge = e.dacoStatus === "Valid" ? `<span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">Valid</span>` : e.dacoStatus === "Expiring Soon" ? `<span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Expiring Soon</span>` : e.dacoStatus === "Critical" ? `<span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-rose-100 text-rose-800">Critical (≤14d)</span>` : `<span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-800">Expired</span>`;
+    return `<tr class="hover:bg-slate-50/80 transition-colors"><td class="px-4 py-3"><div class="font-medium text-slate-900">${e.name}</div><div class="text-xs text-slate-500">${e.id} • ${e.craft}</div></td><td class="px-4 py-3 font-mono text-slate-700">${e.dacoId}</td><td class="px-4 py-3 text-slate-600">${fmtDate(e.dacoIssueDate)}</td><td class="px-4 py-3 text-slate-600">${fmtDate(e.dacoExpiryDate)}</td><td class="px-4 py-3 mono-num font-semibold ${e.dacoDaysRemaining < 0 ? 'text-purple-600' : e.dacoDaysRemaining <= 14 ? 'text-rose-600' : 'text-slate-800'}">${e.dacoDaysRemaining < 0 ? Math.abs(e.dacoDaysRemaining) + "d overdue" : e.dacoDaysRemaining + " days"}</td><td class="px-4 py-3">${badge}</td><td class="px-4 py-3"><button onclick="openIdCard('${e.id}')" class="px-2.5 py-1 rounded-md bg-purple-50 text-purple-700 text-xs font-semibold hover:bg-purple-100">ID Card</button></td></tr>`;
+  }).join("") : `<tr><td colspan="7" class="text-center py-8 text-slate-400">No matching DACO records found.</td></tr>`;
+  document.getElementById("dacoPagination").innerHTML = `<span>Showing ${filtered.length ? start + 1 : 0} to ${Math.min(start + dacoPageSize, filtered.length)} of ${filtered.length} entries</span><div class="flex items-center gap-1"><button onclick="changeDacoPage(${dacoPage - 1})" ${dacoPage <= 1 ? 'disabled class="opacity-40 cursor-not-allowed px-3 py-1 rounded border border-slate-200"' : 'class="px-3 py-1 rounded border border-slate-200 hover:bg-slate-50"'}>Prev</button><span class="px-3 py-1 font-medium">${dacoPage} / ${totalPages}</span><button onclick="changeDacoPage(${dacoPage + 1})" ${dacoPage >= totalPages ? 'disabled class="opacity-40 cursor-not-allowed px-3 py-1 rounded border border-slate-200"' : 'class="px-3 py-1 rounded border border-slate-200 hover:bg-slate-50"'}>Next</button></div>`;
+  safeCreateIcons();
+}
+function setDacoTab(tab) { dacoTab = tab; dacoPage = 1; renderDacoPage(); }
+function changeDacoPage(p) { dacoPage = p; renderDacoPage(); }
+
+document.getElementById("dacoSearch").addEventListener("input", e => { dacoSearchVal = e.target.value; dacoPage = 1; renderDacoPage(); });
+
+/* ============================================================
    RENDER ORG & SHIFT CRAFT
    ============================================================ */
-function renderOrgPage(){
+function renderOrgPage() {
   const orgChart = document.getElementById("orgChart");
   orgChart.innerHTML = `
     <div class="flex flex-col items-center min-w-[700px] py-2">
@@ -530,14 +560,14 @@ function renderOrgPage(){
     </div>
   `;
 
-  const shiftCounts = { "Day Shift":0, "Night Shift":0, "Off Duty":0, "Standby":0 };
+  const shiftCounts = { "Day Shift": 0, "Night Shift": 0, "Off Duty": 0, "Standby": 0 };
   employees.forEach(e => { if (shiftCounts[e.shift] !== undefined) shiftCounts[e.shift]++; });
 
   const shiftColors = {
-    "Day Shift": { icon:"sun", color:"text-amber-600", bg:"bg-amber-50" },
-    "Night Shift": { icon:"moon", color:"text-indigo-600", bg:"bg-indigo-50" },
-    "Off Duty": { icon:"coffee", color:"text-slate-600", bg:"bg-slate-100" },
-    "Standby": { icon:"shield-alert", color:"text-purple-600", bg:"bg-purple-50" },
+    "Day Shift": { icon: "sun", color: "text-amber-600", bg: "bg-amber-50" },
+    "Night Shift": { icon: "moon", color: "text-indigo-600", bg: "bg-indigo-50" },
+    "Off Duty": { icon: "coffee", color: "text-slate-600", bg: "bg-slate-100" },
+    "Standby": { icon: "shield-alert", color: "text-purple-600", bg: "bg-purple-50" },
   };
 
   document.getElementById("shiftCards").innerHTML = Object.entries(shiftCounts).map(([sh, count]) => `
@@ -563,7 +593,7 @@ function renderOrgPage(){
     </div>
   `).join("");
 
-  document.getElementById("crewTableBody").innerHTML = employees.slice(0,10).map(e => `
+  document.getElementById("crewTableBody").innerHTML = employees.slice(0, 10).map(e => `
     <tr class="hover:bg-slate-50">
       <td class="px-4 py-3 font-medium text-slate-900">${e.name} <span class="text-xs font-normal text-slate-400">(${e.id})</span></td>
       <td class="px-4 py-3"><span class="px-2 py-0.5 rounded bg-purple-50 text-purple-700 text-xs font-semibold">${e.craft}</span></td>
@@ -577,14 +607,14 @@ function renderOrgPage(){
 /* ============================================================
    RENDER TOTAL MANPOWER DIRECTORY
    ============================================================ */
-function renderManpowerPage(){
+function renderManpowerPage() {
   // Populate dropdowns if empty
   const deptSelect = document.getElementById("mpDeptFilter");
-  if (deptSelect.children.length === 0){
+  if (deptSelect.children.length === 0) {
     deptSelect.innerHTML = `<option value="all">All Departments</option>` + departments.map(d => `<option value="${d}">${d}</option>`).join("");
   }
   const craftSelect = document.getElementById("mpCraftFilter");
-  if (craftSelect.children.length === 0){
+  if (craftSelect.children.length === 0) {
     craftSelect.innerHTML = `<option value="all">All Crafts</option>` + crafts.map(c => `<option value="${c}">${c}</option>`).join("");
   }
 
@@ -606,7 +636,7 @@ function renderManpowerPage(){
     if (mpDeptVal !== "all" && e.department !== mpDeptVal) return false;
     if (mpCraftVal !== "all" && e.craft !== mpCraftVal) return false;
     if (mpStatusVal !== "all" && e.dutyStatus !== mpStatusVal) return false;
-    if (mpSearchVal){
+    if (mpSearchVal) {
       const q = mpSearchVal.toLowerCase();
       return e.name.toLowerCase().includes(q) || e.id.toLowerCase().includes(q) || e.iqama.includes(q) || e.craft.toLowerCase().includes(q) || e.nationality.toLowerCase().includes(q);
     }
@@ -635,7 +665,7 @@ function renderManpowerPage(){
 
   // Render Table Body
   const tbody = document.getElementById("mpTableBody");
-  if (paginated.length === 0){
+  if (paginated.length === 0) {
     tbody.innerHTML = `<tr><td colspan="10" class="text-center py-8 text-slate-400">No matching manpower records found.</td></tr>`;
   } else {
     tbody.innerHTML = paginated.map(e => {
@@ -643,7 +673,7 @@ function renderManpowerPage(){
       let rowHtml = `<tr class="hover:bg-slate-50/80 transition-colors">`;
       if (mpColumns.id) rowHtml += `<td class="px-4 py-3 font-mono text-xs text-slate-600">${e.id}</td>`;
       if (mpColumns.name) rowHtml += `<td class="px-4 py-3 font-medium text-slate-900">${e.name}</td>`;
-      if (mpColumns.nationality) rowHtml += `<td class="px-4 py-3 text-slate-700">${nationalityFlags[e.nationality]||""} ${e.nationality}</td>`;
+      if (mpColumns.nationality) rowHtml += `<td class="px-4 py-3 text-slate-700">${nationalityFlags[e.nationality] || ""} ${e.nationality}</td>`;
       if (mpColumns.craft) rowHtml += `<td class="px-4 py-3 text-slate-700">${e.craft}</td>`;
       if (mpColumns.department) rowHtml += `<td class="px-4 py-3 text-slate-600">${e.department}</td>`;
       if (mpColumns.iqama) rowHtml += `<td class="px-4 py-3 font-mono text-slate-700">${e.iqama}</td>`;
@@ -668,7 +698,7 @@ function renderManpowerPage(){
         <p class="font-bold text-slate-900 mt-2">${e.name}</p>
         <p class="text-xs text-purple-600 font-medium">${e.craft} • ${e.department}</p>
         <div class="mt-3 space-y-1 text-xs text-slate-600">
-          <p><span class="text-slate-400">Nationality:</span> ${nationalityFlags[e.nationality]||""} ${e.nationality}</p>
+          <p><span class="text-slate-400">Nationality:</span> ${nationalityFlags[e.nationality] || ""} ${e.nationality}</p>
           <p><span class="text-slate-400">Iqama:</span> <span class="font-mono">${e.iqama}</span></p>
           <p><span class="text-slate-400">Job Site:</span> ${e.jobSite}</p>
         </div>
@@ -691,7 +721,7 @@ function renderManpowerPage(){
   safeCreateIcons();
 }
 
-function toggleMpCol(key){
+function toggleMpCol(key) {
   mpColumns[key] = !mpColumns[key];
   renderManpowerPage();
 }
@@ -726,7 +756,7 @@ document.getElementById("mpDeptFilter").addEventListener("change", (e) => { mpDe
 document.getElementById("mpCraftFilter").addEventListener("change", (e) => { mpCraftVal = e.target.value; mpPage = 1; renderManpowerPage(); });
 document.getElementById("mpStatusFilter").addEventListener("change", (e) => { mpStatusVal = e.target.value; mpPage = 1; renderManpowerPage(); });
 
-function changeMpPage(p){ mpPage = p; renderManpowerPage(); }
+function changeMpPage(p) { mpPage = p; renderManpowerPage(); }
 
 /* ============================================================
    EXPORT EXCEL & PDF
@@ -736,7 +766,7 @@ document.getElementById("exportExcelBtn").addEventListener("click", () => {
     if (mpDeptVal !== "all" && e.department !== mpDeptVal) return false;
     if (mpCraftVal !== "all" && e.craft !== mpCraftVal) return false;
     if (mpStatusVal !== "all" && e.dutyStatus !== mpStatusVal) return false;
-    if (mpSearchVal){
+    if (mpSearchVal) {
       const q = mpSearchVal.toLowerCase();
       return e.name.toLowerCase().includes(q) || e.id.toLowerCase().includes(q) || e.iqama.includes(q) || e.craft.toLowerCase().includes(q) || e.nationality.toLowerCase().includes(q);
     }
@@ -797,7 +827,7 @@ document.getElementById("exportPdfBtn").addEventListener("click", () => {
 /* ============================================================
    RENDER EQUIPMENT & ASSETS
    ============================================================ */
-function renderEquipmentPage(){
+function renderEquipmentPage() {
   const inUse = equipmentList.filter(e => e.status === "In Use").length;
   const available = equipmentList.filter(e => e.status === "Available").length;
   const maintenance = equipmentList.filter(e => e.status === "Under Maintenance").length;
@@ -836,7 +866,7 @@ function renderEquipmentPage(){
 
   let filtered = equipmentList.filter(eq => {
     if (equipTab !== "all" && eq.status !== equipTab) return false;
-    if (equipSearchVal){
+    if (equipSearchVal) {
       const q = equipSearchVal.toLowerCase();
       return eq.name.toLowerCase().includes(q) || eq.id.toLowerCase().includes(q) || eq.assignedTo.toLowerCase().includes(q) || eq.category.toLowerCase().includes(q);
     }
@@ -849,7 +879,7 @@ function renderEquipmentPage(){
   const paginated = filtered.slice(start, start + equipPageSize);
 
   const tbody = document.getElementById("equipTableBody");
-  if (paginated.length === 0){
+  if (paginated.length === 0) {
     tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">No equipment found.</td></tr>`;
   } else {
     tbody.innerHTML = paginated.map(eq => {
@@ -879,17 +909,17 @@ function renderEquipmentPage(){
   safeCreateIcons();
 }
 
-function setEquipTab(tab){ equipTab = tab; equipPage = 1; renderEquipmentPage(); }
-function changeEquipPage(p){ equipPage = p; renderEquipmentPage(); }
+function setEquipTab(tab) { equipTab = tab; equipPage = 1; renderEquipmentPage(); }
+function changeEquipPage(p) { equipPage = p; renderEquipmentPage(); }
 document.getElementById("equipSearch").addEventListener("input", (e) => { equipSearchVal = e.target.value; equipPage = 1; renderEquipmentPage(); });
 
 /* ============================================================
    RENDER VACATION & LEAVE
    ============================================================ */
-function renderVacationPage(){
+function renderVacationPage() {
   const onLeaveCount = employees.filter(e => e.dutyStatus === "On Leave").length;
   const pendingCount = vacationRequests.filter(v => v.approval === "Pending").length;
-  const returningCount = vacationRequests.filter(v => v.end > today && v.end.getTime() - today.getTime() < 14*86400000).length;
+  const returningCount = vacationRequests.filter(v => v.end > today && v.end.getTime() - today.getTime() < 14 * 86400000).length;
 
   document.getElementById("leaveKpis").innerHTML = `
     <div class="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-between">
@@ -908,7 +938,7 @@ function renderVacationPage(){
 
   // Gantt Timeline
   const gantt = document.getElementById("ganttChart");
-  gantt.innerHTML = vacationRequests.slice(0,6).map(v => `
+  gantt.innerHTML = vacationRequests.slice(0, 6).map(v => `
     <div class="flex items-center gap-4 text-xs">
       <div class="w-36 font-medium text-slate-800 truncate">${v.name}</div>
       <div class="flex-1 bg-slate-100 h-6 rounded-md relative overflow-hidden flex items-center px-2">
@@ -919,7 +949,7 @@ function renderVacationPage(){
   `).join("");
 
   let filtered = vacationRequests.filter(v => {
-    if (vacSearchVal){
+    if (vacSearchVal) {
       const q = vacSearchVal.toLowerCase();
       return v.name.toLowerCase().includes(q) || v.id.toLowerCase().includes(q);
     }
@@ -932,7 +962,7 @@ function renderVacationPage(){
   const paginated = filtered.slice(start, start + vacPageSize);
 
   const tbody = document.getElementById("vacTableBody");
-  if (paginated.length === 0){
+  if (paginated.length === 0) {
     tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">No vacation requests found.</td></tr>`;
   } else {
     tbody.innerHTML = paginated.map(v => {
@@ -962,13 +992,13 @@ function renderVacationPage(){
   safeCreateIcons();
 }
 
-function changeVacPage(p){ vacPage = p; renderVacationPage(); }
+function changeVacPage(p) { vacPage = p; renderVacationPage(); }
 document.getElementById("vacSearch").addEventListener("input", (e) => { vacSearchVal = e.target.value; vacPage = 1; renderVacationPage(); });
 
 /* ============================================================
    RENDER DOCUMENTATION GALLERY (TABLE + LARGER CHART)
    ============================================================ */
-function renderDocumentationPage(){
+function renderDocumentationPage() {
   const searchInput = document.getElementById("docSearch");
   docSearchVal = searchInput.value;
 
@@ -986,7 +1016,7 @@ function renderDocumentationPage(){
   const currentDocs = pageSize === "all" ? filteredDocs : filteredDocs.slice(startIndex, startIndex + pageSize);
 
   const tbody = document.getElementById("docTableBody");
-  if (currentDocs.length === 0){
+  if (currentDocs.length === 0) {
     tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-slate-500">No documents found matching your search.</td></tr>`;
   } else {
     tbody.innerHTML = currentDocs.map((doc, idx) => `
@@ -1029,7 +1059,7 @@ function renderDocumentationPage(){
   safeCreateIcons();
 }
 
-function changeDocPage(p){
+function changeDocPage(p) {
   docCurrentPage = p;
   renderDocumentationPage();
 }
@@ -1045,7 +1075,7 @@ document.getElementById("docRowsPerPage").addEventListener("change", (e) => {
   renderDocumentationPage();
 });
 
-function renderDocBarChart(){
+function renderDocBarChart() {
   if (docBarChartInstance) docBarChartInstance.destroy();
 
   const categoryCounts = {};
@@ -1083,7 +1113,7 @@ function renderDocBarChart(){
 /* ============================================================
    MODALS & QR ID CARD
    ============================================================ */
-function openIdCard(empId){
+function openIdCard(empId) {
   const e = employees.find(x => x.id === empId);
   if (!e) return;
 
@@ -1102,7 +1132,7 @@ function openIdCard(empId){
       </div>
       <div class="mt-6 flex items-center gap-4">
         <div class="w-16 h-16 rounded-xl bg-purple-600/30 border border-purple-500/40 flex items-center justify-center font-bold text-xl text-purple-200 shrink-0">
-          ${e.name.split(" ").map(n=>n[0]).join("").slice(0,2)}
+          ${e.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
         </div>
         <div>
           <h3 class="font-bold text-base text-white leading-tight">${e.name}</h3>
@@ -1111,7 +1141,7 @@ function openIdCard(empId){
         </div>
       </div>
       <div class="mt-6 grid grid-cols-2 gap-3 text-xs bg-white/5 border border-white/10 rounded-xl p-3">
-        <div><span class="text-slate-400 block text-[10px]">Nationality</span><span class="font-medium">${nationalityFlags[e.nationality]||""} ${e.nationality}</span></div>
+        <div><span class="text-slate-400 block text-[10px]">Nationality</span><span class="font-medium">${nationalityFlags[e.nationality] || ""} ${e.nationality}</span></div>
         <div><span class="text-slate-400 block text-[10px]">Department</span><span class="font-medium">${e.department}</span></div>
         <div><span class="text-slate-400 block text-[10px]">Iqama No.</span><span class="font-mono">${e.iqama}</span></div>
         <div><span class="text-slate-400 block text-[10px]">Job Site</span><span class="font-medium">${e.jobSite}</span></div>
@@ -1135,7 +1165,7 @@ document.getElementById("idCardCloseBtn").addEventListener("click", () => {
   document.getElementById("idCardModal").classList.add("hidden");
 });
 
-function openDocModal(title, img, desc){
+function openDocModal(title, img, desc) {
   document.getElementById("docModalTitle").textContent = title;
   document.getElementById("docModalImg").src = img;
   document.getElementById("docModalDesc").textContent = desc;
@@ -1150,7 +1180,7 @@ document.getElementById("docDownloadBtn").addEventListener("click", () => {
   document.getElementById("docModal").classList.add("hidden");
 });
 
-function setupEventListeners(){
+function setupEventListeners() {
   window.addEventListener("click", (e) => {
     const idModal = document.getElementById("idCardModal");
     if (e.target === idModal) idModal.classList.add("hidden");
@@ -1158,4 +1188,3 @@ function setupEventListeners(){
     if (e.target === docModal) docModal.classList.add("hidden");
   });
 }
-
